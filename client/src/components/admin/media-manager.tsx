@@ -208,15 +208,15 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-7xl h-[90vh] overflow-hidden flex"
       >
         {/* Folder Sidebar */}
-        <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
+        <div className="w-48 sm:w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-gray-900">Folders</h3>
@@ -298,7 +298,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b">
             <div>
               <h2 className="text-2xl font-heading font-bold text-gray-900">
                 {selectMode ? "Select Media" : "Media Library"}
@@ -400,7 +400,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
 
           <div className="overflow-y-auto max-h-[60vh] p-6">
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
               {Array.from({ length: 12 }).map((_, index) => (
                 <div key={index} className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
               ))}
@@ -429,7 +429,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
               )}
             </div>
           ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
               {filteredFiles.map((file) => (
                 <motion.div
                   key={file.id}

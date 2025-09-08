@@ -44,7 +44,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
   const { data: mediaFiles, isLoading } = useQuery<MediaFile[]>({
     queryKey: ["/api/media"],
     queryFn: async () => {
-      const response = await fetch("/api/media?category=gallery");
+      const response = await fetch("/api/media");
       if (!response.ok) throw new Error("Failed to fetch gallery images");
       return response.json();
     },
@@ -199,12 +199,12 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-7xl h-[90vh] overflow-hidden flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
@@ -218,7 +218,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
         </div>
 
         {/* Upload Form */}
-        <div className="p-6 border-b bg-gray-50">
+        <div className="p-4 sm:p-6 border-b bg-gray-50">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -237,7 +237,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tags
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-3">
                 {tagColors.map((tag) => (
                   <button
                     key={tag.name}
@@ -302,10 +302,10 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
         </div>
 
         {/* Controls */}
-        <div className="p-6 border-b">
-          <div className="flex items-center justify-between space-x-4">
-            <div className="flex items-center space-x-4 flex-1">
-              <div className="relative flex-1 max-w-md">
+        <div className="p-4 sm:p-6 border-b">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 flex-1 w-full sm:w-auto">
+              <div className="relative w-full sm:flex-1 sm:max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 <Input
                   placeholder="Search gallery images..."
@@ -354,9 +354,9 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
         </div>
 
         {/* Gallery Grid */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
               {Array.from({ length: 12 }).map((_, index) => (
                 <div key={index} className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
               ))}
@@ -385,7 +385,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
               )}
             </div>
           ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
               {filteredFiles.map((file) => {
                 const fileTags = getFileTagsFromAlt(file.alt);
                 return (
@@ -406,10 +406,12 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
                       src={file.url}
                       alt={file.alt ?? file.originalName}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
-                        target.nextElementSibling?.classList.remove('hidden');
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.classList.remove('hidden');
                       }}
                     />
                     <div className="hidden absolute inset-0 bg-gray-100 flex items-center justify-center">
@@ -491,7 +493,18 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
                       src={file.url}
                       alt={file.alt ?? file.originalName}
                       className="w-16 h-16 object-cover rounded-lg"
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) {
+                          fallback.classList.remove('hidden');
+                          fallback.innerHTML = '<div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center"><svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg></div>';
+                        }
+                      }}
                     />
+                    <div className="hidden"></div>
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-900">{file.originalName}</h4>
                       <p className="text-sm text-gray-600">
