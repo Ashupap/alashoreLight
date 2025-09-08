@@ -40,7 +40,8 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
 
   const createBlogPost = useMutation({
     mutationFn: async (data: InsertBlogPostSchema) => {
-      await apiRequest("POST", "/api/blog", data);
+      const response = await apiRequest("POST", "/api/blog", data);
+      return response.json();
     },
     onSuccess: () => {
       toast({
