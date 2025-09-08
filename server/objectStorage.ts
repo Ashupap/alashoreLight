@@ -75,21 +75,49 @@ export class ObjectStorageService {
 
   // Search for a public object from the search paths.
   async searchPublicObject(filePath: string): Promise<File | null> {
-    for (const searchPath of this.getPublicObjectSearchPaths()) {
+    console.log("=== SEARCH PUBLIC OBJECT DEBUG ===");
+    console.log("Looking for file:", filePath);
+    
+    // Try both public and private directories for backward compatibility
+    const searchPaths = this.getPublicObjectSearchPaths();
+    const allSearchPaths = [...searchPaths];
+    
+    // Also check private directory for existing files uploaded before the fix
+    try {
+      const privateDir = this.getPrivateObjectDir();
+      allSearchPaths.push(privateDir);
+    } catch (error) {
+      // Private dir not available, skip
+    }
+    
+    console.log("Available search paths:", allSearchPaths);
+    
+    for (const searchPath of allSearchPaths) {
       const fullPath = `${searchPath}/${filePath}`;
+      console.log("Trying full path:", fullPath);
 
-      // Full path format: /<bucket_name>/<object_name>
-      const { bucketName, objectName } = parseObjectPath(fullPath);
-      const bucket = objectStorageClient.bucket(bucketName);
-      const file = bucket.file(objectName);
+      try {
+        // Full path format: /<bucket_name>/<object_name>
+        const { bucketName, objectName } = parseObjectPath(fullPath);
+        console.log("Parsed bucket:", bucketName, "object:", objectName);
+        
+        const bucket = objectStorageClient.bucket(bucketName);
+        const file = bucket.file(objectName);
 
-      // Check if file exists
-      const [exists] = await file.exists();
-      if (exists) {
-        return file;
+        // Check if file exists
+        const [exists] = await file.exists();
+        console.log("File exists check for", objectName, ":", exists);
+        
+        if (exists) {
+          console.log("Found file at:", fullPath);
+          return file;
+        }
+      } catch (error: any) {
+        console.error("Error checking path", fullPath, ":", error?.message);
       }
     }
 
+    console.log("File not found in any search path");
     return null;
   }
 
