@@ -1,10 +1,12 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Upload, X, Trash2, Edit, Search, Grid, List, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Trash2, Edit, Search, Grid, List, Image as ImageIcon, Folder, FolderPlus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { MediaFile } from "@shared/schema";
 
 interface MediaManagerProps {
@@ -18,6 +20,10 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [newFolderName, setNewFolderName] = useState("");
+  const [showNewFolderDialog, setShowNewFolderDialog] = useState(false);
+  const [uploadCategory, setUploadCategory] = useState("general");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -25,6 +31,24 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const { data: mediaFiles, isLoading } = useQuery<MediaFile[]>({
     queryKey: ["/api/media"],
   });
+
+  // Get unique categories from media files
+  const categories = mediaFiles ? 
+    [...new Set(mediaFiles.map(file => file.category || 'general'))].sort() : 
+    [];
+
+  // Get category statistics
+  const getCategoryStats = (category: string) => {
+    if (!mediaFiles) return 0;
+    return mediaFiles.filter(file => (file.category || 'general') === category).length;
+  };
+
+  const getTotalSize = (category: string) => {
+    if (!mediaFiles) return 0;
+    return mediaFiles
+      .filter(file => (file.category || 'general') === category)
+      .reduce((total, file) => total + file.size, 0);
+  };
 
   const uploadMutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -87,9 +111,40 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
     setIsUploading(true);
     const formData = new FormData();
     formData.append("file", files[0]);
-    formData.append("category", "general");
+    formData.append("category", uploadCategory);
     
     uploadMutation.mutate(formData);
+  };
+
+  const handleCreateFolder = () => {
+    if (!newFolderName.trim()) {
+      toast({
+        title: "Invalid folder name",
+        description: "Please enter a valid folder name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (categories.includes(newFolderName.toLowerCase())) {
+      toast({
+        title: "Folder exists",
+        description: "A folder with this name already exists",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create a placeholder file in the new category to establish it
+    setUploadCategory(newFolderName.toLowerCase());
+    setSelectedCategory(newFolderName.toLowerCase());
+    setNewFolderName("");
+    setShowNewFolderDialog(false);
+    
+    toast({
+      title: "Folder created",
+      description: `Created folder "${newFolderName}". Upload files to populate it.`,
+    });
   };
 
   const handleUploadClick = () => {
@@ -118,10 +173,15 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
     }
   };
 
-  const filteredFiles = mediaFiles?.filter(file =>
-    file.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    file.alt?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredFiles = mediaFiles?.filter(file => {
+    const matchesSearch = file.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      file.alt?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = selectedCategory === "all" || 
+      (file.category || 'general') === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  }) || [];
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -137,90 +197,192 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex"
       >
-        <div className="flex items-center justify-between p-6 border-b">
-          <div>
-            <h2 className="text-2xl font-heading font-bold text-gray-900">
-              {selectMode ? "Select Media" : "Media Library"}
-            </h2>
-            <p className="text-gray-600">
-              {selectMode ? "Choose a file to use" : "Manage your uploaded files"}
-            </p>
+        {/* Folder Sidebar */}
+        <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900">Folders</h3>
+              <Dialog open={showNewFolderDialog} onOpenChange={setShowNewFolderDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <FolderPlus size={16} />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Create New Folder</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Input
+                      placeholder="Folder name"
+                      value={newFolderName}
+                      onChange={(e) => setNewFolderName(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleCreateFolder()}
+                    />
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="outline" onClick={() => setShowNewFolderDialog(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleCreateFolder}>
+                        Create Folder
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            data-testid="button-close-media-manager"
-          >
-            <X size={20} />
-          </Button>
+          
+          <div className="flex-1 overflow-y-auto p-2">
+            <div className="space-y-1">
+              {/* All Files */}
+              <button
+                onClick={() => setSelectedCategory("all")}
+                className={`w-full text-left p-3 rounded-lg transition-colors flex items-center justify-between ${
+                  selectedCategory === "all" 
+                    ? "bg-ocean-blue text-white" 
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                <div className="flex items-center">
+                  <Folder size={16} className="mr-2" />
+                  <span className="font-medium">All Files</span>
+                </div>
+                <span className="text-xs opacity-75">
+                  {mediaFiles?.length || 0}
+                </span>
+              </button>
+
+              {/* Category Folders */}
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`w-full text-left p-3 rounded-lg transition-colors flex items-center justify-between ${
+                    selectedCategory === category 
+                      ? "bg-ocean-blue text-white" 
+                      : "hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <Folder size={16} className="mr-2" />
+                    <span className="font-medium capitalize">{category}</span>
+                  </div>
+                  <div className="text-xs opacity-75">
+                    <div>{getCategoryStats(category)}</div>
+                    <div className="text-[10px]">{formatFileSize(getTotalSize(category))}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="p-6 border-b">
-          <div className="flex items-center justify-between space-x-4">
-            <div className="flex items-center space-x-4 flex-1">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <Input
-                  placeholder="Search files..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                  data-testid="input-search-media"
-                />
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          <div className="flex items-center justify-between p-6 border-b">
+            <div>
+              <h2 className="text-2xl font-heading font-bold text-gray-900">
+                {selectMode ? "Select Media" : "Media Library"}
+              </h2>
+              <p className="text-gray-600">
+                {selectedCategory === "all" 
+                  ? `${mediaFiles?.length || 0} files total`
+                  : `${filteredFiles.length} files in ${selectedCategory}`
+                }
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              data-testid="button-close-media-manager"
+            >
+              <X size={20} />
+            </Button>
+          </div>
+
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between space-x-4">
+              <div className="flex items-center space-x-4 flex-1">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                  <Input
+                    placeholder="Search files..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                    data-testid="input-search-media"
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    data-testid="button-grid-view"
+                  >
+                    <Grid size={16} />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    data-testid="button-list-view"
+                  >
+                    <List size={16} />
+                  </Button>
+                </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                  data-testid="button-grid-view"
-                >
-                  <Grid size={16} />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                  data-testid="button-list-view"
-                >
-                  <List size={16} />
-                </Button>
+                {selectedFiles.length > 0 && !selectMode && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleDeleteSelected}
+                    disabled={deleteMutation.isPending}
+                    data-testid="button-delete-selected"
+                  >
+                    <Trash2 size={16} className="mr-2" />
+                    Delete ({selectedFiles.length})
+                  </Button>
+                )}
+                
+                {!selectMode && categories.length > 0 && (
+                  <Select value={uploadCategory} onValueChange={setUploadCategory}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Folder" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">General</SelectItem>
+                      {categories.filter(cat => cat !== 'general').map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category.charAt(0).toUpperCase() + category.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                
+                {!selectMode && (
+                  <Button
+                    onClick={handleUploadClick}
+                    disabled={isUploading}
+                    className="bg-ocean-blue hover:bg-deep-navy"
+                    data-testid="button-upload-file"
+                  >
+                    <Upload size={16} className="mr-2" />
+                    {isUploading ? "Uploading..." : "Upload File"}
+                  </Button>
+                )}
               </div>
             </div>
-
-            <div className="flex items-center space-x-2">
-              {selectedFiles.length > 0 && !selectMode && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleDeleteSelected}
-                  disabled={deleteMutation.isPending}
-                  data-testid="button-delete-selected"
-                >
-                  <Trash2 size={16} className="mr-2" />
-                  Delete ({selectedFiles.length})
-                </Button>
-              )}
-              
-              {!selectMode && (
-                <Button
-                  onClick={handleUploadClick}
-                  disabled={isUploading}
-                  className="bg-ocean-blue hover:bg-deep-navy"
-                  data-testid="button-upload-file"
-                >
-                  <Upload size={16} className="mr-2" />
-                  {isUploading ? "Uploading..." : "Upload File"}
-                </Button>
-              )}
-            </div>
           </div>
-        </div>
 
-        <div className="overflow-y-auto max-h-[60vh] p-6">
+          <div className="overflow-y-auto max-h-[60vh] p-6">
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {Array.from({ length: 12 }).map((_, index) => (
@@ -326,18 +488,19 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
                   </div>
                 </motion.div>
               ))}
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileSelect}
-          className="hidden"
-          data-testid="file-input"
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+            data-testid="file-input"
+          />
+        </div>
       </motion.div>
     </div>
   );
