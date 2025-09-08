@@ -80,35 +80,92 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
         lastModified: file.lastModified
       });
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('alt', file.name);
-      formData.append('category', 'blog');
+      // For larger files, use presigned URL upload to bypass nginx limits
+      if (file.size > 800 * 1024) { // 800KB threshold
+        console.log("Large file detected, using presigned URL upload");
+        
+        // Step 1: Get presigned URL
+        const urlResponse = await fetch('/api/media/upload-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            mimetype: file.type
+          }),
+        });
 
-      console.log("FormData created, making request to /api/media/upload");
-      console.log("FormData entries:", Array.from(formData.entries()).map(([key, value]) => 
-        key === 'file' ? [key, `File: ${file.name} (${file.size} bytes)`] : [key, value]
-      ));
-      
-      const response = await fetch('/api/media/upload', {
-        method: 'POST',
-        body: formData,
-      });
+        if (!urlResponse.ok) {
+          const errorText = await urlResponse.text();
+          throw new Error(`Failed to get upload URL: ${urlResponse.status} - ${errorText}`);
+        }
 
-      console.log("Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+        const { uploadUrl, objectId } = await urlResponse.json();
+        console.log("Got presigned URL, uploading directly to object storage");
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log("Error response body:", errorText);
-        console.log("=== CLIENT UPLOAD DEBUG ERROR ===");
-        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        // Step 2: Upload directly to object storage
+        const uploadResponse = await fetch(uploadUrl, {
+          method: 'PUT',
+          body: file,
+          headers: {
+            'Content-Type': file.type,
+          },
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`Direct upload failed: ${uploadResponse.status}`);
+        }
+
+        console.log("Direct upload successful, confirming with server");
+
+        // Step 3: Confirm upload with our server
+        const confirmResponse = await fetch('/api/media/confirm-upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            objectId,
+            filename: file.name,
+            mimetype: file.type,
+            size: file.size,
+            category: 'blog'
+          }),
+        });
+
+        if (!confirmResponse.ok) {
+          const errorText = await confirmResponse.text();
+          throw new Error(`Failed to confirm upload: ${confirmResponse.status} - ${errorText}`);
+        }
+
+        const data = await confirmResponse.json();
+        console.log("=== CLIENT UPLOAD DEBUG SUCCESS (PRESIGNED) ===");
+        return data;
+      } else {
+        // For smaller files, use traditional upload
+        console.log("Small file, using traditional upload");
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('alt', file.name);
+        formData.append('category', 'blog');
+
+        const response = await fetch('/api/media/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.log("Error response body:", errorText);
+          throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log("=== CLIENT UPLOAD DEBUG SUCCESS (TRADITIONAL) ===");
+        return data;
       }
-
-      const data = await response.json();
-      console.log("Upload response data:", data);
-      console.log("=== CLIENT UPLOAD DEBUG SUCCESS ===");
-      return data;
     },
     onSuccess: (data) => {
       console.log("Upload mutation success, setting form value:", data.url);

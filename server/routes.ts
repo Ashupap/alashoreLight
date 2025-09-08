@@ -502,7 +502,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // File upload endpoint using object storage (no auth required for blog images)
+  // Get presigned URL for direct upload to object storage (bypasses nginx limits)
+  app.post('/api/media/upload-url', async (req: any, res) => {
+    try {
+      console.log("=== PRESIGNED URL REQUEST ===");
+      console.log("Request body:", req.body);
+      
+      const { filename, mimetype } = req.body;
+      if (!filename || !mimetype) {
+        return res.status(400).json({ message: "Filename and mimetype required" });
+      }
+
+      // Validate file type
+      if (!mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: "Only image files are allowed" });
+      }
+
+      const uploadUrl = await objectStorageService.getObjectEntityUploadURL();
+      const objectId = uploadUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      
+      console.log("Generated presigned URL for:", filename);
+      console.log("Object ID:", objectId);
+      
+      res.json({
+        uploadUrl,
+        objectId,
+        filename
+      });
+    } catch (error: any) {
+      console.error("Error generating upload URL:", error);
+      res.status(500).json({ message: "Failed to generate upload URL", error: error?.message });
+    }
+  });
+
+  // Confirm upload completion and save metadata
+  app.post('/api/media/confirm-upload', async (req: any, res) => {
+    try {
+      console.log("=== CONFIRM UPLOAD ===");
+      console.log("Request body:", req.body);
+      
+      const { objectId, filename, mimetype, size } = req.body;
+      if (!objectId || !filename) {
+        return res.status(400).json({ message: "Object ID and filename required" });
+      }
+
+      // Create database record
+      const uploadedBy = req.user?.id || 1;
+      const fileUrl = `/objects/uploads/${objectId}`;
+      
+      const mediaData = {
+        filename,
+        originalName: filename,
+        mimeType: mimetype || 'image/jpeg',
+        size: size || 0,
+        url: fileUrl,
+        alt: filename,
+        category: req.body.category || 'general',
+        uploadedBy,
+      };
+
+      try {
+        const mediaFile = await storage.createMediaFile(mediaData);
+        console.log("Database record created:", mediaFile.id);
+        
+        res.status(201).json({ 
+          ...mediaFile,
+          url: fileUrl
+        });
+      } catch (dbError: any) {
+        console.log("Database error, but file uploaded. Returning file URL anyway");
+        
+        const response = {
+          id: Date.now(),
+          url: fileUrl,
+          filename,
+          originalName: filename,
+          mimeType: mimetype,
+          size
+        };
+        
+        res.status(201).json(response);
+      }
+    } catch (error: any) {
+      console.error("Error confirming upload:", error);
+      res.status(500).json({ message: "Failed to confirm upload", error: error?.message });
+    }
+  });
+
+  // Legacy file upload endpoint (for smaller files that work through nginx)
   app.post('/api/media/upload', upload.single('file'), async (req: any, res) => {
     console.log("=== UPLOAD DEBUG START ===");
     console.log("Request headers:", req.headers);
@@ -533,6 +620,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       try {
         console.log("Attempting object storage upload...");
+        console.log("Object storage env vars:", {
+          PRIVATE_OBJECT_DIR: process.env.PRIVATE_OBJECT_DIR ? "SET" : "NOT SET",
+          DEFAULT_OBJECT_STORAGE_BUCKET_ID: process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID ? "SET" : "NOT SET"
+        });
+        
         // Try object storage first
         fileUrl = await objectStorageService.uploadFileBuffer(
           req.file.buffer,
@@ -543,6 +635,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (storageError: any) {
         console.log("Object storage failed, using fallback:", storageError?.message);
         console.log("Storage error stack:", storageError?.stack);
+        console.log("Full error object:", storageError);
         
         // Fallback to local storage for production
         const uploadsDir = path.join(process.cwd(), 'uploads/media');
