@@ -508,6 +508,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("=== PRESIGNED URL REQUEST ===");
       console.log("Request body:", req.body);
       
+      // Check if object storage is available
+      if (!process.env.PRIVATE_OBJECT_DIR || !process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID) {
+        console.log("Object storage not configured, falling back to local storage");
+        return res.status(503).json({ 
+          message: "Object storage not available", 
+          fallback: "local",
+          error: "Object storage environment variables not configured"
+        });
+      }
+      
       const { filename, mimetype } = req.body;
       if (!filename || !mimetype) {
         return res.status(400).json({ message: "Filename and mimetype required" });
@@ -531,7 +541,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error("Error generating upload URL:", error);
-      res.status(500).json({ message: "Failed to generate upload URL", error: error?.message });
+      console.log("Falling back to local storage due to object storage error");
+      res.status(503).json({ 
+        message: "Object storage temporarily unavailable", 
+        fallback: "local",
+        error: error?.message 
+      });
     }
   });
 

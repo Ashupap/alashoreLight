@@ -119,11 +119,15 @@ GMAIL_USER=your_gmail_address@gmail.com
 GMAIL_APP_PASSWORD=your_gmail_app_password
 NOTIFICATION_EMAIL=your_admin_email@company.com
 
-# File Upload Configuration (Optional - for advanced cloud storage)
-# Leave these blank to use local file storage
-# DEFAULT_OBJECT_STORAGE_BUCKET_ID=
-# PUBLIC_OBJECT_SEARCH_PATHS=
-# PRIVATE_OBJECT_DIR=
+# File Upload Configuration
+# Option 1: Use local file storage (recommended for simple setups)
+# Leave the object storage variables commented out to use local storage
+
+# Option 2: Use Replit Object Storage (for advanced cloud storage)
+# Uncomment and configure these if you want to use cloud object storage:
+# DEFAULT_OBJECT_STORAGE_BUCKET_ID=your_bucket_id
+# PUBLIC_OBJECT_SEARCH_PATHS=/your_bucket_id/public
+# PRIVATE_OBJECT_DIR=/your_bucket_id/.private
 EOF
     print_warning "Please edit $ENV_FILE with your actual configuration before continuing!"
     print_warning "Press Enter to continue after updating the .env file..."

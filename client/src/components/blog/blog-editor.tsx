@@ -97,6 +97,29 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
         });
 
         if (!urlResponse.ok) {
+          // If object storage is not available, fall back to traditional upload
+          if (urlResponse.status === 503) {
+            console.log("Object storage not available, falling back to traditional upload");
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('alt', file.name);
+            formData.append('category', 'blog');
+
+            const response = await fetch('/api/media/upload', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log("=== CLIENT UPLOAD DEBUG SUCCESS (FALLBACK) ===");
+            return data;
+          }
+          
           const errorText = await urlResponse.text();
           throw new Error(`Failed to get upload URL: ${urlResponse.status} - ${errorText}`);
         }
