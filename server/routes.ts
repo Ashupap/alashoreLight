@@ -191,8 +191,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Content is required" });
       }
 
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ message: "OpenAI API key not configured" });
+      }
+
       // Import OpenAI - using dynamic import to avoid issues
-      const { OpenAI } = await import('openai');
+      const { default: OpenAI } = await import('openai');
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
@@ -236,8 +240,12 @@ ${content}`;
         return res.status(400).json({ message: "Content and title are required" });
       }
 
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ message: "OpenAI API key not configured" });
+      }
+
       // Import OpenAI - using dynamic import to avoid issues
-      const { OpenAI } = await import('openai');
+      const { default: OpenAI } = await import('openai');
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });

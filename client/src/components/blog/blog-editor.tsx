@@ -183,12 +183,36 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
   });
 
   const onSubmit = async (data: InsertBlogPostSchema) => {
+    // Clean up content - remove empty <p><br></p> tags that ReactQuill adds
+    const cleanContent = data.content?.replace(/<p><br><\/p>/g, '').replace(/<p><\/p>/g, '').trim();
+    
+    // Validation before submission
+    if (!data.title?.trim()) {
+      toast({
+        title: "Title Required",
+        description: "Please add a title for your blog post",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!cleanContent || cleanContent === '<p></p>') {
+      toast({
+        title: "Content Required", 
+        description: "Please add some content to your blog post",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Content is already in HTML format from ReactQuill
     const slugifiedData = {
       ...data,
+      content: cleanContent,
       slug: data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     };
     
+    console.log('Submitting blog post data:', slugifiedData); // Debug log
     saveBlogPost.mutate(slugifiedData);
   };
 
@@ -591,8 +615,10 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
                         <div className="rich-text-editor">
                           <ReactQuill
                             theme="snow"
-                            value={field.value}
-                            onChange={field.onChange}
+                            value={field.value || ""}
+                            onChange={(content) => {
+                              field.onChange(content);
+                            }}
                             modules={quillModules}
                             formats={quillFormats}
                             placeholder="Start writing your blog content here... Use the toolbar above to format your text with headings, lists, bold, italic, and more!"
