@@ -10,11 +10,11 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-import { marked } from "marked";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface BlogEditorProps {
   post?: BlogPost | null;
@@ -182,101 +182,32 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
   });
 
   const onSubmit = async (data: InsertBlogPostSchema) => {
-    // Convert markdown content to HTML
-    const htmlContent = await marked(data.content);
-    
-    // Generate slug from title if not provided
+    // Content is already in HTML format from ReactQuill
     const slugifiedData = {
       ...data,
-      content: htmlContent,
       slug: data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     };
     
     saveBlogPost.mutate(slugifiedData);
   };
 
-  // Auto-format pasted content to look professional
-  const formatContent = (text: string): string => {
-    let formatted = text;
-    
-    // Clean up extra whitespace and line breaks
-    formatted = formatted.replace(/\r\n/g, '\n');
-    formatted = formatted.replace(/\n{3,}/g, '\n\n');
-    formatted = formatted.replace(/[ \t]+/g, ' ');
-    
-    // Split into paragraphs
-    const paragraphs = formatted.split('\n\n').map(p => p.trim()).filter(p => p.length > 0);
-    
-    return paragraphs.map(paragraph => {
-      // Auto-detect and format lists
-      if (paragraph.includes('\n') && /^[\d\-\*\+•]/.test(paragraph.trim())) {
-        const lines = paragraph.split('\n').map(line => line.trim()).filter(line => line);
-        return lines.map(line => {
-          // Convert numbered lists
-          if (/^\d+\.?\s/.test(line)) {
-            return line.replace(/^\d+\.?\s/, (match, offset) => {
-              const num = line.match(/^\d+/)?.[0];
-              return `${num}. `;
-            });
-          }
-          // Convert bullet points
-          if (/^[\-\*\+•]\s/.test(line)) {
-            return line.replace(/^[\-\*\+•]\s/, '- ');
-          }
-          return line;
-        }).join('\n');
-      }
-      
-      // Auto-detect headings (lines that are short and followed by content)
-      if (paragraph.length < 80 && !paragraph.includes('.') && !paragraph.includes(',')) {
-        // Check if it looks like a heading
-        const words = paragraph.split(' ');
-        if (words.length <= 8 && paragraph === paragraph.toUpperCase()) {
-          return `## ${paragraph.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}`;
-        } else if (words.length <= 6 && /^[A-Z]/.test(paragraph)) {
-          return `### ${paragraph}`;
-        }
-      }
-      
-      // Auto-detect quotes
-      if (paragraph.startsWith('"') && paragraph.endsWith('"')) {
-        return `> ${paragraph.slice(1, -1)}`;
-      }
-      
-      // Auto-emphasize important text in parentheses
-      paragraph = paragraph.replace(/\(([^)]+)\)/g, '**($1)**');
-      
-      // Auto-emphasize ALL CAPS words
-      paragraph = paragraph.replace(/\b[A-Z]{3,}\b/g, (match) => `**${match}**`);
-      
-      return paragraph;
-    }).join('\n\n');
+  // Rich text editor configuration
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      ['blockquote', 'code-block'],
+      ['link', 'clean']
+    ],
   };
 
-  const handleContentPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    event.preventDefault();
-    const pastedText = event.clipboardData.getData('text');
-    const formattedText = formatContent(pastedText);
-    
-    const currentValue = form.getValues('content');
-    const textarea = event.target as HTMLTextAreaElement;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    
-    const newContent = currentValue.substring(0, start) + formattedText + currentValue.substring(end);
-    form.setValue('content', newContent);
-    
-    // Set cursor position after pasted content
-    setTimeout(() => {
-      textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
-      textarea.focus();
-    }, 0);
-    
-    toast({
-      title: "Content Formatted",
-      description: "Pasted content has been automatically formatted for better readability",
-    });
-  };
+  const quillFormats = [
+    'header', 'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet', 'indent', 'blockquote', 'code-block',
+    'link'
+  ];
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -344,6 +275,36 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
         {/* Scrollable Content */}
         <div className="overflow-y-auto max-h-[calc(95vh-100px)]">
           <div className="p-8">
+            <style jsx>{`
+              .rich-text-editor .ql-editor {
+                min-height: 350px;
+                font-size: 16px;
+                line-height: 1.6;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+              }
+              .rich-text-editor .ql-toolbar {
+                border-top: 2px solid #e5e7eb;
+                border-left: 2px solid #e5e7eb;
+                border-right: 2px solid #e5e7eb;
+                border-bottom: 1px solid #e5e7eb;
+                background: #f9fafb;
+                border-radius: 8px 8px 0 0;
+              }
+              .rich-text-editor .ql-container {
+                border-left: 2px solid #e5e7eb;
+                border-right: 2px solid #e5e7eb;
+                border-bottom: 2px solid #e5e7eb;
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+              }
+              .rich-text-editor .ql-snow.ql-toolbar button:hover,
+              .rich-text-editor .ql-snow .ql-toolbar button:hover,
+              .rich-text-editor .ql-snow.ql-toolbar button.ql-active,
+              .rich-text-editor .ql-snow .ql-toolbar button.ql-active {
+                color: #1e40af;
+              }
+            `}</style>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Title Field with modern styling */}
@@ -522,83 +483,38 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
                           </div>
                         </div>
                         
-                        {/* Content area with better formatting */}
-                        <div className="relative">
-                          <Textarea
-                            rows={18}
-                            placeholder="Write your blog content here! You can use simple formatting:
-
-# Main Heading
-## Section Heading
-### Subsection
-
-**Bold text** or *italic text*
-
-- Bullet point 1
-- Bullet point 2
-- Bullet point 3
-
-1. Numbered list item
-2. Another numbered item
-
-> This is a quote or important note
-
----
-
-The editor will automatically convert these to proper HTML when you publish!"
-                            {...field}
-                            className="border-0 focus:ring-0 resize-none rounded-none text-base leading-relaxed font-mono"
-                            data-testid="textarea-content"
-                            onPaste={handleContentPaste}
-                            onKeyDown={(e) => {
-                              // Simple keyboard shortcuts for formatting
-                              if (e.ctrlKey || e.metaKey) {
-                                if (e.key === 'b') {
-                                  e.preventDefault();
-                                  const textarea = e.target as HTMLTextAreaElement;
-                                  const start = textarea.selectionStart;
-                                  const end = textarea.selectionEnd;
-                                  const selectedText = textarea.value.substring(start, end);
-                                  const beforeText = textarea.value.substring(0, start);
-                                  const afterText = textarea.value.substring(end);
-                                  const newText = `${beforeText}**${selectedText}**${afterText}`;
-                                  field.onChange(newText);
-                                  setTimeout(() => {
-                                    textarea.setSelectionRange(start + 2, end + 2);
-                                  }, 0);
-                                } else if (e.key === 'i') {
-                                  e.preventDefault();
-                                  const textarea = e.target as HTMLTextAreaElement;
-                                  const start = textarea.selectionStart;
-                                  const end = textarea.selectionEnd;
-                                  const selectedText = textarea.value.substring(start, end);
-                                  const beforeText = textarea.value.substring(0, start);
-                                  const afterText = textarea.value.substring(end);
-                                  const newText = `${beforeText}*${selectedText}*${afterText}`;
-                                  field.onChange(newText);
-                                  setTimeout(() => {
-                                    textarea.setSelectionRange(start + 1, end + 1);
-                                  }, 0);
-                                }
-                              }
+                        {/* Rich Text Editor */}
+                        <div className="rich-text-editor">
+                          <ReactQuill
+                            theme="snow"
+                            value={field.value}
+                            onChange={field.onChange}
+                            modules={quillModules}
+                            formats={quillFormats}
+                            placeholder="Start writing your blog content here... Use the toolbar above to format your text with headings, lists, bold, italic, and more!"
+                            style={{ 
+                              height: '400px',
+                              backgroundColor: 'white'
                             }}
                           />
                         </div>
                         
                         {/* Format Helper */}
-                        <div className="bg-gray-50 px-4 py-2 border-t border-gray-200 text-xs text-gray-600">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <strong>Headings:</strong> # Main, ## Section, ### Sub
+                        <div className="bg-gradient-to-r from-blue-50 to-green-50 px-4 py-3 border-t border-gray-200 text-sm text-gray-700 rounded-b-xl mt-12">
+                          <div className="flex items-center space-x-6">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-semibold text-blue-800">💡 Pro Tips:</span>
                             </div>
-                            <div>
-                              <strong>Text:</strong> **bold**, *italic*, `code`
-                            </div>
-                            <div>
-                              <strong>Lists:</strong> - bullet or 1. numbered
-                            </div>
-                            <div>
-                              <strong>Quote:</strong> {"> Important note"}
+                            <div className="grid grid-cols-3 gap-4 flex-1">
+                              <div>
+                                <strong>Paste & Format:</strong> Content is auto-formatted
+                              </div>
+                              <div>
+                                <strong>Headings:</strong> Use dropdown for H1, H2, H3
+                              </div>
+                              <div>
+                                <strong>Lists:</strong> Click list buttons in toolbar
+                              </div>
                             </div>
                           </div>
                         </div>
