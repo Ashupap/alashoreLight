@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Upload, X, Trash2, Edit, Search, Grid, List, Image as ImageIcon, Folder, FolderPlus, Plus } from "lucide-react";
+import { Upload, X, Trash2, Edit, Search, Grid, List, Image as ImageIcon, Folder, FolderPlus, Plus, Download, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +34,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
 
   // Get unique categories from media files
   const categories = mediaFiles ? 
-    [...new Set(mediaFiles.map(file => file.category || 'general'))].sort() : 
+    Array.from(new Set(mediaFiles.map(file => file.category || 'general'))).sort() : 
     [];
 
   // Get category statistics
@@ -171,6 +171,22 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
           : [...prev, file.id]
       );
     }
+  };
+
+  const handleDownload = (file: MediaFile, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.download = file.originalName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleViewFullsize = (file: MediaFile, e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(file.url, '_blank');
   };
 
   const filteredFiles = mediaFiles?.filter(file => {
@@ -445,8 +461,28 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                   
                   <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/80 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="truncate font-medium">{file.originalName}</p>
-                    <p className="text-gray-300">{formatFileSize(file.size)}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="truncate font-medium">{file.originalName}</p>
+                        <p className="text-gray-300">{formatFileSize(file.size)}</p>
+                      </div>
+                      <div className="flex items-center space-x-1 ml-2">
+                        <button
+                          onClick={(e) => handleViewFullsize(file, e)}
+                          className="p-1 hover:bg-white/20 rounded"
+                          title="View Fullsize"
+                        >
+                          <ExternalLink size={12} />
+                        </button>
+                        <button
+                          onClick={(e) => handleDownload(file, e)}
+                          className="p-1 hover:bg-white/20 rounded"
+                          title="Download"
+                        >
+                          <Download size={12} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
                   {selectedFiles.includes(file.id) && (
@@ -483,8 +519,24 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
                       {formatFileSize(file.size)} • {file.mimeType}
                     </p>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(file.createdAt!).toLocaleDateString()}
+                  <div className="flex items-center space-x-2">
+                    <div className="text-sm text-gray-500">
+                      {new Date(file.createdAt!).toLocaleDateString()}
+                    </div>
+                    <button
+                      onClick={(e) => handleViewFullsize(file, e)}
+                      className="p-2 hover:bg-gray-200 rounded"
+                      title="View Fullsize"
+                    >
+                      <ExternalLink size={14} />
+                    </button>
+                    <button
+                      onClick={(e) => handleDownload(file, e)}
+                      className="p-2 hover:bg-gray-200 rounded"
+                      title="Download"
+                    >
+                      <Download size={14} />
+                    </button>
                   </div>
                 </motion.div>
               ))}

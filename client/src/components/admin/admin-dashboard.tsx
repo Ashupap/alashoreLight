@@ -8,6 +8,7 @@ import type { BlogPost, Product, Testimonial, Inquiry } from "@shared/schema";
 import BlogEditor from "@/components/blog/blog-editor";
 import ContentEditor from "./content-editor";
 import MediaManager from "./media-manager";
+import GalleryManager from "./gallery-manager";
 import BlogManager from "./blog-manager";
 import ProductsManager from "./products-manager";
 import TestimonialsManager from "./testimonials-manager";
@@ -32,6 +33,7 @@ export default function AdminDashboard() {
   const [showBlogEditor, setShowBlogEditor] = useState(false);
   const [showContentEditor, setShowContentEditor] = useState<string | null>(null);
   const [showMediaManager, setShowMediaManager] = useState(false);
+  const [showGalleryManager, setShowGalleryManager] = useState(false);
   const { toast } = useToast();
 
   const { data: blogPosts, isLoading: blogLoading } = useQuery<BlogPost[]>({
@@ -240,31 +242,55 @@ export default function AdminDashboard() {
   );
 
   const renderMediaLibrary = () => (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-heading font-bold text-gray-900">
-          Media Library
-        </h1>
-        <Button 
-          className="bg-ocean-blue hover:bg-deep-navy" 
-          onClick={() => setShowMediaManager(true)}
-          data-testid="button-upload-media"
-        >
-          <Plus size={20} className="mr-2" />
-          Upload Media
-        </Button>
+    <div className="space-y-8">
+      <h1 className="text-3xl font-heading font-bold text-gray-900">
+        Media Management
+      </h1>
+      
+      {/* Media Library Section */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-heading font-semibold text-gray-900">Media Library</h2>
+            <p className="text-gray-600">Manage uploaded files and images by folders</p>
+          </div>
+          <Button 
+            className="bg-ocean-blue hover:bg-deep-navy" 
+            onClick={() => setShowMediaManager(true)}
+            data-testid="button-open-media-library"
+          >
+            <ImageIcon size={16} className="mr-2" />
+            Open Media Library
+          </Button>
+        </div>
       </div>
-      <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-        <ImageIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No media files yet</h3>
-        <p className="text-gray-600 mb-6">Upload images and files to get started.</p>
-        <Button 
-          className="bg-ocean-blue hover:bg-deep-navy" 
-          onClick={() => setShowMediaManager(true)}
-          data-testid="button-upload-first-media"
-        >
-          Upload First File
-        </Button>
+      
+      {/* Gallery Management Section */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-heading font-semibold text-gray-900">Gallery Management</h2>
+            <p className="text-gray-600">Upload and organize gallery images with colorful tags</p>
+          </div>
+          <Button 
+            className="bg-purple-600 hover:bg-purple-700" 
+            onClick={() => setShowGalleryManager(true)}
+            data-testid="button-open-gallery-manager"
+          >
+            <Tag size={16} className="mr-2" />
+            Gallery Manager
+          </Button>
+        </div>
+        
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mt-4">
+          <h3 className="font-medium text-gray-900 mb-2">Features:</h3>
+          <ul className="text-sm text-gray-600 space-y-1">
+            <li>• Upload images with descriptions</li>
+            <li>• Add colorful tags for easy organization</li>
+            <li>• Browse and filter by tags</li>
+            <li>• Download and view fullsize images</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
@@ -419,6 +445,10 @@ export default function AdminDashboard() {
 
       {showMediaManager && (
         <MediaManager onClose={() => setShowMediaManager(false)} />
+      )}
+      
+      {showGalleryManager && (
+        <GalleryManager onClose={() => setShowGalleryManager(false)} />
       )}
     </>
   );
