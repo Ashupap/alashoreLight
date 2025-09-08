@@ -58,6 +58,13 @@ export class ObjectStorageService {
   // Gets the private object directory.
   getPrivateObjectDir(): string {
     const dir = process.env.PRIVATE_OBJECT_DIR || "";
+    console.log("PRIVATE_OBJECT_DIR value:", dir);
+    console.log("All object storage env vars:", {
+      PRIVATE_OBJECT_DIR: process.env.PRIVATE_OBJECT_DIR,
+      PUBLIC_OBJECT_SEARCH_PATHS: process.env.PUBLIC_OBJECT_SEARCH_PATHS,
+      DEFAULT_OBJECT_STORAGE_BUCKET_ID: process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID
+    });
+    
     if (!dir) {
       throw new Error(
         "PRIVATE_OBJECT_DIR not set. Object storage not available in this environment."
