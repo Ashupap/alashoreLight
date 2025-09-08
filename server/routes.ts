@@ -122,11 +122,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get author ID from authenticated user
       const authorId = req.user.id;
       
-      // Generate slug from title
-      const slug = postData.title
+      // Generate base slug from title
+      let baseSlug = postData.title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
+      
+      // Handle empty title case
+      if (!baseSlug) {
+        baseSlug = 'untitled-post';
+      }
+      
+      // Check for duplicate slugs and make unique
+      let slug = baseSlug;
+      let counter = 1;
+      let existingPost = await storage.getBlogPostBySlug(slug);
+      
+      while (existingPost) {
+        slug = `${baseSlug}-${counter}`;
+        existingPost = await storage.getBlogPostBySlug(slug);
+        counter++;
+      }
       
       const post = await storage.createBlogPost({ ...postData, slug }, authorId);
       res.status(201).json(post);
@@ -150,10 +166,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update slug if title changed
       if (postData.title) {
-        postData.slug = postData.title
+        let baseSlug = postData.title
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)/g, '');
+        
+        if (!baseSlug) {
+          baseSlug = 'untitled-post';
+        }
+        
+        // Check for duplicate slugs and make unique (but skip current post)
+        let slug = baseSlug;
+        let counter = 1;
+        let existingPost = await storage.getBlogPostBySlug(slug);
+        
+        while (existingPost && existingPost.id !== id) {
+          slug = `${baseSlug}-${counter}`;
+          existingPost = await storage.getBlogPostBySlug(slug);
+          counter++;
+        }
+        
+        postData.slug = slug;
       }
       
       const post = await storage.updateBlogPost(id, postData);
