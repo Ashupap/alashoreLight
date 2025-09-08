@@ -191,14 +191,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Content is required" });
       }
 
-      if (!process.env.OPENAI_API_KEY) {
+      if (!process.env.OPENAI_API_KEY1) {
         return res.status(500).json({ message: "OpenAI API key not configured" });
       }
 
       // Import OpenAI - using dynamic import to avoid issues
       const { default: OpenAI } = await import('openai');
       const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: process.env.OPENAI_API_KEY1,
       });
 
       const prompt = `You are a professional content editor specializing in blog posts. Please improve the following content by:
@@ -240,14 +240,14 @@ ${content}`;
         return res.status(400).json({ message: "Content and title are required" });
       }
 
-      if (!process.env.OPENAI_API_KEY) {
+      if (!process.env.OPENAI_API_KEY1) {
         return res.status(500).json({ message: "OpenAI API key not configured" });
       }
 
       // Import OpenAI - using dynamic import to avoid issues
       const { default: OpenAI } = await import('openai');
       const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: process.env.OPENAI_API_KEY1,
       });
 
       const prompt = `Based on this blog post title and content, write a compelling and concise excerpt (2-3 sentences, maximum 150 characters) that will engage readers and make them want to read the full post.
