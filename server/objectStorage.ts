@@ -152,12 +152,14 @@ export class ObjectStorageService {
   // Upload file buffer to object storage
   async uploadFileBuffer(fileBuffer: Buffer, filename: string, mimeType: string): Promise<string> {
     try {
-      const privateObjectDir = this.getPrivateObjectDir();
+      // Use the first public search path for uploads instead of private directory
+      const publicSearchPaths = this.getPublicObjectSearchPaths();
+      const publicObjectDir = publicSearchPaths[0]; // Use first public path
       
       const objectId = randomUUID();
       const extension = filename.split('.').pop() || 'jpg';
       const objectName = `${objectId}.${extension}`;
-      const fullPath = `${privateObjectDir}/uploads/${objectName}`;
+      const fullPath = `${publicObjectDir}/uploads/${objectName}`;
 
       const { bucketName, objectName: finalObjectName } = parseObjectPath(fullPath);
       
