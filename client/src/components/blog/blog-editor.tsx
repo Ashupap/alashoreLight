@@ -172,8 +172,11 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
   });
 
   const onSubmit = async (data: InsertBlogPostSchema) => {
+    console.log("=== FORM SUBMIT DEBUG START ===");
     console.log("Form submitted with data:", data);
     console.log("Form errors:", form.formState.errors);
+    console.log("Form isValid:", form.formState.isValid);
+    console.log("Form isDirty:", form.formState.isDirty);
     
     // Convert markdown content to HTML
     const htmlContent = await marked(data.content);
@@ -185,6 +188,8 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
       slug: data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     };
     
+    console.log("Final data to send:", slugifiedData);
+    console.log("=== CALLING MUTATION ===");
     createBlogPost.mutate(slugifiedData);
   };
 
@@ -569,6 +574,12 @@ The editor will automatically convert these to proper HTML when you publish!"
                     disabled={createBlogPost.isPending}
                     className="bg-gradient-to-r from-ocean-blue to-marine-teal hover:from-deep-navy hover:to-ocean-blue text-white px-8 py-3 font-semibold"
                     data-testid="button-publish"
+                    onClick={() => {
+                      console.log("=== PUBLISH BUTTON CLICKED ===");
+                      console.log("Form errors:", form.formState.errors);
+                      console.log("Form values:", form.getValues());
+                      console.log("Is pending:", createBlogPost.isPending);
+                    }}
                   >
                     {createBlogPost.isPending ? (
                       <>
