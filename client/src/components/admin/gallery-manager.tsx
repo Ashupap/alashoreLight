@@ -181,7 +181,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
 
   const filteredFiles = mediaFiles?.filter(file =>
     file.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    file.alt?.toLowerCase().includes(searchTerm.toLowerCase())
+    (file.alt && file.alt.toLowerCase().includes(searchTerm.toLowerCase()))
   ) || [];
 
   const formatFileSize = (bytes: number) => {
@@ -192,7 +192,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const getFileTagsFromAlt = (alt?: string) => {
+  const getFileTagsFromAlt = (alt?: string | null) => {
     if (!alt) return [];
     const hashTags = alt.match(/#\w+/g) || [];
     return hashTags.map(tag => tag.substring(1));
