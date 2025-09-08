@@ -71,7 +71,7 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
   });
 
   const uploadImage = useMutation({
-    mutationFn: async (file: File) => {
+    mutationFn: async (file: File): Promise<{ url: string; id: number; filename: string }> => {
       console.log("=== CLIENT UPLOAD DEBUG START ===");
       console.log("File details:", {
         name: file.name,
@@ -80,115 +80,75 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
         lastModified: file.lastModified
       });
 
-      // For larger files, use presigned URL upload to bypass nginx limits
-      if (file.size > 800 * 1024) { // 800KB threshold
-        console.log("Large file detected, using presigned URL upload");
+      // Use client-side compression and base64 encoding (same as product upload)
+      // This completely bypasses server upload and nginx limits
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
         
-        // Step 1: Get presigned URL
-        const urlResponse = await fetch('/api/media/upload-url', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            filename: file.name,
-            mimetype: file.type
-          }),
-        });
-
-        if (!urlResponse.ok) {
-          // If object storage is not available, fall back to traditional upload
-          if (urlResponse.status === 503) {
-            console.log("Object storage not available, falling back to traditional upload");
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('alt', file.name);
-            formData.append('category', 'blog');
-
-            const response = await fetch('/api/media/upload', {
-              method: 'POST',
-              body: formData,
-            });
-
-            if (!response.ok) {
-              const errorText = await response.text();
-              throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        img.onload = () => {
+          try {
+            console.log("Processing image with client-side compression");
+            
+            // Calculate new dimensions (max 800px width/height)
+            const maxSize = 800;
+            let { width, height } = img;
+            
+            if (width > height) {
+              if (width > maxSize) {
+                height = (height * maxSize) / width;
+                width = maxSize;
+              }
+            } else {
+              if (height > maxSize) {
+                width = (width * maxSize) / height;
+                height = maxSize;
+              }
             }
-
-            const data = await response.json();
-            console.log("=== CLIENT UPLOAD DEBUG SUCCESS (FALLBACK) ===");
-            return data;
+            
+            // Set canvas size and draw compressed image
+            canvas.width = width;
+            canvas.height = height;
+            ctx?.drawImage(img, 0, 0, width, height);
+            
+            // Convert to base64 with compression
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            
+            console.log("Image compressed successfully");
+            console.log("Original size:", file.size, "bytes");
+            console.log("Compressed size:", Math.round(compressedDataUrl.length * 0.75), "bytes (estimated)");
+            console.log("=== CLIENT UPLOAD DEBUG SUCCESS (BASE64) ===");
+            
+            // Return a response that matches the expected format
+            resolve({
+              url: compressedDataUrl,
+              id: Date.now(), // Generate a temporary ID
+              filename: file.name
+            });
+          } catch (error) {
+            console.error("Error processing image:", error);
+            reject(new Error("Failed to process image"));
           }
-          
-          const errorText = await urlResponse.text();
-          throw new Error(`Failed to get upload URL: ${urlResponse.status} - ${errorText}`);
-        }
-
-        const { uploadUrl, objectId } = await urlResponse.json();
-        console.log("Got presigned URL, uploading directly to object storage");
-
-        // Step 2: Upload directly to object storage
-        const uploadResponse = await fetch(uploadUrl, {
-          method: 'PUT',
-          body: file,
-          headers: {
-            'Content-Type': file.type,
-          },
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error(`Direct upload failed: ${uploadResponse.status}`);
-        }
-
-        console.log("Direct upload successful, confirming with server");
-
-        // Step 3: Confirm upload with our server
-        const confirmResponse = await fetch('/api/media/confirm-upload', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            objectId,
-            filename: file.name,
-            mimetype: file.type,
-            size: file.size,
-            category: 'blog'
-          }),
-        });
-
-        if (!confirmResponse.ok) {
-          const errorText = await confirmResponse.text();
-          throw new Error(`Failed to confirm upload: ${confirmResponse.status} - ${errorText}`);
-        }
-
-        const data = await confirmResponse.json();
-        console.log("=== CLIENT UPLOAD DEBUG SUCCESS (PRESIGNED) ===");
-        return data;
-      } else {
-        // For smaller files, use traditional upload
-        console.log("Small file, using traditional upload");
+        };
         
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('alt', file.name);
-        formData.append('category', 'blog');
-
-        const response = await fetch('/api/media/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.log("Error response body:", errorText);
-          throw new Error(`Upload failed: ${response.status} - ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log("=== CLIENT UPLOAD DEBUG SUCCESS (TRADITIONAL) ===");
-        return data;
-      }
+        img.onerror = () => {
+          console.error("Failed to load image for processing");
+          reject(new Error("Failed to load image"));
+        };
+        
+        // Load image from file
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            img.src = e.target.result as string;
+          }
+        };
+        reader.onerror = () => {
+          reject(new Error("Failed to read file"));
+        };
+        reader.readAsDataURL(file);
+      });
     },
     onSuccess: (data) => {
       console.log("Upload mutation success, setting form value:", data.url);
