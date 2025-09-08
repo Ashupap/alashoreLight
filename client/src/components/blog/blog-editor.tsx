@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X, Upload, Image as ImageIcon, Sparkles, Wand2 } from "lucide-react";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { insertBlogPostSchema, type InsertBlogPostSchema, type BlogPost } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -196,10 +196,10 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
       return;
     }
 
-    if (!cleanContent || cleanContent === '<p></p>') {
+    if (!cleanContent || cleanContent === '<p></p>' || cleanContent === '<p><br></p>' || cleanContent.length < 10) {
       toast({
         title: "Content Required", 
-        description: "Please add some content to your blog post",
+        description: "Please add some meaningful content to your blog post",
         variant: "destructive",
       });
       return;
@@ -216,55 +216,6 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
     saveBlogPost.mutate(slugifiedData);
   };
 
-  // AI content formatting mutation
-  const formatWithAI = useMutation({
-    mutationFn: async (content: string) => {
-      const response = await apiRequest("POST", "/api/ai/format-content", {
-        content,
-        type: "blog_post"
-      });
-      return response.json();
-    },
-    onSuccess: (data) => {
-      form.setValue('content', data.formattedContent);
-      toast({
-        title: "✨ Content Enhanced!",
-        description: "Your content has been professionally formatted and improved with AI",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Formatting Failed",
-        description: "Unable to format content with AI. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Generate excerpt with AI
-  const generateExcerpt = useMutation({
-    mutationFn: async (content: string) => {
-      const response = await apiRequest("POST", "/api/ai/generate-excerpt", {
-        content,
-        title: form.getValues('title')
-      });
-      return response.json();
-    },
-    onSuccess: (data) => {
-      form.setValue('excerpt', data.excerpt);
-      toast({
-        title: "📝 Excerpt Generated!",
-        description: "AI has created a compelling excerpt for your blog post",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Generation Failed",
-        description: "Unable to generate excerpt. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
 
   // Rich text editor configuration
   const quillModules = {
@@ -284,32 +235,6 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
     'link'
   ];
 
-  const handleAIFormat = () => {
-    const currentContent = form.getValues('content');
-    if (!currentContent || currentContent.trim().length < 50) {
-      toast({
-        title: "Content Too Short",
-        description: "Please write at least a few sentences for AI to format effectively",
-        variant: "destructive",
-      });
-      return;
-    }
-    formatWithAI.mutate(currentContent);
-  };
-
-  const handleGenerateExcerpt = () => {
-    const currentContent = form.getValues('content');
-    const currentTitle = form.getValues('title');
-    if (!currentContent || !currentTitle) {
-      toast({
-        title: "Missing Content",
-        description: "Please add a title and some content first",
-        variant: "destructive",
-      });
-      return;
-    }
-    generateExcerpt.mutate(currentContent);
-  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -583,32 +508,6 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
                               </span>
                             </div>
                           </div>
-                        </div>
-                        
-                        {/* AI Formatting Button */}
-                        <div className="mb-4">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleAIFormat}
-                            disabled={formatWithAI.isPending}
-                            className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:from-purple-100 hover:to-blue-100 text-purple-700 hover:text-purple-800"
-                          >
-                            {formatWithAI.isPending ? (
-                              <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                                Enhancing with AI...
-                              </>
-                            ) : (
-                              <>
-                                <Wand2 size={16} className="mr-2" />
-                                ✨ AI Format & Enhance Content
-                              </>
-                            )}
-                          </Button>
-                          <p className="text-xs text-gray-500 mt-1">
-                            AI will improve grammar, structure, and formatting to make your content more professional
-                          </p>
                         </div>
                         
                         {/* Rich Text Editor */}
