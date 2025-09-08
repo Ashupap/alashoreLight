@@ -570,6 +570,32 @@ The editor will automatically convert these to proper HTML when you publish!"
                     Cancel
                   </Button>
                   <Button
+                    type="button"
+                    onClick={() => {
+                      console.log("=== MANUAL TEST BUTTON CLICKED ===");
+                      const values = form.getValues();
+                      console.log("Form values:", values);
+                      console.log("Form errors:", form.formState.errors);
+                      
+                      // Test with minimal data
+                      const testData = {
+                        title: values.title || "Test Blog Post",
+                        content: values.content || "Test content",
+                        category: values.category || "Industry",
+                        published: values.published || false,
+                        excerpt: values.excerpt || "",
+                        featuredImage: values.featuredImage || "",
+                        slug: ""
+                      };
+                      
+                      console.log("Sending test data:", testData);
+                      createBlogPost.mutate(testData);
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-3"
+                  >
+                    TEST
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={createBlogPost.isPending}
                     className="bg-gradient-to-r from-ocean-blue to-marine-teal hover:from-deep-navy hover:to-ocean-blue text-white px-8 py-3 font-semibold"
