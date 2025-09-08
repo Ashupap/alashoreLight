@@ -50,7 +50,7 @@ export const blogPosts = pgTable("blog_posts", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   excerpt: text("excerpt"),
   content: text("content").notNull(),
-  featuredImage: varchar("featured_image", { length: 512 }),
+  featuredImage: text("featured_image"),
   category: varchar("category", { length: 100 }).notNull(),
   published: boolean("published").default(false),
   authorId: varchar("author_id", { length: 255 }).references(() => users.id),
