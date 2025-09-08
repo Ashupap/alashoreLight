@@ -217,7 +217,7 @@ Content to format:
 ${content}`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 2000,
         temperature: 0.3,
@@ -259,7 +259,7 @@ Content: ${content.substring(0, 1000)}...
 Please return ONLY the excerpt text without quotes or additional formatting.`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 100,
         temperature: 0.5,
@@ -271,6 +271,43 @@ Please return ONLY the excerpt text without quotes or additional formatting.`;
     } catch (error) {
       console.error("Error generating excerpt with AI:", error);
       res.status(500).json({ message: "Failed to generate excerpt" });
+    }
+  });
+
+  // Test OpenAI API connection
+  app.get('/api/ai/test', requireAuth, async (req, res) => {
+    try {
+      if (!process.env.OPENAI_API_KEY1) {
+        return res.status(500).json({ message: "OpenAI API key not configured" });
+      }
+
+      const { default: OpenAI } = await import('openai');
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY1,
+      });
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: "Say 'OpenAI API is working correctly!'" }],
+        max_tokens: 50,
+        temperature: 0.1,
+      });
+
+      const result = response.choices[0]?.message?.content || "No response";
+      
+      res.json({ 
+        success: true, 
+        message: "OpenAI API test successful",
+        response: result,
+        model: "gpt-3.5-turbo"
+      });
+    } catch (error: any) {
+      console.error("OpenAI API test error:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "OpenAI API test failed", 
+        error: error?.message || "Unknown error"
+      });
     }
   });
 
