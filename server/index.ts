@@ -4,16 +4,25 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Increase payload limits for file uploads
+// Increase payload limits for file uploads (but keep reasonable for JSON)
 app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Add raw body parser for file uploads
-app.use(express.raw({ limit: '50mb', type: ['image/*', 'application/octet-stream'] }));
-
+// Add detailed request logging especially for uploads
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
+  
+  // Log upload attempts with size info
+  if (path.includes('/api/media/upload')) {
+    console.log(`=== INCOMING UPLOAD REQUEST ===`);
+    console.log(`Method: ${req.method}`);
+    console.log(`Path: ${path}`);
+    console.log(`Content-Type: ${req.headers['content-type']}`);
+    console.log(`Content-Length: ${req.headers['content-length']}`);
+    console.log(`User-Agent: ${req.headers['user-agent']}`);
+  }
+  
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
@@ -24,6 +33,17 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+    
+    if (path.includes('/api/media/upload')) {
+      console.log(`=== UPLOAD RESPONSE ===`);
+      console.log(`Status: ${res.statusCode}`);
+      console.log(`Duration: ${duration}ms`);
+      if (capturedJsonResponse) {
+        console.log(`Response: ${JSON.stringify(capturedJsonResponse)}`);
+      }
+      console.log(`=== END UPLOAD ===`);
+    }
+    
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
