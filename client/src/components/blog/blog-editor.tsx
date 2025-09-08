@@ -203,6 +203,89 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
     saveBlogPost.mutate(slugifiedData);
   };
 
+  // Auto-format pasted content to look professional
+  const formatContent = (text: string): string => {
+    let formatted = text;
+    
+    // Clean up extra whitespace and line breaks
+    formatted = formatted.replace(/\r\n/g, '\n');
+    formatted = formatted.replace(/\n{3,}/g, '\n\n');
+    formatted = formatted.replace(/[ \t]+/g, ' ');
+    
+    // Split into paragraphs
+    const paragraphs = formatted.split('\n\n').map(p => p.trim()).filter(p => p.length > 0);
+    
+    return paragraphs.map(paragraph => {
+      // Auto-detect and format lists
+      if (paragraph.includes('\n') && /^[\d\-\*\+•]/.test(paragraph.trim())) {
+        const lines = paragraph.split('\n').map(line => line.trim()).filter(line => line);
+        return lines.map(line => {
+          // Convert numbered lists
+          if (/^\d+\.?\s/.test(line)) {
+            return line.replace(/^\d+\.?\s/, (match, offset) => {
+              const num = line.match(/^\d+/)?.[0];
+              return `${num}. `;
+            });
+          }
+          // Convert bullet points
+          if (/^[\-\*\+•]\s/.test(line)) {
+            return line.replace(/^[\-\*\+•]\s/, '- ');
+          }
+          return line;
+        }).join('\n');
+      }
+      
+      // Auto-detect headings (lines that are short and followed by content)
+      if (paragraph.length < 80 && !paragraph.includes('.') && !paragraph.includes(',')) {
+        // Check if it looks like a heading
+        const words = paragraph.split(' ');
+        if (words.length <= 8 && paragraph === paragraph.toUpperCase()) {
+          return `## ${paragraph.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}`;
+        } else if (words.length <= 6 && /^[A-Z]/.test(paragraph)) {
+          return `### ${paragraph}`;
+        }
+      }
+      
+      // Auto-detect quotes
+      if (paragraph.startsWith('"') && paragraph.endsWith('"')) {
+        return `> ${paragraph.slice(1, -1)}`;
+      }
+      
+      // Auto-emphasize important text in parentheses
+      paragraph = paragraph.replace(/\(([^)]+)\)/g, '**($1)**');
+      
+      // Auto-emphasize ALL CAPS words
+      paragraph = paragraph.replace(/\b[A-Z]{3,}\b/g, (match) => `**${match}**`);
+      
+      return paragraph;
+    }).join('\n\n');
+  };
+
+  const handleContentPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    event.preventDefault();
+    const pastedText = event.clipboardData.getData('text');
+    const formattedText = formatContent(pastedText);
+    
+    const currentValue = form.getValues('content');
+    const textarea = event.target as HTMLTextAreaElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    
+    const newContent = currentValue.substring(0, start) + formattedText + currentValue.substring(end);
+    form.setValue('content', newContent);
+    
+    // Set cursor position after pasted content
+    setTimeout(() => {
+      textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
+      textarea.focus();
+    }, 0);
+    
+    toast({
+      title: "Content Formatted",
+      description: "Pasted content has been automatically formatted for better readability",
+    });
+  };
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -474,6 +557,7 @@ The editor will automatically convert these to proper HTML when you publish!"
                             {...field}
                             className="border-0 focus:ring-0 resize-none rounded-none text-base leading-relaxed font-mono"
                             data-testid="textarea-content"
+                            onPaste={handleContentPaste}
                             onKeyDown={(e) => {
                               // Simple keyboard shortcuts for formatting
                               if (e.ctrlKey || e.metaKey) {
