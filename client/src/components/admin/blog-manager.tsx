@@ -122,6 +122,7 @@ export default function BlogManager() {
   if (showEditor) {
     return (
       <BlogEditor 
+        post={editingPost}
         onClose={handleCloseEditor}
       />
     );

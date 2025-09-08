@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
-import { insertBlogPostSchema, type InsertBlogPostSchema } from "@shared/schema";
+import { insertBlogPostSchema, type InsertBlogPostSchema, type BlogPost } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -17,10 +17,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { marked } from "marked";
 
 interface BlogEditorProps {
+  post?: BlogPost | null;
   onClose: () => void;
 }
 
-export default function BlogEditor({ onClose }: BlogEditorProps) {
+export default function BlogEditor({ post, onClose }: BlogEditorProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -30,25 +31,32 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
     resolver: zodResolver(insertBlogPostSchema),
     mode: "onChange",
     defaultValues: {
-      title: "",
-      excerpt: "",
-      content: "",
-      featuredImage: "",
-      category: "Industry",
-      published: true,
-      slug: "",
+      title: post?.title || "",
+      excerpt: post?.excerpt || "",
+      content: post?.content || "",
+      featuredImage: post?.featuredImage || "",
+      category: post?.category || "Industry",
+      published: post?.published ?? true,
+      slug: post?.slug || "",
     },
   });
 
-  const createBlogPost = useMutation({
+  const saveBlogPost = useMutation({
     mutationFn: async (data: InsertBlogPostSchema) => {
-      const response = await apiRequest("POST", "/api/blog", data);
-      return response.json();
+      if (post?.id) {
+        // Update existing post
+        const response = await apiRequest("PUT", `/api/blog/${post.id}`, data);
+        return response.json();
+      } else {
+        // Create new post
+        const response = await apiRequest("POST", "/api/blog", data);
+        return response.json();
+      }
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Blog post created successfully!",
+        description: post?.id ? "Blog post updated successfully!" : "Blog post created successfully!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/blog"] });
       onClose();
@@ -67,7 +75,7 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
       }
       toast({
         title: "Error",
-        description: "Failed to create blog post. Please try again.",
+        description: post?.id ? "Failed to update blog post. Please try again." : "Failed to create blog post. Please try again.",
         variant: "destructive",
       });
     },
@@ -192,7 +200,7 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
     
     console.log("Final data to send:", slugifiedData);
     console.log("=== CALLING MUTATION ===");
-    createBlogPost.mutate(slugifiedData);
+    saveBlogPost.mutate(slugifiedData);
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,10 +248,10 @@ export default function BlogEditor({ onClose }: BlogEditorProps) {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-heading font-bold">
-                Create New Blog Post
+                {post?.id ? "Edit Blog Post" : "Create New Blog Post"}
               </h2>
               <p className="text-blue-100 mt-1">
-                Share insights and stories with your audience
+                {post?.id ? "Update your blog post content and settings" : "Share insights and stories with your audience"}
               </p>
             </div>
             <Button
@@ -573,14 +581,14 @@ The editor will automatically convert these to proper HTML when you publish!"
                   </Button>
                   <Button
                     type="button"
-                    disabled={createBlogPost.isPending}
+                    disabled={saveBlogPost.isPending}
                     className="bg-gradient-to-r from-ocean-blue to-marine-teal hover:from-deep-navy hover:to-ocean-blue text-white px-8 py-3 font-semibold"
                     data-testid="button-publish"
                     onClick={() => {
                       console.log("=== PUBLISH BUTTON CLICKED ===");
                       console.log("Form errors:", form.formState.errors);
                       console.log("Form values:", form.getValues());
-                      console.log("Is pending:", createBlogPost.isPending);
+                      console.log("Is pending:", saveBlogPost.isPending);
                       
                       // Get form values and submit manually
                       const formValues = form.getValues();
@@ -588,13 +596,15 @@ The editor will automatically convert these to proper HTML when you publish!"
                       form.handleSubmit(onSubmit)(formValues as any);
                     }}
                   >
-                    {createBlogPost.isPending ? (
+                    {saveBlogPost.isPending ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Publishing...
+                        {post?.id ? "Updating..." : "Publishing..."}
                       </>
                     ) : (
-                      form.watch('published') ? "Publish Post" : "Save Draft"
+                      post?.id 
+                        ? (form.watch('published') ? "Update & Publish" : "Update Draft")
+                        : (form.watch('published') ? "Publish Post" : "Save Draft")
                     )}
                   </Button>
                 </div>
