@@ -182,6 +182,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI content formatting routes
+  app.post('/api/ai/format-content', requireAuth, async (req, res) => {
+    try {
+      const { content, type } = req.body;
+      
+      if (!content) {
+        return res.status(400).json({ message: "Content is required" });
+      }
+
+      // Import OpenAI - using dynamic import to avoid issues
+      const { OpenAI } = await import('openai');
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const prompt = `You are a professional content editor specializing in blog posts. Please improve the following content by:
+
+1. Enhancing grammar and readability
+2. Adding proper HTML formatting (headings, paragraphs, lists, bold text)
+3. Improving structure and flow
+4. Making it more engaging and professional
+5. Ensuring proper paragraph breaks and spacing
+6. Converting any plain text lists into proper HTML lists
+7. Adding emphasis where appropriate
+
+Please return ONLY the improved HTML content without any explanations or additional text.
+
+Content to format:
+${content}`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 2000,
+        temperature: 0.3,
+      });
+
+      const formattedContent = response.choices[0]?.message?.content || content;
+
+      res.json({ formattedContent });
+    } catch (error) {
+      console.error("Error formatting content with AI:", error);
+      res.status(500).json({ message: "Failed to format content" });
+    }
+  });
+
+  app.post('/api/ai/generate-excerpt', requireAuth, async (req, res) => {
+    try {
+      const { content, title } = req.body;
+      
+      if (!content || !title) {
+        return res.status(400).json({ message: "Content and title are required" });
+      }
+
+      // Import OpenAI - using dynamic import to avoid issues
+      const { OpenAI } = await import('openai');
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const prompt = `Based on this blog post title and content, write a compelling and concise excerpt (2-3 sentences, maximum 150 characters) that will engage readers and make them want to read the full post.
+
+Title: ${title}
+
+Content: ${content.substring(0, 1000)}...
+
+Please return ONLY the excerpt text without quotes or additional formatting.`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 100,
+        temperature: 0.5,
+      });
+
+      const excerpt = response.choices[0]?.message?.content?.trim() || "";
+
+      res.json({ excerpt });
+    } catch (error) {
+      console.error("Error generating excerpt with AI:", error);
+      res.status(500).json({ message: "Failed to generate excerpt" });
+    }
+  });
+
   // Testimonial routes
   app.get('/api/testimonials', async (req, res) => {
     try {
