@@ -275,7 +275,7 @@ export default function BlogEditor({ post, onClose }: BlogEditorProps) {
         {/* Scrollable Content */}
         <div className="overflow-y-auto max-h-[calc(95vh-100px)]">
           <div className="p-8">
-            <style jsx>{`
+            <style>{`
               .rich-text-editor .ql-editor {
                 min-height: 350px;
                 font-size: 16px;
