@@ -184,8 +184,8 @@ export default function Media() {
     const hashTags = alt.match(/#(\w+)/g) || [];
     const categoryTags = hashTags.map(tag => tag.substring(1).toLowerCase());
     
-    // Look for Our Gallery categories in tags
-    const galleryCategories = ["facility", "processing", "operations", "team"];
+    // Look for any gallery-related categories in tags (expanded list)
+    const galleryCategories = ["facility", "processing", "operations", "team", "quality", "sustainability", "awards", "community"];
     const foundCategory = categoryTags.find(tag => galleryCategories.includes(tag));
     
     return foundCategory ? foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1) : null;
@@ -259,7 +259,17 @@ export default function Media() {
     }
   ];
 
-  const categories = ["All", "Facility", "Processing", "Operations", "Team"];
+  // Get dynamic categories from actual gallery images
+  const getAvailableCategories = () => {
+    if (!galleryImages || galleryImages.length === 0) {
+      return ["All"];
+    }
+    
+    const imageCategories = Array.from(new Set(galleryImages.map(img => img.category)));
+    return ["All", ...imageCategories.sort()];
+  };
+
+  const categories = getAvailableCategories();
   const filteredImages = selectedCategory === "All" 
     ? galleryImages 
     : galleryImages.filter(img => img.category === selectedCategory);
@@ -725,25 +735,29 @@ export default function Media() {
                 viewport={{ once: true }}
                 className="flex flex-wrap justify-center gap-4 mb-12"
               >
-                {categories.map((category, index) => (
-                  <motion.button
-                    key={category}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 backdrop-blur-md border ${
-                      selectedCategory === category
-                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent shadow-lg"
-                        : "bg-white/20 text-white border-white/30 hover:bg-white/30 hover:border-purple-400"
-                    }`}
-                  >
-                    {category}
-                  </motion.button>
-                ))}
+                {categories.map((category, index) => {
+                  const categoryCount = category === "All" ? galleryImages.length : galleryImages.filter(img => img.category === category).length;
+                  
+                  return (
+                    <motion.button
+                      key={category}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 backdrop-blur-md border ${
+                        selectedCategory === category
+                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent shadow-lg"
+                          : "bg-white/20 text-white border-white/30 hover:bg-white/30 hover:border-purple-400"
+                      }`}
+                    >
+                      {category} ({categoryCount})
+                    </motion.button>
+                  );
+                })}
               </motion.div>
             </motion.div>
             
