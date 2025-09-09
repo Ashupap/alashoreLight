@@ -788,6 +788,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Import local images endpoint
+  app.post('/api/media/import-local', requireAuth, async (req: any, res) => {
+    try {
+      console.log("Starting local image import...");
+      const uploadedBy = req.user.id;
+      let importedCount = 0;
+      
+      // Define local image folders to scan
+      const imageFolders = [
+        'attached_assets',
+        'server/public/assets',
+        'uploads/media'
+      ];
+      
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+      
+      for (const folder of imageFolders) {
+        const folderPath = path.join(process.cwd(), folder);
+        console.log(`Scanning folder: ${folderPath}`);
+        
+        if (!fs.existsSync(folderPath)) {
+          console.log(`Folder doesn't exist: ${folderPath}`);
+          continue;
+        }
+        
+        // Get category from folder name
+        let category = 'general';
+        if (folder.includes('assets')) category = 'assets';
+        if (folder.includes('attached_assets')) category = 'attachments';
+        if (folder.includes('uploads')) category = 'uploads';
+        
+        // Recursively scan folder for images
+        const scanDirectory = async (dirPath: string, relativePath = '') => {
+          const files = fs.readdirSync(dirPath);
+          
+          for (const file of files) {
+            const filePath = path.join(dirPath, file);
+            const stat = fs.statSync(filePath);
+            
+            if (stat.isDirectory()) {
+              // Skip node_modules and other system directories
+              if (!file.startsWith('.') && file !== 'node_modules') {
+                await scanDirectory(filePath, path.join(relativePath, file));
+              }
+            } else if (stat.isFile()) {
+              const ext = path.extname(file).toLowerCase();
+              if (imageExtensions.includes(ext)) {
+                const relativeFilePath = path.join(relativePath, file);
+                console.log(`Found image: ${relativeFilePath}`);
+                
+                try {
+                  // Create media record for local file
+                  const stats = fs.statSync(filePath);
+                  const mediaData = {
+                    filename: file,
+                    originalName: file,
+                    mimeType: `image/${ext.substring(1)}`,
+                    size: stats.size,
+                    url: `/${folder}/${relativeFilePath}`.replace(/\\/g, '/'),
+                    alt: file.replace(path.extname(file), '').replace(/[_-]/g, ' '),
+                    category,
+                    uploadedBy,
+                  };
+                  
+                  await storage.createMediaFile(mediaData);
+                  importedCount++;
+                  console.log(`Imported: ${file}`);
+                } catch (error) {
+                  console.log(`Failed to import ${file}:`, error);
+                }
+              }
+            }
+          }
+        };
+        
+        await scanDirectory(folderPath);
+      }
+      
+      console.log(`Import complete. Imported ${importedCount} images.`);
+      res.json({ 
+        success: true, 
+        imported: importedCount,
+        message: `Successfully imported ${importedCount} images from local folders`
+      });
+      
+    } catch (error) {
+      console.error("Error importing local images:", error);
+      res.status(500).json({ message: "Failed to import local images" });
+    }
+  });
+
   app.put('/api/media/:id', requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Upload, X, Trash2, Edit, Search, Grid, List, Image as ImageIcon, Folder, FolderPlus, Plus, Download, ExternalLink } from "lucide-react";
+import { Upload, X, Trash2, Edit, Search, Grid, List, Image as ImageIcon, Folder, FolderPlus, Plus, Download, ExternalLink, RefreshCw, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const [newFolderName, setNewFolderName] = useState("");
   const [showNewFolderDialog, setShowNewFolderDialog] = useState(false);
   const [uploadCategory, setUploadCategory] = useState("general");
+  const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -131,6 +132,30 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
     },
   });
 
+  const importMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/media/import-local', {
+        method: 'POST',
+      });
+      if (!response.ok) throw new Error("Failed to import local images");
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Import Complete",
+        description: `Successfully imported ${data.imported} images from local folders`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/media"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Import Failed",
+        description: error.message || "Failed to import local images",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -214,6 +239,15 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const handleViewFullsize = (file: MediaFile, e: React.MouseEvent) => {
     e.stopPropagation();
     window.open(file.url, '_blank');
+  };
+
+  const handleImportLocal = () => {
+    setIsImporting(true);
+    importMutation.mutate(undefined, {
+      onSettled: () => {
+        setIsImporting(false);
+      }
+    });
   };
 
   const filteredFiles = mediaFiles?.filter(file => {
@@ -411,15 +445,34 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
                 )}
                 
                 {!selectMode && (
-                  <Button
-                    onClick={handleUploadClick}
-                    disabled={isUploading}
-                    className="bg-ocean-blue hover:bg-deep-navy"
-                    data-testid="button-upload-file"
-                  >
-                    <Upload size={16} className="mr-2" />
-                    {isUploading ? "Uploading..." : "Upload File"}
-                  </Button>
+                  <>
+                    <Button
+                      onClick={handleImportLocal}
+                      disabled={isImporting}
+                      variant="outline"
+                      className="border-orange-500 text-orange-600 hover:bg-orange-50"
+                      data-testid="button-import-local"
+                    >
+                      <FolderOpen size={16} className="mr-2" />
+                      {isImporting ? (
+                        <>
+                          <RefreshCw size={16} className="mr-2 animate-spin" />
+                          Importing...
+                        </>
+                      ) : (
+                        "Import Local Images"
+                      )}
+                    </Button>
+                    <Button
+                      onClick={handleUploadClick}
+                      disabled={isUploading}
+                      className="bg-ocean-blue hover:bg-deep-navy"
+                      data-testid="button-upload-file"
+                    >
+                      <Upload size={16} className="mr-2" />
+                      {isUploading ? "Uploading..." : "Upload File"}
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
