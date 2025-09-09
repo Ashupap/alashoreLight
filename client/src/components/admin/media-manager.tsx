@@ -32,16 +32,36 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
     queryKey: ["/api/media"],
   });
 
+  // All image categories/folders used throughout the app
+  const allAppCategories = [
+    'general',     // Default category
+    'gallery',     // Our Gallery section images  
+    'products',    // Product images
+    'blog',        // Blog post featured images
+    'testimonials', // Customer testimonials
+    'team',        // Team member photos
+    'facility',    // Facility/infrastructure images
+    'processing',  // Processing operations
+    'operations',  // Business operations
+    'awards',      // Awards and certifications
+    'community',   // CSR and community activities
+    'news',        // News and media coverage
+    'hero',        // Hero section backgrounds
+    'logos',       // Company and partner logos
+    'banners',     // Website banners
+    'icons',       // UI icons and graphics
+  ];
+
   // Get unique categories from media files
-  const categories = mediaFiles ? 
+  const categoriesWithFiles = mediaFiles ? 
     Array.from(new Set(mediaFiles.map(file => file.category || 'general'))).sort() : 
     [];
   
-  // Get comprehensive category statistics
+  // Get comprehensive category list (all app categories)
   const getAllCategories = () => {
-    if (!mediaFiles) return [];
-    const allCategories = Array.from(new Set(mediaFiles.map(file => file.category || 'general')));
-    return allCategories.sort();
+    const combinedCategories = [...allAppCategories, ...categoriesWithFiles];
+    const uniqueCategories = Array.from(new Set(combinedCategories));
+    return uniqueCategories.sort();
   };
 
   // Get category statistics
@@ -133,7 +153,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
       return;
     }
 
-    if (categories.includes(newFolderName.toLowerCase())) {
+    if (getAllCategories().includes(newFolderName.toLowerCase())) {
       toast({
         title: "Folder exists",
         description: "A folder with this name already exists",
@@ -279,7 +299,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
               </button>
 
               {/* Category Folders */}
-              {categories.map((category) => (
+              {getAllCategories().map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
@@ -374,14 +394,14 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
                   </Button>
                 )}
                 
-                {!selectMode && categories.length > 0 && (
+                {!selectMode && getAllCategories().length > 0 && (
                   <Select value={uploadCategory} onValueChange={setUploadCategory}>
                     <SelectTrigger className="w-32">
                       <SelectValue placeholder="Folder" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="general">General</SelectItem>
-                      {categories.filter(cat => cat !== 'general').map((category) => (
+                      {getAllCategories().filter(cat => cat !== 'general').map((category) => (
                         <SelectItem key={category} value={category}>
                           {category.charAt(0).toUpperCase() + category.slice(1)}
                         </SelectItem>
