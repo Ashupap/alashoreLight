@@ -10,6 +10,20 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/
 import { gsap } from "gsap";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { useQuery } from "@tanstack/react-query";
+
+interface MediaFile {
+  id: number;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  alt?: string | null;
+  category?: string | null;
+  uploadedBy: string;
+  createdAt: string;
+}
 
 export default function Media() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -159,7 +173,35 @@ export default function Media() {
     }
   ];
 
-  const galleryImages = [
+  // Fetch gallery images from database
+  const { data: galleryFiles } = useQuery<MediaFile[]>({
+    queryKey: ["/api/media"],
+  });
+
+  // Extract gallery category from alt text tags
+  const getGalleryCategory = (alt?: string | null) => {
+    if (!alt) return null;
+    const hashTags = alt.match(/#(\w+)/g) || [];
+    const categoryTags = hashTags.map(tag => tag.substring(1).toLowerCase());
+    
+    // Look for Our Gallery categories in tags
+    const galleryCategories = ["facility", "processing", "operations", "team"];
+    const foundCategory = categoryTags.find(tag => galleryCategories.includes(tag));
+    
+    return foundCategory ? foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1) : null;
+  };
+
+  // Filter gallery files and transform to gallery format
+  const galleryImages = galleryFiles ? galleryFiles
+    .filter(file => file.category === 'gallery' && getGalleryCategory(file.alt))
+    .map(file => ({
+      src: file.url,
+      alt: file.alt || file.originalName,
+      category: getGalleryCategory(file.alt)!,
+      width: 1200,
+      height: 800
+    })) : [
+    // Fallback static images if no database images available
     {
       src: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.03.31-PM.jpg",
       alt: "Modern seafood processing facility",
