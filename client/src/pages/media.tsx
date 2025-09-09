@@ -185,7 +185,7 @@ export default function Media() {
     const categoryTags = hashTags.map(tag => tag.substring(1).toLowerCase());
     
     // Look for any gallery-related categories in tags (expanded list)
-    const galleryCategories = ["facility", "processing", "operations", "team", "quality", "sustainability", "awards", "community"];
+    const galleryCategories = ["facility", "processing", "operations", "team", "quality", "sustainability", "awards", "community", "csr"];
     const foundCategory = categoryTags.find(tag => galleryCategories.includes(tag));
     
     return foundCategory ? foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1) : null;

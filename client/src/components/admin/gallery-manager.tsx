@@ -23,6 +23,7 @@ const galleryCategories = [
   { name: "sustainability", color: "bg-emerald-500 text-white", displayName: "Sustainability" },
   { name: "awards", color: "bg-amber-500 text-black", displayName: "Awards" },
   { name: "community", color: "bg-purple-500 text-white", displayName: "Community" },
+  { name: "csr", color: "bg-indigo-500 text-white", displayName: "CSR" },
 ];
 
 export default function GalleryManager({ onClose }: GalleryManagerProps) {
