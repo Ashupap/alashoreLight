@@ -36,6 +36,13 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const categories = mediaFiles ? 
     Array.from(new Set(mediaFiles.map(file => file.category || 'general'))).sort() : 
     [];
+  
+  // Get comprehensive category statistics
+  const getAllCategories = () => {
+    if (!mediaFiles) return [];
+    const allCategories = Array.from(new Set(mediaFiles.map(file => file.category || 'general')));
+    return allCategories.sort();
+  };
 
   // Get category statistics
   const getCategoryStats = (category: string) => {

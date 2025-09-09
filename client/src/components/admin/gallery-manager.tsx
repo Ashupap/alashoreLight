@@ -13,20 +13,16 @@ interface GalleryManagerProps {
   onClose: () => void;
 }
 
-// Predefined colorful tag options
-const tagColors = [
-  { name: "seafood", color: "bg-blue-500 text-white", displayName: "Seafood" },
-  { name: "shrimp", color: "bg-orange-500 text-white", displayName: "Shrimp" },
-  { name: "fish", color: "bg-teal-500 text-white", displayName: "Fish" },
-  { name: "crab", color: "bg-red-500 text-white", displayName: "Crab" },
-  { name: "lobster", color: "bg-purple-500 text-white", displayName: "Lobster" },
-  { name: "quality", color: "bg-green-500 text-white", displayName: "Quality" },
-  { name: "export", color: "bg-indigo-500 text-white", displayName: "Export" },
-  { name: "processing", color: "bg-yellow-500 text-black", displayName: "Processing" },
-  { name: "facility", color: "bg-gray-500 text-white", displayName: "Facility" },
+// Our Gallery categories to match the media page filters
+const galleryCategories = [
+  { name: "facility", color: "bg-blue-500 text-white", displayName: "Facility" },
+  { name: "processing", color: "bg-orange-500 text-white", displayName: "Processing" },
+  { name: "operations", color: "bg-teal-500 text-white", displayName: "Operations" },
   { name: "team", color: "bg-pink-500 text-white", displayName: "Team" },
+  { name: "quality", color: "bg-green-500 text-white", displayName: "Quality" },
   { name: "sustainability", color: "bg-emerald-500 text-white", displayName: "Sustainability" },
   { name: "awards", color: "bg-amber-500 text-black", displayName: "Awards" },
+  { name: "community", color: "bg-purple-500 text-white", displayName: "Community" },
 ];
 
 export default function GalleryManager({ onClose }: GalleryManagerProps) {
@@ -238,7 +234,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
                 Tags
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-3">
-                {tagColors.map((tag) => (
+                {galleryCategories.map((tag) => (
                   <button
                     key={tag.name}
                     onClick={() => handleTagToggle(tag.name)}
@@ -269,7 +265,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
               {selectedTags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {selectedTags.map((tag) => {
-                    const tagConfig = tagColors.find(t => t.name === tag);
+                    const tagConfig = galleryCategories.find(t => t.name === tag);
                     return (
                       <Badge
                         key={tag}
@@ -427,7 +423,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
                         {fileTags.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {fileTags.slice(0, 3).map((tag) => {
-                              const tagConfig = tagColors.find(t => t.name === tag);
+                              const tagConfig = galleryCategories.find(t => t.name === tag);
                               return (
                                 <span
                                   key={tag}
@@ -513,7 +509,7 @@ export default function GalleryManager({ onClose }: GalleryManagerProps) {
                       {fileTags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                           {fileTags.map((tag) => {
-                            const tagConfig = tagColors.find(t => t.name === tag);
+                            const tagConfig = galleryCategories.find(t => t.name === tag);
                             return (
                               <span
                                 key={tag}
