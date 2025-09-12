@@ -608,7 +608,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create database record
       const uploadedBy = req.user?.id || 1;
-      const fileUrl = `/objects/uploads/${objectId}`;
+      const fileUrl = `/public-objects/uploads/${objectId}`;
       
       const mediaData = {
         filename,
