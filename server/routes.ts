@@ -51,6 +51,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve uploaded files from local storage (fallback for production)
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+  
+  // Serve attached assets (images should work from here)
+  app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
 
   // Legacy upload fallback - check object storage if local file not found
   app.get('/uploads/*', async (req, res, next) => {
@@ -60,23 +63,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const result = await objectStorageService.searchPublicObject(`uploads/${filePath}`);
       
-      if (result.found) {
+      if (result && result.found) {
         console.log(`Found in object storage: ${result.url}`);
         const fileStream = await objectStorageService.downloadObject(result.bucketName!, result.objectName!);
         
-        const ext = path.extname(filePath).toLowerCase();
-        const mimeTypes: { [key: string]: string } = {
-          '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
-          '.gif': 'image/gif', '.webp': 'image/webp'
-        };
-        
-        res.set('Content-Type', mimeTypes[ext] || 'application/octet-stream');
-        res.set('Cache-Control', 'public, max-age=31536000');
-        fileStream.pipe(res);
-      } else {
-        console.log(`Not found in object storage: uploads/${filePath}`);
-        res.status(404).json({ message: 'File not found' });
+        if (fileStream) {
+          const ext = path.extname(filePath).toLowerCase();
+          const mimeTypes: { [key: string]: string } = {
+            '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+            '.gif': 'image/gif', '.webp': 'image/webp'
+          };
+          
+          res.set('Content-Type', mimeTypes[ext] || 'application/octet-stream');
+          res.set('Cache-Control', 'public, max-age=31536000');
+          fileStream.pipe(res);
+          return;
+        }
       }
+      
+      console.log(`Not found in object storage: uploads/${filePath}`);
+      res.status(404).json({ message: 'File not found' });
     } catch (error) {
       console.error('Error in legacy upload fallback:', error);
       res.status(500).json({ message: 'Error serving file' });
@@ -839,9 +845,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Determine local file path
           let localPath = '';
           if (image.url.startsWith('/uploads/media/')) {
-            localPath = path.join(process.cwd(), image.url.replace('/uploads/media/', 'uploads/media/'));
+            localPath = path.join(process.cwd(), image.url.substring(1)); // Remove leading slash
           } else if (image.url.startsWith('/server/public/assets/')) {
-            localPath = path.join(process.cwd(), image.url.replace('/server/public/assets/', 'server/public/assets/'));
+            localPath = path.join(process.cwd(), image.url.substring(1)); // Remove leading slash
           }
           
           console.log(`Migrating ${image.filename}: ${localPath}`);
