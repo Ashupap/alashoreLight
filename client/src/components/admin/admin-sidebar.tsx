@@ -50,7 +50,7 @@ export default function AdminSidebar({ activeSection, onSectionChange }: AdminSi
         </Button>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="space-y-2 pb-24">
         {menuItems.map((item) => (
           <motion.button
             key={item.id}
@@ -69,24 +69,22 @@ export default function AdminSidebar({ activeSection, onSectionChange }: AdminSi
         ))}
       </nav>
 
-      <div className="absolute bottom-6 left-6 right-6 space-y-4">
+      <div className="absolute bottom-4 left-4 right-4">
         {user && (
-          <div className="text-center border-t border-gray-600 pt-4">
-            <p className="text-sm text-gray-300">Signed in as</p>
-            <p className="font-semibold text-white">{user.username}</p>
-            {user.role && (
-              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
-            )}
+          <div className="text-center border-t border-gray-600 pt-3 pb-3">
+            <p className="text-xs text-gray-300 mb-1">Signed in as</p>
+            <p className="font-semibold text-white text-sm truncate">{user.username} {user.role}</p>
           </div>
         )}
         <Button
           onClick={handleLogout}
           variant="outline"
+          size="sm"
           className="w-full text-white border-white hover:bg-white hover:text-deep-navy"
           data-testid="button-logout"
           disabled={logoutMutation.isPending}
         >
-          <LogOut size={16} className="mr-2" />
+          <LogOut size={14} className="mr-2" />
           {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
         </Button>
       </div>
