@@ -788,6 +788,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Migrate existing local images to object storage
+  app.post('/api/media/migrate-to-storage', requireAuth, async (req: any, res) => {
+    try {
+      console.log("Starting migration of local images to object storage...");
+      
+      // Get all media files with local paths
+      const localImages = await storage.getMediaFiles();
+      const imagesToMigrate = localImages?.filter(img => 
+        img.url.startsWith('/uploads/media/') || img.url.startsWith('/server/public/assets/')
+      ) || [];
+      
+      console.log(`Found ${imagesToMigrate.length} local images to migrate`);
+      let migratedCount = 0;
+      let failedCount = 0;
+      
+      for (const image of imagesToMigrate) {
+        try {
+          // Determine local file path
+          let localPath = '';
+          if (image.url.startsWith('/uploads/media/')) {
+            localPath = path.join(process.cwd(), image.url.replace('/uploads/media/', 'uploads/media/'));
+          } else if (image.url.startsWith('/server/public/assets/')) {
+            localPath = path.join(process.cwd(), image.url.replace('/server/public/assets/', 'server/public/assets/'));
+          }
+          
+          console.log(`Migrating ${image.filename}: ${localPath}`);
+          
+          // Check if local file exists
+          if (!fs.existsSync(localPath)) {
+            console.log(`Local file not found, skipping: ${localPath}`);
+            failedCount++;
+            continue;
+          }
+          
+          // Read local file
+          const fileBuffer = fs.readFileSync(localPath);
+          
+          // Upload to object storage
+          const objectStorageUrl = await objectStorageService.uploadFileBuffer(
+            fileBuffer,
+            image.filename,
+            image.mimeType
+          );
+          
+          // Update database record
+          await storage.updateMediaFile(image.id, { url: objectStorageUrl });
+          
+          console.log(`Successfully migrated: ${image.filename} -> ${objectStorageUrl}`);
+          migratedCount++;
+          
+        } catch (error: any) {
+          console.error(`Failed to migrate ${image.filename}:`, error?.message);
+          failedCount++;
+        }
+      }
+      
+      console.log(`Migration complete. Migrated: ${migratedCount}, Failed: ${failedCount}`);
+      res.json({ 
+        success: true, 
+        migrated: migratedCount,
+        failed: failedCount,
+        total: imagesToMigrate.length,
+        message: `Successfully migrated ${migratedCount} of ${imagesToMigrate.length} images to object storage`
+      });
+      
+    } catch (error: any) {
+      console.error("Error during migration:", error);
+      res.status(500).json({ message: "Migration failed", error: error?.message });
+    }
+  });
+
   // Import local images endpoint
   app.post('/api/media/import-local', requireAuth, async (req: any, res) => {
     try {

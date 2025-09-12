@@ -25,6 +25,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const [showNewFolderDialog, setShowNewFolderDialog] = useState(false);
   const [uploadCategory, setUploadCategory] = useState("general");
   const [isImporting, setIsImporting] = useState(false);
+  const [isMigrating, setIsMigrating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -156,6 +157,30 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
     },
   });
 
+  const migrateMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/media/migrate-to-storage', {
+        method: 'POST',
+      });
+      if (!response.ok) throw new Error("Failed to migrate images to object storage");
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Migration Complete",
+        description: `Successfully migrated ${data.migrated} of ${data.total} images to object storage`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/media"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Migration Failed", 
+        description: error.message || "Failed to migrate images to object storage",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -246,6 +271,15 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
     importMutation.mutate(undefined, {
       onSettled: () => {
         setIsImporting(false);
+      }
+    });
+  };
+
+  const handleMigrateToStorage = () => {
+    setIsMigrating(true);
+    migrateMutation.mutate(undefined, {
+      onSettled: () => {
+        setIsMigrating(false);
       }
     });
   };
@@ -446,6 +480,22 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
                 
                 {!selectMode && (
                   <>
+                    <Button
+                      onClick={handleMigrateToStorage}
+                      disabled={isMigrating}
+                      variant="outline"
+                      className="border-green-500 text-green-600 hover:bg-green-50"
+                      data-testid="button-migrate-storage"
+                    >
+                      {isMigrating ? (
+                        <>
+                          <RefreshCw size={16} className="mr-2 animate-spin" />
+                          Migrating...
+                        </>
+                      ) : (
+                        "Migrate to Object Storage"
+                      )}
+                    </Button>
                     <Button
                       onClick={handleImportLocal}
                       disabled={isImporting}
