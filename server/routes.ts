@@ -37,19 +37,25 @@ async function fixBrokenImageUrls() {
     
     console.log(`🔧 Found ${brokenImages.length} broken image URLs, fixing...`);
     
-    // Map broken URLs to working attached_assets images
-    const imageMap = [
-      'Asset1_1756792162174.png',
-      'Asset 3_1756100807050.png', 
-      '2-1_1756901827544.png',
-      '4-1 (1)_1756901765521.png'
-    ];
+    // Get available working images from attached_assets
+    const attachedAssetsDir = path.join(process.cwd(), 'attached_assets');
+    let availableImages: string[] = [];
+    
+    try {
+      if (fs.existsSync(attachedAssetsDir)) {
+        availableImages = fs.readdirSync(attachedAssetsDir)
+          .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
+          .slice(0, 20); // Use first 20 available images
+      }
+    } catch (error) {
+      console.error("Error reading attached_assets directory:", error);
+    }
     
     let fixedCount = 0;
-    for (let i = 0; i < brokenImages.length && i < imageMap.length; i++) {
+    for (let i = 0; i < brokenImages.length && i < availableImages.length; i++) {
       const image = brokenImages[i];
-      const workingImageName = imageMap[i];
-      const workingPath = path.join(process.cwd(), 'attached_assets', workingImageName);
+      const workingImageName = availableImages[i];
+      const workingPath = path.join(attachedAssetsDir, workingImageName);
       
       // Check if the working image exists
       if (fs.existsSync(workingPath)) {
@@ -1171,3 +1177,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   return httpServer;
 }
+// Auto-restart trigger
