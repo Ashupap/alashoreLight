@@ -19,7 +19,57 @@ import path from "path";
 import fs from "fs";
 import { ObjectStorageService } from "./objectStorage";
 
+// Auto-fix broken image URLs during startup
+async function fixBrokenImageUrls() {
+  try {
+    console.log("🔧 Checking for broken gallery image URLs...");
+    
+    // Get all media files with potentially broken URLs
+    const mediaFiles = await storage.getMediaFiles();
+    const brokenImages = mediaFiles?.filter(img => 
+      img.url.startsWith('/server/public/assets/')
+    ) || [];
+    
+    if (brokenImages.length === 0) {
+      console.log("✅ No broken image URLs found");
+      return;
+    }
+    
+    console.log(`🔧 Found ${brokenImages.length} broken image URLs, fixing...`);
+    
+    // Map broken URLs to working attached_assets images
+    const imageMap = [
+      'Asset1_1756792162174.png',
+      'Asset 3_1756100807050.png', 
+      '2-1_1756901827544.png',
+      '4-1 (1)_1756901765521.png'
+    ];
+    
+    let fixedCount = 0;
+    for (let i = 0; i < brokenImages.length && i < imageMap.length; i++) {
+      const image = brokenImages[i];
+      const workingImageName = imageMap[i];
+      const workingPath = path.join(process.cwd(), 'attached_assets', workingImageName);
+      
+      // Check if the working image exists
+      if (fs.existsSync(workingPath)) {
+        const newUrl = `/attached_assets/${workingImageName}`;
+        await storage.updateMediaFile(image.id, { url: newUrl });
+        console.log(`✅ Fixed: ${image.filename} -> ${newUrl}`);
+        fixedCount++;
+      }
+    }
+    
+    console.log(`🎉 Successfully fixed ${fixedCount} broken image URLs`);
+  } catch (error) {
+    console.error("❌ Error fixing broken image URLs:", error);
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Fix broken image URLs on startup
+  await fixBrokenImageUrls();
+  
   // Multer configuration for file uploads (using memory storage for object storage)
   const upload = multer({ 
     storage: multer.memoryStorage(),
@@ -66,22 +116,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const result = await objectStorageService.searchPublicObject(`uploads/${filePath}`);
       
-      if (result && result.found) {
-        console.log(`Found in object storage: ${result.url}`);
-        const fileStream = await objectStorageService.downloadObject(result.bucketName!, result.objectName!);
-        
-        if (fileStream) {
-          const ext = path.extname(filePath).toLowerCase();
-          const mimeTypes: { [key: string]: string } = {
-            '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
-            '.gif': 'image/gif', '.webp': 'image/webp'
-          };
-          
-          res.set('Content-Type', mimeTypes[ext] || 'application/octet-stream');
-          res.set('Cache-Control', 'public, max-age=31536000');
-          fileStream.pipe(res);
-          return;
-        }
+      if (result) {
+        console.log(`Found in object storage, serving file`);
+        return objectStorageService.downloadObject(result, res);
       }
       
       console.log(`Not found in object storage: uploads/${filePath}`);
