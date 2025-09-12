@@ -52,6 +52,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded files from local storage (fallback for production)
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
+  // Legacy upload fallback - check object storage if local file not found
+  app.get('/uploads/*', async (req, res, next) => {
+    try {
+      const filePath = req.path.replace('/uploads/', '');
+      console.log(`=== LEGACY UPLOAD FALLBACK === Looking for: ${filePath}`);
+      
+      const result = await objectStorageService.searchPublicObject(`uploads/${filePath}`);
+      
+      if (result.found) {
+        console.log(`Found in object storage: ${result.url}`);
+        const fileStream = await objectStorageService.downloadObject(result.bucketName!, result.objectName!);
+        
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeTypes: { [key: string]: string } = {
+          '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+          '.gif': 'image/gif', '.webp': 'image/webp'
+        };
+        
+        res.set('Content-Type', mimeTypes[ext] || 'application/octet-stream');
+        res.set('Cache-Control', 'public, max-age=31536000');
+        fileStream.pipe(res);
+      } else {
+        console.log(`Not found in object storage: uploads/${filePath}`);
+        res.status(404).json({ message: 'File not found' });
+      }
+    } catch (error) {
+      console.error('Error in legacy upload fallback:', error);
+      res.status(500).json({ message: 'Error serving file' });
+    }
+  });
+
   // Public object serving endpoint
   app.get("/public-objects/:filePath(*)", async (req, res) => {
     const filePath = req.params.filePath;
