@@ -54,6 +54,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Serve attached assets (images should work from here)
   app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
+  
+  // Serve production build assets (fixes 32 broken images including gallery)
+  app.use('/server/public/assets', express.static(path.join(process.cwd(), 'server/public/assets')));
 
   // Legacy upload fallback - check object storage if local file not found
   app.get('/uploads/*', async (req, res, next) => {
