@@ -73,7 +73,10 @@ export default function AdminSidebar({ activeSection, onSectionChange }: AdminSi
         {user && (
           <div className="text-center border-t border-gray-600 pt-3 pb-3">
             <p className="text-xs text-gray-300 mb-1">Signed in as</p>
-            <p className="font-semibold text-white text-sm truncate">{user.username} {user.role}</p>
+            <p className="font-semibold text-white text-sm truncate">{user.username}</p>
+            {user.role && user.role !== user.username && (
+              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
+            )}
           </div>
         )}
         <Button
