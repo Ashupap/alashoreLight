@@ -26,6 +26,7 @@ export default function MediaManager({ onClose, onSelect, selectMode = false }: 
   const [uploadCategory, setUploadCategory] = useState("general");
   const [isImporting, setIsImporting] = useState(false);
   const [isMigrating, setIsMigrating] = useState(false);
+  const [isFixingGallery, setIsFixingGallery] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();

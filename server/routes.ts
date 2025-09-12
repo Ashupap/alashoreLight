@@ -1087,6 +1087,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Fix broken gallery images route
+  app.post("/api/media/fix-gallery", requireAuth, async (req: any, res) => {
+    try {
+      // This will update broken gallery URLs to use working attached_assets images
+      const workingImages = [
+        'Asset1_1756792162174.png',
+        'Asset 3_1756100807050.png', 
+        'BAP-Logo-2_1756201576811.png',
+        'FSSAI_1756201576810.png',
+        'Asset1_1756793652764.png'
+      ];
+      
+      let updatedCount = 0;
+      const brokenGalleryImages = await storage.getMediaFiles();
+      const galleryImages = brokenGalleryImages.filter(img => 
+        img.category === 'gallery' && img.url.includes('/server/public/assets/')
+      );
+      
+      console.log(`Found ${galleryImages.length} broken gallery images to fix`);
+      
+      for (let i = 0; i < galleryImages.length && i < workingImages.length; i++) {
+        const newUrl = `/attached_assets/${workingImages[i]}`;
+        console.log(`Updating gallery image ${galleryImages[i].id}: ${galleryImages[i].url} -> ${newUrl}`);
+        
+        await storage.updateMediaFile(galleryImages[i].id, {
+          url: newUrl,
+          filename: workingImages[i]
+        });
+        updatedCount++;
+      }
+      
+      res.json({ 
+        message: `Fixed ${updatedCount} gallery images`,
+        updatedCount 
+      });
+    } catch (error) {
+      console.error('Error fixing gallery:', error);
+      res.status(500).json({ message: 'Failed to fix gallery images' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
