@@ -83,7 +83,7 @@ export default function AdminSidebar({ activeSection, onSectionChange }: AdminSi
           onClick={handleLogout}
           variant="outline"
           size="sm"
-          className="w-full text-white border-white hover:bg-white hover:text-deep-navy"
+          className="w-full bg-transparent text-white border-white hover:bg-white hover:text-deep-navy"
           data-testid="button-logout"
           disabled={logoutMutation.isPending}
         >
