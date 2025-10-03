@@ -36,13 +36,13 @@ async function initializeDefaultSettings() {
       // General/Site Information Settings
       { key: "companyName", value: "Alashore Marine Exports Pvt. Ltd.", category: "general", description: "Company name" },
       { key: "tagline", value: "Premium Seafood Exports Worldwide", category: "general", description: "Company tagline" },
-      { key: "description", value: "Leading exporter of high-quality seafood products from India to global markets. We specialize in sustainable fishing practices and maintain the highest quality standards.", category: "general", description: "Company description" },
-      { key: "address", value: "Chennai, Tamil Nadu, India", category: "general", description: "Company address" },
+      { key: "description", value: "Leading seafood exporter from India specializing in premium quality vannamei shrimp and marine products.", category: "general", description: "Company description" },
+      { key: "address", value: "Odisha, India", category: "general", description: "Company address" },
       
       // SEO Settings
-      { key: "metaTitle", value: "Alashore Marine - Premium Seafood Exports from India", category: "seo", description: "Website meta title" },
-      { key: "metaDescription", value: "Leading exporter of high-quality seafood products worldwide. Sustainable fishing practices and premium quality guaranteed. Export services from India to global markets.", category: "seo", description: "Website meta description" },
-      { key: "keywords", value: "seafood export, marine products, fish export, sustainable fishing, seafood exporter India, premium seafood", category: "seo", description: "SEO keywords" },
+      { key: "metaTitle", value: "Alashore Marine Exports - Premium Seafood Exporter | India", category: "seo", description: "Website meta title" },
+      { key: "metaDescription", value: "Alashore Marine Exports - Leading seafood exporter from India. Premium quality vannamei shrimp, fish, and marine products. Serving 90+ customers globally with sustainable practices.", category: "seo", description: "Website meta description" },
+      { key: "keywords", value: "seafood export, vannamei shrimp, marine products, India seafood, premium fish, sustainable fishing, Alashore Marine", category: "seo", description: "SEO keywords" },
       
       // Analytics Settings
       { key: "googleAnalyticsId", value: "", category: "analytics", description: "Google Analytics tracking ID" },
