@@ -1219,7 +1219,7 @@ Format your response as JSON with this structure:
 }`;
 
       const completion = await openrouter.chat.completions.create({
-        model: "google/gemini-2.0-flash-exp:free",
+        model: "deepseek/deepseek-r1:free",
         messages: [{ role: "user", content: prompt }],
       });
 
