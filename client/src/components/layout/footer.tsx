@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
 import { Anchor, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 import { PerformanceImage } from "@/components/ui/performance-image";
+import { useWebsiteSettings } from "@/hooks/use-website-settings";
 import logoImage from "@assets/Asset 3_1_1756973310181.png";
 
 export default function Footer() {
+  const { settings } = useWebsiteSettings();
+  
   const groupCompanies = [
     "Balasore Marine Exports Pvt. Ltd.",
     { name: "Natnov Bioscience Pvt. Ltd.", url: "http://www.natnovbioscience.com/" },
@@ -21,10 +24,10 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: "https://www.facebook.com/AlashoreMarine/", name: "Facebook" },
-    { icon: Instagram, href: "https://www.instagram.com/alashoremarine/", name: "Instagram" },
-    { icon: Twitter, href: "https://twitter.com/AlashoreL", name: "Twitter" },
-    { icon: Linkedin, href: "https://www.linkedin.com/company/alashore-marine-private-limited/", name: "LinkedIn" },
+    { icon: Facebook, href: settings.facebook, name: "Facebook" },
+    { icon: Instagram, href: settings.instagram, name: "Instagram" },
+    { icon: Twitter, href: settings.twitter, name: "Twitter" },
+    { icon: Linkedin, href: settings.linkedin, name: "LinkedIn" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -156,26 +159,26 @@ export default function Footer() {
               </p>
               <p>
                 <a 
-                  href="mailto:alashoremarine@gmail.com" 
+                  href={`mailto:${settings.email}`}
                   className="hover:text-white transition-colors"
                   data-testid="link-email"
                 >
-                  alashoremarine@gmail.com
+                  {settings.email}
                 </a>
               </p>
               <p>
                 <a 
-                  href="tel:+917381050536" 
+                  href={`tel:${settings.phone.replace(/\s/g, '')}`}
                   className="hover:text-white transition-colors"
                   data-testid="link-phone"
                 >
-                  +91 7381050536
+                  {settings.phone}
                 </a>
               </p>
             </div>
 
             <div className="flex space-x-4 mt-6">
-              {socialLinks.map((social) => (
+              {socialLinks.filter(social => social.href).map((social) => (
                 <motion.a
                   key={social.name}
                   href={social.href}

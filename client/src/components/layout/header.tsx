@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Menu, X, Shield, Mail, Phone, Building2, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 import { PerformanceImage } from "@/components/ui/performance-image";
+import { useWebsiteSettings } from "@/hooks/use-website-settings";
 import logoImage from "@assets/Asset 3_1_1756973310181.png";
 
 interface HeaderProps {
@@ -13,6 +14,7 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const { settings } = useWebsiteSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,20 +101,20 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <a 
-                href="mailto:alashoremarine@gmail.com"
+                href={`mailto:${settings.email}`}
                 className="flex items-center space-x-1 hover:text-yellow-200 transition-colors"
                 data-testid="link-email"
               >
                 <Mail size={14} />
-                <span>alashoremarine@gmail.com</span>
+                <span>{settings.email}</span>
               </a>
               <a 
-                href="tel:+917381050536"
+                href={`tel:${settings.phone.replace(/\s/g, '')}`}
                 className="flex items-center space-x-1 hover:text-yellow-200 transition-colors"
                 data-testid="link-phone"
               >
                 <Phone size={14} />
-                <span>+91 7381050536</span>
+                <span>{settings.phone}</span>
               </a>
               <div className="hidden lg:flex items-center space-x-1">
                 <Building2 size={14} />
@@ -129,50 +131,58 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
             >
               <span className="hidden sm:inline">Follow Us:</span>
               <div className="flex space-x-2">
-                <motion.a
-                  href="https://www.facebook.com/AlashoreMarine/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="hover:bg-white/20 p-1 rounded transition-colors"
-                  data-testid="link-facebook"
-                >
-                  <Facebook size={16} />
-                </motion.a>
-                <motion.a
-                  href="https://www.instagram.com/alashoremarine/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, rotate: -5 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="hover:bg-white/20 p-1 rounded transition-colors"
-                  data-testid="link-instagram"
-                >
-                  <Instagram size={16} />
-                </motion.a>
-                <motion.a
-                  href="https://twitter.com/AlashoreL"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="hover:bg-white/20 p-1 rounded transition-colors"
-                  data-testid="link-twitter"
-                >
-                  <Twitter size={16} />
-                </motion.a>
-                <motion.a
-                  href="https://www.linkedin.com/company/alashore-marine-private-limited/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, rotate: -5 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="hover:bg-white/20 p-1 rounded transition-colors"
-                  data-testid="link-linkedin"
-                >
-                  <Linkedin size={16} />
-                </motion.a>
+                {settings.facebook && (
+                  <motion.a
+                    href={settings.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="hover:bg-white/20 p-1 rounded transition-colors"
+                    data-testid="link-facebook"
+                  >
+                    <Facebook size={16} />
+                  </motion.a>
+                )}
+                {settings.instagram && (
+                  <motion.a
+                    href={settings.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, rotate: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="hover:bg-white/20 p-1 rounded transition-colors"
+                    data-testid="link-instagram"
+                  >
+                    <Instagram size={16} />
+                  </motion.a>
+                )}
+                {settings.twitter && (
+                  <motion.a
+                    href={settings.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="hover:bg-white/20 p-1 rounded transition-colors"
+                    data-testid="link-twitter"
+                  >
+                    <Twitter size={16} />
+                  </motion.a>
+                )}
+                {settings.linkedin && (
+                  <motion.a
+                    href={settings.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, rotate: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="hover:bg-white/20 p-1 rounded transition-colors"
+                    data-testid="link-linkedin"
+                  >
+                    <Linkedin size={16} />
+                  </motion.a>
+                )}
               </div>
             </motion.div>
           </div>
