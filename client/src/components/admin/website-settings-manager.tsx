@@ -6,7 +6,7 @@ import { z } from "zod";
 import { motion } from "framer-motion";
 import { 
   Facebook, Instagram, Twitter, Linkedin, Mail, Phone, Save, RefreshCw,
-  Building2, Globe, BarChart3, Settings2, X, Plus
+  Building2, Globe, Settings2, X, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -266,7 +266,7 @@ export default function WebsiteSettingsManager() {
         >
           <div className="flex items-start mb-4">
             <div className="w-12 h-12 bg-ocean-blue rounded-lg flex items-center justify-center mr-4">
-              <BarChart3 size={24} className="text-white" />
+              <Settings2 size={24} className="text-white" />
             </div>
             <div className="flex-1">
               <h3 className="text-xl font-heading font-semibold text-gray-900 mb-2">
@@ -464,15 +464,6 @@ function SiteInfoDialog({ open, onClose, settings, onSave, isSaving, getSettingV
 
 // SEO Dialog Component
 function SeoDialog({ open, onClose, settings, onSave, isSaving, getSettingValue }: DialogProps) {
-  const { toast } = useToast();
-  const [seoAnalysis, setSeoAnalysis] = useState<{
-    score: number;
-    analysis: string;
-    issues: string[];
-    recommendations: string[];
-  } | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-
   const form = useForm<SeoFormValues>({
     resolver: zodResolver(seoSchema),
     defaultValues: {
@@ -489,32 +480,8 @@ function SeoDialog({ open, onClose, settings, onSave, isSaving, getSettingValue 
         metaDescription: getSettingValue('metaDescription', 'Leading exporter of high-quality seafood products worldwide. Sustainable fishing practices and premium quality guaranteed.'),
         keywords: getSettingValue('keywords', 'seafood export, marine products, fish export, sustainable fishing'),
       });
-      setSeoAnalysis(null);
     }
   }, [open, settings, form, getSettingValue]);
-
-  const analyzeSEO = async () => {
-    setIsAnalyzing(true);
-    try {
-      const values = form.getValues();
-      const response = await apiRequest("POST", '/api/seo/analyze', values);
-      const data = await response.json();
-      setSeoAnalysis(data);
-      toast({
-        title: "SEO Analysis Complete",
-        description: `Your SEO score is ${data.score}/100`,
-      });
-    } catch (error) {
-      console.error('SEO analysis error:', error);
-      toast({
-        title: "Analysis Failed",
-        description: error instanceof Error ? error.message : "Failed to analyze SEO",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -650,90 +617,6 @@ function SeoDialog({ open, onClose, settings, onSave, isSaving, getSettingValue 
                 );
               }}
             />
-
-            {/* SEO Analysis Section */}
-            <div className="border-t pt-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">AI-Powered SEO Analysis</h3>
-                <Button
-                  type="button"
-                  onClick={analyzeSEO}
-                  disabled={isAnalyzing}
-                  variant="outline"
-                  className="border-ocean-blue text-ocean-blue hover:bg-ocean-blue hover:text-white"
-                  data-testid="button-analyze-seo"
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <BarChart3 className="mr-2 h-4 w-4" />
-                      Analyze SEO
-                    </>
-                  )}
-                </Button>
-              </div>
-
-              {seoAnalysis && (
-                <div className="space-y-4">
-                  {/* SEO Score */}
-                  <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-ocean-blue/10 to-marine-teal/10 rounded-lg border border-ocean-blue/20">
-                    <div className="flex-shrink-0">
-                      <div className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold ${
-                        seoAnalysis.score >= 80 ? 'bg-green-100 text-green-700' :
-                        seoAnalysis.score >= 60 ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
-                        {seoAnalysis.score}
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-lg">SEO Score</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{seoAnalysis.analysis}</p>
-                    </div>
-                  </div>
-
-                  {/* Issues */}
-                  {seoAnalysis.issues && seoAnalysis.issues.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-red-700 flex items-center gap-2">
-                        <X className="h-4 w-4" />
-                        Issues Found
-                      </h4>
-                      <ul className="space-y-1">
-                        {seoAnalysis.issues.map((issue, index) => (
-                          <li key={index} className="text-sm text-muted-foreground pl-6 relative">
-                            <span className="absolute left-2">•</span>
-                            {issue}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Recommendations */}
-                  {seoAnalysis.recommendations && seoAnalysis.recommendations.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-green-700 flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        Recommendations
-                      </h4>
-                      <ul className="space-y-1">
-                        {seoAnalysis.recommendations.map((rec, index) => (
-                          <li key={index} className="text-sm text-muted-foreground pl-6 relative">
-                            <span className="absolute left-2">•</span>
-                            {rec}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
 
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={onClose}>
@@ -961,7 +844,7 @@ function AnalyticsDialog({ open, onClose, settings, onSave, isSaving, getSetting
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center text-2xl">
-            <BarChart3 className="mr-2 text-ocean-blue" />
+            <Settings2 className="mr-2 text-ocean-blue" />
             Analytics Configuration
           </DialogTitle>
           <DialogDescription>

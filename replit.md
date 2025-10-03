@@ -4,6 +4,13 @@ This is a full-stack web application for Alashore Marine Exports Pvt. Ltd., a se
 
 # Recent Changes
 
+**October 3, 2025**
+- **Removed AI-powered SEO analysis feature**:
+  - Eliminated unreliable Open Router AI integration due to free tier rate limits and response parsing issues
+  - Cleaned up backend endpoint and frontend UI components
+  - Maintained core SEO settings functionality with modern tag-based keyword interface
+  - Website settings now focus on manual SEO configuration without AI analysis
+
 **September 3, 2025**
 - **Implemented complete email notification system for inquiries**:
   - Gmail SMTP integration using Gmail App Password for secure authentication
