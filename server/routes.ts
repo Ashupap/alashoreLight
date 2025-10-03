@@ -1219,7 +1219,7 @@ Format your response as JSON with this structure:
 }`;
 
       const completion = await openrouter.chat.completions.create({
-        model: "deepseek/deepseek-r1:free",
+        model: "meta-llama/llama-3.2-3b-instruct:free",
         messages: [{ role: "user", content: prompt }],
       });
 
