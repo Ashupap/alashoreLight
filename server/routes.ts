@@ -18,6 +18,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { ObjectStorageService } from "./objectStorage";
+import OpenAI from "openai";
 
 // Initialize default website settings on startup
 async function initializeDefaultSettings() {
@@ -1179,6 +1180,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting website setting:", error);
       res.status(500).json({ message: "Failed to delete website setting" });
+    }
+  });
+
+  // SEO Analysis using Open Router AI
+  app.post('/api/seo/analyze', requireAuth, async (req, res) => {
+    try {
+      const { metaTitle, metaDescription, keywords } = req.body;
+
+      if (!process.env.OPENROUTER_API_KEY) {
+        return res.status(500).json({ 
+          message: "Open Router API key not configured" 
+        });
+      }
+
+      const openrouter = new OpenAI({
+        baseURL: "https://openrouter.ai/api/v1",
+        apiKey: process.env.OPENROUTER_API_KEY,
+      });
+
+      const prompt = `You are an SEO expert. Analyze the following SEO settings and provide a detailed assessment:
+
+Meta Title: "${metaTitle}"
+Meta Description: "${metaDescription}"
+Keywords: "${keywords}"
+
+Please provide:
+1. An overall SEO score (0-100)
+2. Specific issues found (if any)
+3. Actionable recommendations to improve SEO
+
+Format your response as JSON with this structure:
+{
+  "score": number (0-100),
+  "analysis": "brief overall assessment",
+  "issues": ["issue 1", "issue 2", ...],
+  "recommendations": ["recommendation 1", "recommendation 2", ...]
+}`;
+
+      const completion = await openrouter.chat.completions.create({
+        model: "google/gemini-2.0-flash-exp:free",
+        messages: [{ role: "user", content: prompt }],
+      });
+
+      const responseText = completion.choices[0]?.message?.content || "";
+      
+      // Parse JSON response
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("Could not parse AI response");
+      }
+
+      const analysis = JSON.parse(jsonMatch[0]);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error analyzing SEO:", error);
+      res.status(500).json({ 
+        message: "Failed to analyze SEO",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
