@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,17 +49,26 @@ export default function WebsiteSettingsManager() {
   });
 
   // Update form when settings are loaded
-  useState(() => {
-    if (settings) {
-      const formData: Partial<SettingsFormValues> = {};
+  useEffect(() => {
+    if (settings && settings.length > 0) {
+      const formData: Partial<SettingsFormValues> = {
+        facebook: "",
+        instagram: "",
+        twitter: "",
+        linkedin: "",
+        email: "",
+        phone: "",
+      };
+      
       settings.forEach((setting) => {
-        if (setting.key in form.getValues()) {
+        if (setting.key in formData) {
           formData[setting.key as keyof SettingsFormValues] = setting.value || "";
         }
       });
+      
       form.reset(formData);
     }
-  });
+  }, [settings, form]);
 
   const updateSettingMutation = useMutation({
     mutationFn: async ({ key, value }: { key: string; value: string }) => {
