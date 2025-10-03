@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Menu, X, Shield, Mail, Phone, Building2, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Menu, X, Mail, Phone, Building2, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 import { PerformanceImage } from "@/components/ui/performance-image";
 import { useWebsiteSettings } from "@/hooks/use-website-settings";
 import logoImage from "@assets/Asset 3_1_1756973310181.png";
@@ -528,14 +528,6 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
 
           {/* CTA Buttons */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <Link
-              href="/meadmin"
-              className={`hidden xl:flex items-center text-sm ${isScrolled ? 'text-gray-600' : 'text-white/90 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'} hover:text-coral-accent transition-all duration-300`}
-              data-testid="link-admin"
-            >
-              <Shield size={16} className="mr-1" />
-              Admin
-            </Link>
             <motion.button
               onClick={onEnquiryClick ? onEnquiryClick : () => scrollToSection("/#contact")}
               className="relative bg-ocean-blue text-white px-3 py-1.5 sm:px-6 sm:py-2 text-sm rounded-lg hover:bg-deep-navy transition-all duration-300 overflow-hidden"
