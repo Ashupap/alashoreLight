@@ -19,6 +19,36 @@ import path from "path";
 import fs from "fs";
 import { ObjectStorageService } from "./objectStorage";
 
+// Initialize default website settings on startup
+async function initializeDefaultSettings() {
+  try {
+    console.log("🔧 Initializing default website settings...");
+    
+    const defaultSettings = [
+      { key: "facebook", value: "https://www.facebook.com/AlashoreMarine/", category: "contact", description: "Facebook page URL" },
+      { key: "instagram", value: "https://www.instagram.com/alashoremarine/", category: "contact", description: "Instagram profile URL" },
+      { key: "twitter", value: "https://twitter.com/AlashoreL", category: "contact", description: "Twitter profile URL" },
+      { key: "linkedin", value: "https://www.linkedin.com/company/alashore-marine-private-limited/", category: "contact", description: "LinkedIn company page URL" },
+      { key: "email", value: "alashoremarine@gmail.com", category: "contact", description: "Primary contact email" },
+      { key: "phone", value: "+91 7381050536", category: "contact", description: "Primary contact phone number" },
+    ];
+
+    const existingSettings = await storage.getWebsiteSettings();
+    
+    for (const setting of defaultSettings) {
+      const exists = existingSettings?.find(s => s.key === setting.key);
+      if (!exists) {
+        await storage.createWebsiteSetting(setting);
+        console.log(`✅ Created default setting: ${setting.key}`);
+      }
+    }
+    
+    console.log("✅ Default settings initialized");
+  } catch (error) {
+    console.error("❌ Error initializing default settings:", error);
+  }
+}
+
 // Auto-fix broken image URLs during startup
 async function fixBrokenImageUrls() {
   try {
@@ -73,6 +103,9 @@ async function fixBrokenImageUrls() {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize default settings on startup
+  await initializeDefaultSettings();
+  
   // Fix broken image URLs on startup
   await fixBrokenImageUrls();
   

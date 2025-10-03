@@ -7,6 +7,7 @@ import { MapPin, Mail, Phone, Building, Facebook, Instagram, Twitter, Linkedin }
 import { insertInquirySchema, type InsertInquirySchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useWebsiteSettings } from "@/hooks/use-website-settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 
 export default function Contact() {
   const { toast } = useToast();
+  const { settings } = useWebsiteSettings();
 
   const form = useForm<InsertInquirySchema>({
     resolver: zodResolver(insertInquirySchema),
@@ -60,14 +62,14 @@ export default function Contact() {
     {
       icon: Mail,
       title: "Email",
-      content: "alashoremarine@gmail.com",
-      href: "mailto:alashoremarine@gmail.com",
+      content: settings.email,
+      href: `mailto:${settings.email}`,
     },
     {
       icon: Phone,
       title: "Phone",
-      content: "+91 7381050536",
-      href: "tel:+917381050536",
+      content: settings.phone,
+      href: `tel:${settings.phone.replace(/\s/g, '')}`,
     },
     {
       icon: Building,
@@ -77,10 +79,10 @@ export default function Contact() {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: "https://www.facebook.com/AlashoreMarine/", name: "Facebook" },
-    { icon: Instagram, href: "https://www.instagram.com/alashoremarine/", name: "Instagram" },
-    { icon: Twitter, href: "https://twitter.com/AlashoreL", name: "Twitter" },
-    { icon: Linkedin, href: "https://www.linkedin.com/company/alashore-marine-private-limited/", name: "LinkedIn" },
+    { icon: Facebook, href: settings.facebook, name: "Facebook" },
+    { icon: Instagram, href: settings.instagram, name: "Instagram" },
+    { icon: Twitter, href: settings.twitter, name: "Twitter" },
+    { icon: Linkedin, href: settings.linkedin, name: "LinkedIn" },
   ];
 
   return (
@@ -141,7 +143,7 @@ export default function Contact() {
             <div className="mt-8">
               <h4 className="font-semibold text-gray-900 mb-4">Follow Us</h4>
               <div className="flex space-x-4">
-                {socialLinks.map((social) => (
+                {socialLinks.filter(social => social.href).map((social) => (
                   <motion.a
                     key={social.name}
                     href={social.href}
