@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, KeyboardEvent } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +6,7 @@ import { z } from "zod";
 import { motion } from "framer-motion";
 import { 
   Facebook, Instagram, Twitter, Linkedin, Mail, Phone, Save, RefreshCw,
-  Building2, Globe, BarChart3, Settings2
+  Building2, Globe, BarChart3, Settings2, X, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -535,18 +535,87 @@ function SeoDialog({ open, onClose, settings, onSave, isSaving, getSettingValue 
             <FormField
               control={form.control}
               name="keywords"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>SEO Keywords</FormLabel>
-                  <FormControl>
-                    <Input {...field} data-testid="input-keywords" />
-                  </FormControl>
-                  <FormDescription>
-                    Comma-separated keywords relevant to your business
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const [inputValue, setInputValue] = useState("");
+                const keywords = field.value ? field.value.split(',').map(k => k.trim()).filter(k => k) : [];
+
+                const addKeyword = (keyword: string) => {
+                  const trimmed = keyword.trim();
+                  if (trimmed && !keywords.includes(trimmed)) {
+                    const newKeywords = [...keywords, trimmed];
+                    field.onChange(newKeywords.join(', '));
+                    setInputValue("");
+                  }
+                };
+
+                const removeKeyword = (keywordToRemove: string) => {
+                  const newKeywords = keywords.filter(k => k !== keywordToRemove);
+                  field.onChange(newKeywords.join(', '));
+                };
+
+                const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addKeyword(inputValue);
+                  }
+                };
+
+                return (
+                  <FormItem>
+                    <FormLabel>SEO Keywords</FormLabel>
+                    <FormControl>
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap gap-2 min-h-[40px] p-3 border border-input rounded-md bg-background">
+                          {keywords.length === 0 ? (
+                            <span className="text-muted-foreground text-sm">No keywords added yet</span>
+                          ) : (
+                            keywords.map((keyword, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center gap-1 px-3 py-1 bg-ocean-blue/10 text-ocean-blue rounded-full text-sm font-medium border border-ocean-blue/20 hover:bg-ocean-blue/20 transition-colors"
+                                data-testid={`keyword-tag-${index}`}
+                              >
+                                {keyword}
+                                <button
+                                  type="button"
+                                  onClick={() => removeKeyword(keyword)}
+                                  className="ml-1 hover:bg-ocean-blue/30 rounded-full p-0.5 transition-colors"
+                                  data-testid={`button-remove-keyword-${index}`}
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </span>
+                            ))
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Type keyword and press Enter or comma to add"
+                            data-testid="input-keyword-add"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => addKeyword(inputValue)}
+                            className="shrink-0"
+                            data-testid="button-add-keyword"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Add keywords relevant to your business. Press Enter or comma to add.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             <div className="flex justify-end gap-3 pt-4">
