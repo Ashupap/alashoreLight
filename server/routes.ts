@@ -25,12 +25,28 @@ async function initializeDefaultSettings() {
     console.log("🔧 Initializing default website settings...");
     
     const defaultSettings = [
+      // Contact & Social Media Settings
       { key: "facebook", value: "https://www.facebook.com/AlashoreMarine/", category: "contact", description: "Facebook page URL" },
       { key: "instagram", value: "https://www.instagram.com/alashoremarine/", category: "contact", description: "Instagram profile URL" },
       { key: "twitter", value: "https://twitter.com/AlashoreL", category: "contact", description: "Twitter profile URL" },
       { key: "linkedin", value: "https://www.linkedin.com/company/alashore-marine-private-limited/", category: "contact", description: "LinkedIn company page URL" },
       { key: "email", value: "alashoremarine@gmail.com", category: "contact", description: "Primary contact email" },
-      { key: "phone", value: "+91 7381050536", category: "contact", description: "Primary contact phone number" },
+      { key: "phone", value: "+91 7381050540", category: "contact", description: "Primary contact phone number" },
+      
+      // General/Site Information Settings
+      { key: "companyName", value: "Alashore Marine Exports Pvt. Ltd.", category: "general", description: "Company name" },
+      { key: "tagline", value: "Premium Seafood Exports Worldwide", category: "general", description: "Company tagline" },
+      { key: "description", value: "Leading exporter of high-quality seafood products from India to global markets. We specialize in sustainable fishing practices and maintain the highest quality standards.", category: "general", description: "Company description" },
+      { key: "address", value: "Chennai, Tamil Nadu, India", category: "general", description: "Company address" },
+      
+      // SEO Settings
+      { key: "metaTitle", value: "Alashore Marine - Premium Seafood Exports from India", category: "seo", description: "Website meta title" },
+      { key: "metaDescription", value: "Leading exporter of high-quality seafood products worldwide. Sustainable fishing practices and premium quality guaranteed. Export services from India to global markets.", category: "seo", description: "Website meta description" },
+      { key: "keywords", value: "seafood export, marine products, fish export, sustainable fishing, seafood exporter India, premium seafood", category: "seo", description: "SEO keywords" },
+      
+      // Analytics Settings
+      { key: "googleAnalyticsId", value: "", category: "analytics", description: "Google Analytics tracking ID" },
+      { key: "facebookPixelId", value: "", category: "analytics", description: "Facebook Pixel ID" },
     ];
 
     const existingSettings = await storage.getWebsiteSettings();
