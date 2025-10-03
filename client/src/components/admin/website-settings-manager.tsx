@@ -498,10 +498,11 @@ function SeoDialog({ open, onClose, settings, onSave, isSaving, getSettingValue 
     try {
       const values = form.getValues();
       const response = await apiRequest("POST", '/api/seo/analyze', values);
-      setSeoAnalysis(response as any);
+      const data = await response.json();
+      setSeoAnalysis(data);
       toast({
         title: "SEO Analysis Complete",
-        description: `Your SEO score is ${(response as any).score}/100`,
+        description: `Your SEO score is ${data.score}/100`,
       });
     } catch (error) {
       console.error('SEO analysis error:', error);
