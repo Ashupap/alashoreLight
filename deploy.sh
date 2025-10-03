@@ -176,6 +176,9 @@ if [ ! -z "$DATABASE_URL" ]; then
     }
 fi
 
+# Note: Website settings (social media links, contact info) will be automatically
+# initialized on server startup if they don't exist. Existing settings are preserved.
+
 # Use safe SQL migration instead of drizzle-kit for production
 print_status "Applying safe schema migration for featured_image column..."
 if [ ! -z "$DATABASE_URL" ]; then
