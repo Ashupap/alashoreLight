@@ -4,6 +4,21 @@ This is a full-stack web application for Alashore Marine Exports Pvt. Ltd., a se
 
 # Recent Changes
 
+**October 6, 2025**
+- **Redesigned all contact forms with modern styling**:
+  - Updated Input and Textarea components with cleaner, more professional appearance
+  - Implemented greyed-out placeholder text (gray-400) for better UX
+  - Enhanced form containers with white backgrounds, rounded corners, and subtle shadows
+  - Added smooth hover and focus states with ocean-blue accent colors
+  - Modernized buttons with better padding, shadows, and transition effects
+  - Increased input heights to 48px for better touch targets and visual balance
+  - Applied modern design across homepage contact section, dedicated contact page, and modal forms
+- **Enhanced header navigation with active page indicators**:
+  - Added animated underline for active pages in desktop navigation
+  - Implemented coral-accent color highlighting for current page
+  - Added smooth spring animations for page transitions
+  - Mobile navigation also shows active page with underline indicator
+
 **October 3, 2025**
 - **Removed AI-powered SEO analysis feature**:
   - Eliminated unreliable Open Router AI integration due to free tier rate limits and response parsing issues

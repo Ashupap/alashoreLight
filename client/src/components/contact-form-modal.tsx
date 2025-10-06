@@ -141,7 +141,7 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
               </div>
 
               {/* Form Content */}
-              <div className="p-6">
+              <div className="p-8">
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
@@ -292,7 +292,7 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
                         type="button"
                         variant="outline"
                         onClick={onClose}
-                        className="flex-1"
+                        className="flex-1 h-12 rounded-lg border-2 font-semibold hover:bg-gray-50"
                         data-testid="button-modal-cancel"
                       >
                         Cancel
@@ -300,7 +300,7 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
                       <Button
                         type="submit"
                         disabled={createInquiry.isPending}
-                        className="flex-1 bg-ocean-blue hover:bg-deep-navy"
+                        className="flex-1 bg-ocean-blue hover:bg-deep-navy text-white font-semibold h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                         data-testid="button-modal-send-message"
                       >
                         {createInquiry.isPending ? (

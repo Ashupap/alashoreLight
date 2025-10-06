@@ -320,9 +320,9 @@ export default function Contact() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true }}
-                className="bg-light-marine p-8 rounded-xl shadow-lg"
+                className="bg-white p-10 rounded-2xl shadow-xl border border-gray-100"
               >
-                <h3 className="text-2xl font-heading font-semibold text-gray-900 mb-6">
+                <h3 className="text-3xl font-heading font-bold text-gray-900 mb-8">
                   Send us a Message
                 </h3>
 
@@ -473,7 +473,7 @@ export default function Contact() {
                     <Button
                       type="submit"
                       disabled={createInquiry.isPending}
-                      className="w-full bg-ocean-blue hover:bg-deep-navy"
+                      className="w-full bg-ocean-blue hover:bg-deep-navy text-white font-semibold h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                       data-testid="button-send-message"
                     >
                       {createInquiry.isPending ? (
