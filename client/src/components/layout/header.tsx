@@ -483,7 +483,7 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
                 <PerformanceImage
                   src={logoImage}
                   alt="Alashore Marine Exports"
-                  className="h-12 sm:h-14 lg:h-16 w-auto object-contain"
+                  className="h-16 sm:h-18 lg:h-20 w-auto object-contain"
                   data-testid="header-logo"
                   priority={true}
                   loading="eager"
