@@ -465,13 +465,13 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
               <motion.div
                 className={`relative z-10 transition-all duration-500 overflow-visible ${
                   isScrolled 
-                    ? 'filter brightness-110 contrast-125 drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]' 
+                    ? 'filter brightness-75 contrast-150 drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]' 
                     : 'filter brightness-125 contrast-150 saturate-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]'
                 }`}
                 style={{ minWidth: 'fit-content', minHeight: 'fit-content', overflow: 'visible', width: 'auto', maxWidth: 'none', flexShrink: 0 }}
                 animate={{
                   filter: isScrolled 
-                    ? ["brightness(1.1) contrast(1.25)", "brightness(1.15) contrast(1.3)", "brightness(1.1) contrast(1.25)"]
+                    ? ["brightness(0.75) contrast(1.5)", "brightness(0.8) contrast(1.55)", "brightness(0.75) contrast(1.5)"]
                     : ["brightness(1.25) contrast(1.5) saturate(1.1)", "brightness(1.3) contrast(1.55) saturate(1.15)", "brightness(1.25) contrast(1.5) saturate(1.1)"]
                 }}
                 transition={{
