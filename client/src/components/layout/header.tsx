@@ -503,27 +503,49 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-4 xl:space-x-8">
-            {navigation.map((item) => (
-              <div key={item.name}>
-                {item.href.startsWith("/#") ? (
-                  <button
-                    onClick={() => handleNavigation(item.href)}
-                    className={`${isScrolled ? 'text-gray-700' : 'text-white font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'} hover:text-coral-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(255,107,107,0.4)]`}
-                    data-testid={`button-nav-${item.name.toLowerCase()}`}
-                  >
-                    {item.name}
-                  </button>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className={`${isScrolled ? 'text-gray-700' : 'text-white font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'} hover:text-coral-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(255,107,107,0.4)]`}
-                    data-testid={`link-nav-${item.name.toLowerCase()}`}
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </div>
-            ))}
+            {navigation.map((item) => {
+              const isActive = item.href === "/" ? location === "/" : location === item.href || location.startsWith(item.href + "/");
+              
+              return (
+                <div key={item.name} className="relative">
+                  {item.href.startsWith("/#") ? (
+                    <button
+                      onClick={() => handleNavigation(item.href)}
+                      className={`relative ${
+                        isScrolled ? 'text-gray-700' : 'text-white font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'
+                      } hover:text-coral-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(255,107,107,0.4)] pb-1`}
+                      data-testid={`button-nav-${item.name.toLowerCase()}`}
+                    >
+                      {item.name}
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`relative ${
+                        isActive 
+                          ? 'text-coral-accent font-bold' 
+                          : isScrolled ? 'text-gray-700' : 'text-white font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'
+                      } hover:text-coral-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(255,107,107,0.4)] pb-1`}
+                      data-testid={`link-nav-${item.name.toLowerCase()}`}
+                    >
+                      {item.name}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeNavIndicator"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-coral-accent rounded-full"
+                          initial={false}
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30
+                          }}
+                        />
+                      )}
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
           </nav>
 
           {/* CTA Buttons */}
@@ -572,28 +594,39 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
             className="lg:hidden bg-white border-t"
           >
             <div className="container mx-auto px-4 py-4 space-y-4">
-              {navigation.map((item) => (
-                <div key={item.name}>
-                  {item.href.startsWith("/#") ? (
-                    <button
-                      onClick={() => handleNavigation(item.href)}
-                      className="block text-gray-700 hover:text-coral-accent transition-colors"
-                      data-testid={`button-mobile-nav-${item.name.toLowerCase()}`}
-                    >
-                      {item.name}
-                    </button>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="block text-gray-700 hover:text-coral-accent transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                      data-testid={`link-mobile-nav-${item.name.toLowerCase()}`}
-                    >
-                      {item.name}
-                    </Link>
-                  )}
-                </div>
-              ))}
+              {navigation.map((item) => {
+                const isActive = item.href === "/" ? location === "/" : location === item.href || location.startsWith(item.href + "/");
+                
+                return (
+                  <div key={item.name} className="relative">
+                    {item.href.startsWith("/#") ? (
+                      <button
+                        onClick={() => handleNavigation(item.href)}
+                        className="block text-gray-700 hover:text-coral-accent transition-colors"
+                        data-testid={`button-mobile-nav-${item.name.toLowerCase()}`}
+                      >
+                        {item.name}
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={`block ${
+                          isActive 
+                            ? 'text-coral-accent font-bold' 
+                            : 'text-gray-700'
+                        } hover:text-coral-accent transition-colors relative pb-1`}
+                        onClick={() => setIsMenuOpen(false)}
+                        data-testid={`link-mobile-nav-${item.name.toLowerCase()}`}
+                      >
+                        {item.name}
+                        {isActive && (
+                          <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-coral-accent rounded-full" />
+                        )}
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         )}
