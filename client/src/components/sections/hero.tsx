@@ -68,7 +68,7 @@ const Hero = memo(function Hero() {
       ref={containerRef}
       // Use min-h-screen to ensure content fits, especially on mobile.
       // Use flexbox for vertical centering, which is more reliable than absolute positioning.
-      className="relative min-h-[calc(100vh-4rem)] md:min-h-screen flex flex-col justify-center overflow-hidden py-8 md:py-12 lg:py-0"
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden py-12 md:py-16 lg:py-0"
     >
       {/* Background Video with Parallax */}
       <motion.div
@@ -300,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-[min(65vh,520px)] sm:h-[min(60vh,560px)] lg:h-[560px] flex items-center justify-center hero-image-container mx-auto overflow-hidden rounded-3xl">
+          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] flex items-center justify-center hero-image-container mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -329,14 +329,14 @@ const Hero = memo(function Hero() {
                 }}
               >
                 {/* Static Container - No Ken Burns scaling */}
-                <div className="w-full h-full flex items-center justify-center">
+                <div className="w-full flex items-center justify-center">
                   <PerformanceImage
                     src={seafoodImages[currentIndex].src}
                     alt={seafoodImages[currentIndex].alt}
-                    className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
+                    className={`w-full h-auto max-h-[50vh] object-contain filter brightness-110 contrast-105 ${
                       currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
-                    sizes="(max-width: 640px) 320px, (max-width: 768px) 384px, (max-width: 1024px) 448px, (max-width: 1280px) 512px, 576px"
+                    sizes="(max-width: 640px) 200px, (max-width: 768px) 280px, (max-width: 1024px) 350px, (max-width: 1280px) 450px, 550px"
                     priority={true}
                     placeholder="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYzJhM2E7c3RvcC1vcGFjaXR5OjAuMSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxNDRlNGE7c3RvcC1vcGFjaXR5OjAuMSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNncmFkKSIvPjwvc3ZnPg=="
                     style={{
