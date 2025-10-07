@@ -168,7 +168,7 @@ const Hero = memo(function Hero() {
       <motion.div
         style={{ y }}
         // Use a grid with dynamic ordering to handle mobile vs desktop layout
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-0 items-center justify-center h-full max-w-full overflow-visible"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 max-w-full"
       >
         {/* Enhanced Text and Buttons */}
         <motion.div
