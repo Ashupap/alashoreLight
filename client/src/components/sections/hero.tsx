@@ -10,9 +10,9 @@ import { useState, useEffect, useRef, memo } from "react";
 import { Link } from "wouter";
 import { PerformanceImage } from "@/components/ui/performance-image";
 import factoryVideo from "@assets/Alashore-Marine-Factory_1755929476699.mp4";
+import productImage from "@assets/product_1759826413192.png";
 import shrimpImage from "@assets/shrimp-optimized.webp";
 import iqfImage from "@assets/IQF_1759820332061.png";
-import rtcImage from "@assets/RTC_1759820339215.png";
 
 const Hero = memo(function Hero() {
   const containerRef = useRef(null);
@@ -27,11 +27,15 @@ const Hero = memo(function Hero() {
   const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
   const y = useSpring(parallaxY, springConfig);
 
-  const [currentText, setCurrentText] = useState(0);
-  const [currentImage, setCurrentImage] = useState(0);
-  const seafoodTypes = ["Seafood", "Vannamei", "IQF Shrimp", "RTC Shrimp"];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const seafoodTypes = ["Seafood", "Vannamei", "IQF Shrimp"];
 
   const seafoodImages = [
+    {
+      src: productImage,
+      alt: "Premium Cooked Shrimp",
+      title: "Seafood",
+    },
     {
       src: shrimpImage,
       alt: "Premium Vannamei Shrimp",
@@ -42,28 +46,15 @@ const Hero = memo(function Hero() {
       alt: "IQF Frozen Shrimp",
       title: "IQF Shrimp",
     },
-    {
-      src: rtcImage,
-      alt: "Ready To Cook Breaded Shrimp",
-      title: "RTC Shrimp",
-    },
   ];
 
   useEffect(() => {
-    const textInterval = setInterval(() => {
-      setCurrentText((prev) => (prev + 1) % seafoodTypes.length);
-    }, 2500);
-
-    return () => clearInterval(textInterval);
-  }, [seafoodTypes.length]);
-
-  useEffect(() => {
-    const imageInterval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % seafoodImages.length);
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % seafoodTypes.length);
     }, 4000);
 
-    return () => clearInterval(imageInterval);
-  }, [seafoodImages.length]);
+    return () => clearInterval(interval);
+  }, [seafoodTypes.length]);
 
   const scrollToAbout = () => {
     const element = document.querySelector("#about");
@@ -203,7 +194,7 @@ const Hero = memo(function Hero() {
           >
             Premium{" "}
             <motion.span
-              key={currentText}
+              key={currentIndex}
               initial={{ opacity: 0, y: 30, rotateX: -90 }}
               animate={{ opacity: 1, y: 0, rotateX: 0 }}
               exit={{ opacity: 0, y: -30, rotateX: 90 }}
@@ -211,7 +202,7 @@ const Hero = memo(function Hero() {
               className="text-coral-accent inline-block relative"
             >
               <AnimatePresence mode="wait">
-                <span key={currentText}>{seafoodTypes[currentText]}</span>
+                <span key={currentIndex}>{seafoodTypes[currentIndex]}</span>
               </AnimatePresence>
               <motion.div
                 initial={{ scaleX: 0 }}
@@ -312,7 +303,7 @@ const Hero = memo(function Hero() {
           <div className="relative w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[140px] md:h-[140px] lg:w-[350px] lg:h-[350px] xl:w-[450px] xl:h-[450px] hero-image-container overflow-hidden mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
-                key={currentImage}
+                key={currentIndex}
                 initial={{
                   x: 300,
                   opacity: 0,
@@ -321,7 +312,7 @@ const Hero = memo(function Hero() {
                 animate={{
                   x: 0,
                   opacity: 1,
-                  scale: 1,
+                  scale: currentIndex === 0 ? 1 : 0.9,
                 }}
                 exit={{
                   x: -300,
@@ -332,7 +323,6 @@ const Hero = memo(function Hero() {
                   duration: 0.8,
                   ease: "easeInOut",
                 }}
-                // Ensures the motion.div takes up full space
                 className="absolute inset-0"
                 style={{
                   zIndex: 25,
@@ -341,12 +331,10 @@ const Hero = memo(function Hero() {
                 {/* Static Container - No Ken Burns scaling */}
                 <div className="w-full h-full flex items-center justify-center p-2">
                   <PerformanceImage
-                    src={seafoodImages[currentImage].src}
-                    alt={seafoodImages[currentImage].alt}
-                    // Use object-contain to prevent the image from being cropped or distorted
-                    // Ensure the image scales down correctly within its parent container
+                    src={seafoodImages[currentIndex].src}
+                    alt={seafoodImages[currentIndex].alt}
                     className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
-                      currentImage === 1 ? "mix-blend-multiply" : ""
+                      currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
                     sizes="(max-width: 384px) 80px, (max-width: 640px) 100px, (max-width: 768px) 140px, (max-width: 1024px) 350px, 450px"
                     width={512}
@@ -365,7 +353,7 @@ const Hero = memo(function Hero() {
 
             {/* Custom Floating Shadow Component */}
             <motion.div
-              key={`shadow-${currentImage}`}
+              key={`shadow-${currentIndex}`}
               animate={{
                 scale: [0.7, 0.9, 0.8],
                 opacity: [0.3, 0.6, 0.4],
