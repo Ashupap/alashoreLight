@@ -68,7 +68,7 @@ const Hero = memo(function Hero() {
       ref={containerRef}
       // Use min-h-screen to ensure content fits, especially on mobile.
       // Use flexbox for vertical centering, which is more reliable than absolute positioning.
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden py-4 sm:py-8 lg:py-0"
+      className="relative min-h-[calc(100vh-4rem)] md:min-h-screen flex flex-col justify-center overflow-hidden py-8 md:py-12 lg:py-0"
     >
       {/* Background Video with Parallax */}
       <motion.div
@@ -165,14 +165,14 @@ const Hero = memo(function Hero() {
       <motion.div
         style={{ y }}
         // Use a grid with dynamic ordering to handle mobile vs desktop layout
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-0 items-center justify-center h-full max-w-full"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-0 items-center justify-center h-full max-w-full"
       >
         {/* Enhanced Text and Buttons */}
         <motion.div
           initial={{ opacity: 0, x: -80, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="text-white space-y-2 sm:space-y-4 lg:space-y-8 lg:col-span-1 order-2 lg:order-1 text-center lg:text-left"
+          className="text-white space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 lg:col-span-1 order-2 lg:order-1 text-center lg:text-left"
         >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -243,7 +243,7 @@ const Hero = memo(function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.5 }}
-            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
           >
             <Link href="/contact#contact-form">
               <motion.button
@@ -252,7 +252,7 @@ const Hero = memo(function Hero() {
                   boxShadow: "0 25px 50px rgba(255, 107, 107, 0.3)",
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative bg-gradient-to-r from-coral-accent to-golden-orange hover:from-golden-orange hover:to-coral-accent text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl font-bold transition-all duration-500 shadow-2xl overflow-hidden group w-full sm:w-auto"
+                className="relative bg-gradient-to-r from-coral-accent to-golden-orange hover:from-golden-orange hover:to-coral-accent text-white px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-2xl text-base sm:text-lg font-bold transition-all duration-500 shadow-2xl overflow-hidden group w-full sm:w-auto"
                 data-testid="button-hero-get-in-touch"
               >
                 <motion.div
@@ -272,7 +272,7 @@ const Hero = memo(function Hero() {
                   borderColor: "rgba(255, 107, 107, 1)",
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative border-2 border-white/70 text-white backdrop-blur-md px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl font-bold transition-all duration-500 hover:text-coral-accent group overflow-hidden w-full sm:w-auto"
+                className="relative border-2 border-white/70 text-white backdrop-blur-md px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-2xl text-base sm:text-lg font-bold transition-all duration-500 hover:text-coral-accent group overflow-hidden w-full sm:w-auto"
                 data-testid="button-hero-view-products"
               >
                 <motion.div
@@ -300,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl aspect-square hero-image-container overflow-hidden mx-auto">
+          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl max-h-[45vh] sm:max-h-[55vh] lg:max-h-[480px] aspect-[4/5] sm:aspect-square hero-image-container overflow-hidden mx-auto rounded-3xl shadow-xl">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -329,7 +329,7 @@ const Hero = memo(function Hero() {
                 }}
               >
                 {/* Static Container - No Ken Burns scaling */}
-                <div className="w-full h-full flex items-center justify-center p-2">
+                <div className="w-full h-full flex items-center justify-center">
                   <PerformanceImage
                     src={seafoodImages[currentIndex].src}
                     alt={seafoodImages[currentIndex].alt}
