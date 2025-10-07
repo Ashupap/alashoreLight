@@ -22,7 +22,7 @@ import sustainabilityBg from "@assets/generated_images/Sustainable_aquaculture_o
 import processingFacilityImg from "@assets/generated_images/Seafood_processing_facility_interior_25ca1780.png";
 import transportFleetImg from "@assets/generated_images/Refrigerated_seafood_transport_fleet_da6483c0.png";
 import compressionSystemImg from "@assets/generated_images/Industrial_compression_systems_facility_06113571.png";
-import plantFacilityImg from "@assets/4-1 (1)_1756901765521.png";
+import plantFacilityImg from "@assets/plant-facility_1756901765521.png";
 import qualityLabImg from "@assets/qa_1759821463123.png";
 import productionCapacityImg from "@assets/production1_1759821485619.png";
 import aquacultureFarmImg from "@assets/farm1_1759821524383.jpg";
