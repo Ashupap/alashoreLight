@@ -20,12 +20,12 @@ import ContactFormModal from "@/components/contact-form-modal";
 import { useRef, useState } from "react";
 import sustainabilityBg from "@assets/generated_images/Sustainable_aquaculture_ocean_background_50127a79.png";
 import processingFacilityImg from "@assets/generated_images/Seafood_processing_facility_interior_25ca1780.png";
-import aquacultureFarmImg from "@assets/generated_images/Sustainable_aquaculture_fish_farm_ab1886b9.png";
 import transportFleetImg from "@assets/generated_images/Refrigerated_seafood_transport_fleet_da6483c0.png";
-import plantFacilityImg from "@assets/generated_images/Industrial_processing_plant_facility_e8f45426.png";
 import compressionSystemImg from "@assets/generated_images/Industrial_compression_systems_facility_06113571.png";
-import qualityLabImg from "@assets/generated_images/Quality_control_laboratory_testing_92093505.png";
-import productionCapacityImg from "@assets/generated_images/High_capacity_production_facility_b87ef9ff.png";
+import plantFacilityImg from "@assets/4-1 (1)_1756901765521.png";
+import qualityLabImg from "@assets/qa_1759821463123.png";
+import productionCapacityImg from "@assets/production1_1759821485619.png";
+import aquacultureFarmImg from "@assets/farm1_1759821524383.jpg";
 // Customer Logo Imports
 import azureLogo from "@assets/AZURE_1755944927383.png";
 import costarLogo from "@assets/Costar_1755944927383.png";
