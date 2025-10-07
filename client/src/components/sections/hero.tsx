@@ -300,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[400px] xl:max-w-[500px] aspect-square hero-image-container overflow-hidden mx-auto">
+          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl aspect-square hero-image-container overflow-hidden mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -336,9 +336,7 @@ const Hero = memo(function Hero() {
                     className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
                       currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
-                    sizes="(max-width: 640px) 200px, (max-width: 768px) 250px, (max-width: 1024px) 300px, (max-width: 1280px) 400px, 500px"
-                    width={512}
-                    height={512}
+                    sizes="(max-width: 640px) 320px, (max-width: 768px) 384px, (max-width: 1024px) 448px, (max-width: 1280px) 512px, 576px"
                     priority={true}
                     placeholder="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYzJhM2E7c3RvcC1vcGFjaXR5OjAuMSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxNDRlNGE7c3RvcC1vcGFjaXR5OjAuMSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNncmFkKSIvPjwvc3ZnPg=="
                     style={{
