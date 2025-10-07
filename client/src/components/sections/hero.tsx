@@ -299,8 +299,8 @@ const Hero = memo(function Hero() {
           className="relative lg:col-span-1 order-1 lg:order-2 w-full flex items-center justify-center lg:block"
           style={{ zIndex: 20 }}
         >
-          {/* Responsive Container with Strict Mobile Constraints */}
-          <div className="relative w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[140px] md:h-[140px] lg:w-[350px] lg:h-[350px] xl:w-[450px] xl:h-[450px] hero-image-container overflow-hidden mx-auto">
+          {/* Responsive Container with Flexible Sizing */}
+          <div className="relative w-full max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[400px] xl:max-w-[500px] aspect-square hero-image-container overflow-hidden mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -336,7 +336,7 @@ const Hero = memo(function Hero() {
                     className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
                       currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
-                    sizes="(max-width: 384px) 80px, (max-width: 640px) 100px, (max-width: 768px) 140px, (max-width: 1024px) 350px, 450px"
+                    sizes="(max-width: 640px) 200px, (max-width: 768px) 250px, (max-width: 1024px) 300px, (max-width: 1280px) 400px, 500px"
                     width={512}
                     height={512}
                     priority={true}

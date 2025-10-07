@@ -78,7 +78,7 @@ export const PerformanceImage = memo(function PerformanceImage({
   return (
     <div 
       ref={imgRef} 
-      className={`relative overflow-hidden ${className}`} 
+      className="relative overflow-hidden" 
       style={containerStyle}
     >
       {/* Invisible seamless loading background */}
@@ -96,7 +96,7 @@ export const PerformanceImage = memo(function PerformanceImage({
           sizes={sizes}
           width={width}
           height={height}
-          className="w-full h-full object-cover"
+          className={className || "w-full h-full object-cover"}
           style={{ 
             willChange: isLoaded ? 'auto' : 'opacity',
             transform: 'translateZ(0)',
