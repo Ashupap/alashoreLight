@@ -309,7 +309,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Strict Mobile Constraints */}
-          <div className="relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[240px] md:h-[240px] lg:w-[400px] lg:h-[400px] xl:w-[500px] xl:h-[500px] hero-image-container overflow-hidden mx-auto">
+          <div className="relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[180px] md:h-[180px] lg:w-[400px] lg:h-[400px] xl:w-[500px] xl:h-[500px] hero-image-container overflow-hidden mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentImage}
@@ -348,7 +348,7 @@ const Hero = memo(function Hero() {
                     className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
                       currentImage === 1 ? "mix-blend-multiply" : ""
                     }`}
-                    sizes="(max-width: 384px) 140px, (max-width: 640px) 180px, (max-width: 768px) 240px, (max-width: 1024px) 400px, 500px"
+                    sizes="(max-width: 384px) 100px, (max-width: 640px) 120px, (max-width: 768px) 180px, (max-width: 1024px) 400px, 500px"
                     width={512}
                     height={512}
                     priority={true}
