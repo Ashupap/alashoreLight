@@ -71,7 +71,7 @@ const Hero = memo(function Hero() {
       ref={containerRef}
       // Use min-h-screen to ensure content fits, especially on mobile.
       // Use flexbox for vertical centering, which is more reliable than absolute positioning.
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden py-12 md:py-16 lg:py-0"
+      className="relative min-h-screen flex flex-col justify-center py-12 md:py-16 lg:py-0"
     >
       {/* Background Video with Parallax */}
       <motion.div
@@ -331,20 +331,22 @@ const Hero = memo(function Hero() {
                   zIndex: 25,
                 }}
               >
-                {/* Simple image container */}
-                <img
-                  src={seafoodImages[currentIndex].src}
-                  alt={seafoodImages[currentIndex].alt}
-                  className={`w-full h-auto object-contain filter brightness-110 contrast-105 rounded-2xl ${
-                    currentIndex === 1 ? "mix-blend-multiply" : ""
-                  }`}
-                  loading="eager"
-                  style={{
-                    imageRendering: "auto",
-                    transform: "translateZ(0)",
-                    backfaceVisibility: "hidden",
-                  }}
-                />
+                {/* Image wrapper with aspect ratio to prevent clipping */}
+                <div className="w-full aspect-[4/5] flex items-center justify-center">
+                  <img
+                    src={seafoodImages[currentIndex].src}
+                    alt={seafoodImages[currentIndex].alt}
+                    className={`w-full h-full object-contain filter brightness-110 contrast-105 rounded-2xl ${
+                      currentIndex === 1 ? "mix-blend-multiply" : ""
+                    }`}
+                    loading="eager"
+                    style={{
+                      imageRendering: "auto",
+                      transform: "translateZ(0)",
+                      backfaceVisibility: "hidden",
+                    }}
+                  />
+                </div>
               </motion.div>
             </AnimatePresence>
 
