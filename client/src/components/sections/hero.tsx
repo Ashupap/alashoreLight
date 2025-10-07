@@ -300,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Strict Mobile Constraints */}
-          <div className="relative w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[140px] md:h-[140px] lg:w-[350px] lg:h-[350px] xl:w-[450px] xl:h-[450px] hero-image-container overflow-hidden mx-auto">
+          <div className="relative w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[140px] md:h-[140px] lg:w-[350px] lg:h-[350px] xl:w-[450px] xl:h-[450px] hero-image-container mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -323,25 +323,26 @@ const Hero = memo(function Hero() {
                   duration: 0.8,
                   ease: "easeInOut",
                 }}
-                // Ensures the motion.div takes up full space
                 className="absolute inset-0"
                 style={{
                   zIndex: 25,
                 }}
               >
-                {/* Static Container - No Ken Burns scaling */}
-                <div className="w-full h-full flex items-center justify-center p-2">
+                {/* Static Container with conditional sizing */}
+                <div 
+                  className="w-full h-full flex items-center justify-center p-2"
+                  style={{
+                    // Cooked shrimp: full size, Vannamei and IQF: 60% size
+                    width: currentIndex === 0 ? '100%' : '60%',
+                    height: currentIndex === 0 ? '100%' : '60%',
+                    margin: 'auto'
+                  }}
+                >
                   <PerformanceImage
                     src={seafoodImages[currentIndex].src}
                     alt={seafoodImages[currentIndex].alt}
-                    // Use object-contain to prevent the image from being cropped or distorted
-                    // Reduce size for vannamei (index 1) and IQF (index 2)
-                    className={`object-contain filter brightness-110 contrast-105 ${
-                      currentIndex === 1 ? "mix-blend-multiply w-[70%] h-[70%]" : ""
-                    } ${
-                      currentIndex === 2 ? "w-[70%] h-[70%]" : ""
-                    } ${
-                      currentIndex === 0 ? "w-full h-full" : ""
+                    className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
+                      currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
                     sizes="(max-width: 384px) 80px, (max-width: 640px) 100px, (max-width: 768px) 140px, (max-width: 1024px) 350px, 450px"
                     width={512}
@@ -355,81 +356,58 @@ const Hero = memo(function Hero() {
                     }}
                   />
                 </div>
-                
-                {/* Smoke Effect for Cooked Shrimp */}
-                {currentIndex === 0 && (
-                  <>
-                    <motion.div
-                      animate={{ 
-                        y: [0, -80, -100], 
-                        x: [0, 10, -5],
-                        opacity: [0, 0.6, 0],
-                        scale: [0.5, 1.2, 1.5]
-                      }}
-                      transition={{ 
-                        duration: 3, 
-                        repeat: Infinity, 
-                        ease: "easeOut",
-                        repeatDelay: 0.2
-                      }}
-                      className="absolute top-1/3 left-1/2 w-12 h-12 bg-white/40 rounded-full blur-xl"
-                      style={{ zIndex: 30 }}
-                    />
-                    <motion.div
-                      animate={{ 
-                        y: [0, -70, -90], 
-                        x: [0, -8, 8],
-                        opacity: [0, 0.5, 0],
-                        scale: [0.6, 1.1, 1.4]
-                      }}
-                      transition={{ 
-                        duration: 3.5, 
-                        repeat: Infinity, 
-                        ease: "easeOut",
-                        delay: 0.5,
-                        repeatDelay: 0.3
-                      }}
-                      className="absolute top-1/3 left-1/3 w-10 h-10 bg-white/30 rounded-full blur-xl"
-                      style={{ zIndex: 30 }}
-                    />
-                    <motion.div
-                      animate={{ 
-                        y: [0, -60, -85], 
-                        x: [0, 5, -10],
-                        opacity: [0, 0.4, 0],
-                        scale: [0.4, 1, 1.3]
-                      }}
-                      transition={{ 
-                        duration: 4, 
-                        repeat: Infinity, 
-                        ease: "easeOut",
-                        delay: 1,
-                        repeatDelay: 0.4
-                      }}
-                      className="absolute top-1/3 right-1/3 w-14 h-14 bg-white/35 rounded-full blur-2xl"
-                      style={{ zIndex: 30 }}
-                    />
-                    <motion.div
-                      animate={{ 
-                        y: [0, -75, -95], 
-                        x: [0, -12, 3],
-                        opacity: [0, 0.55, 0],
-                        scale: [0.5, 1.15, 1.6]
-                      }}
-                      transition={{ 
-                        duration: 3.2, 
-                        repeat: Infinity, 
-                        ease: "easeOut",
-                        delay: 1.5,
-                        repeatDelay: 0.5
-                      }}
-                      className="absolute top-1/2 left-1/2 w-16 h-16 bg-white/25 rounded-full blur-2xl"
-                      style={{ zIndex: 30 }}
-                    />
-                  </>
-                )}
               </motion.div>
             </AnimatePresence>
+
+            {/* Smoke Effect for Cooked Shrimp - Outside animation container */}
+            {currentIndex === 0 && (
+              <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 35 }}>
+                <motion.div
+                  animate={{ 
+                    y: [20, -60], 
+                    x: [0, 15, -10],
+                    opacity: [0.8, 0.4, 0],
+                    scale: [0.8, 1.5, 2]
+                  }}
+                  transition={{ 
+                    duration: 2.5, 
+                    repeat: Infinity, 
+                    ease: "easeOut"
+                  }}
+                  className="absolute top-1/4 left-1/2 -translate-x-1/2 w-20 h-20 lg:w-32 lg:h-32 bg-gradient-to-t from-white/60 to-white/20 rounded-full blur-2xl"
+                />
+                <motion.div
+                  animate={{ 
+                    y: [15, -70], 
+                    x: [0, -12, 8],
+                    opacity: [0.7, 0.3, 0],
+                    scale: [0.7, 1.4, 1.8]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeOut",
+                    delay: 0.3
+                  }}
+                  className="absolute top-1/3 left-1/3 w-16 h-16 lg:w-24 lg:h-24 bg-gradient-to-t from-white/50 to-white/10 rounded-full blur-2xl"
+                />
+                <motion.div
+                  animate={{ 
+                    y: [25, -55], 
+                    x: [0, 8, -15],
+                    opacity: [0.6, 0.35, 0],
+                    scale: [0.9, 1.3, 1.7]
+                  }}
+                  transition={{ 
+                    duration: 2.8, 
+                    repeat: Infinity, 
+                    ease: "easeOut",
+                    delay: 0.6
+                  }}
+                  className="absolute top-1/3 right-1/3 w-18 h-18 lg:w-28 lg:h-28 bg-gradient-to-t from-white/55 to-white/15 rounded-full blur-3xl"
+                />
+              </div>
+            )}
 
             {/* Custom Floating Shadow Component */}
             <motion.div
