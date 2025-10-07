@@ -168,7 +168,7 @@ const Hero = memo(function Hero() {
       <motion.div
         style={{ y }}
         // Use a grid with dynamic ordering to handle mobile vs desktop layout
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-0 items-center justify-center h-full max-w-full"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-0 items-center justify-center h-full max-w-full overflow-visible"
       >
         {/* Enhanced Text and Buttons */}
         <motion.div
@@ -299,11 +299,11 @@ const Hero = memo(function Hero() {
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
           transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
           // Center image container on small screens using flexbox and auto margins
-          className="relative lg:col-span-1 order-1 lg:order-2 w-full flex items-center justify-center lg:block"
+          className="relative lg:col-span-1 order-1 lg:order-2 w-full flex items-center justify-center lg:block overflow-visible"
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] hero-image-container mx-auto">
+          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] hero-image-container mx-auto overflow-visible">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
