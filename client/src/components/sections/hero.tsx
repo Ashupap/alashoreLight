@@ -35,16 +35,19 @@ const Hero = memo(function Hero() {
       src: productImage,
       alt: "Premium Cooked Shrimp",
       title: "Seafood",
+      aspectRatio: "100%", // 1:1 square
     },
     {
       src: shrimpImage,
       alt: "Premium Vannamei Shrimp",
       title: "Vannamei Shrimp",
+      aspectRatio: "100%", // 1:1 square
     },
     {
       src: iqfImage,
       alt: "IQF Frozen Shrimp",
       title: "IQF Shrimp",
+      aspectRatio: "100%", // 1:1 square
     },
   ];
 
@@ -300,7 +303,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] flex items-center justify-center hero-image-container mx-auto">
+          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] hero-image-container mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -323,17 +326,17 @@ const Hero = memo(function Hero() {
                   duration: 0.8,
                   ease: "easeInOut",
                 }}
-                className="absolute inset-0"
+                className="w-full"
                 style={{
                   zIndex: 25,
                 }}
               >
-                {/* Static Container - No Ken Burns scaling */}
-                <div className="w-full flex items-center justify-center">
+                {/* Ratio-aware padding box to prevent clipping */}
+                <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: seafoodImages[currentIndex].aspectRatio }}>
                   <PerformanceImage
                     src={seafoodImages[currentIndex].src}
                     alt={seafoodImages[currentIndex].alt}
-                    className={`w-full h-auto max-h-[50vh] object-contain filter brightness-110 contrast-105 ${
+                    className={`absolute inset-0 w-full h-full object-contain filter brightness-110 contrast-105 ${
                       currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
                     sizes="(max-width: 640px) 200px, (max-width: 768px) 280px, (max-width: 1024px) 350px, (max-width: 1280px) 450px, 550px"
