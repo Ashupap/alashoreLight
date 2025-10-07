@@ -298,12 +298,11 @@ const Hero = memo(function Hero() {
           initial={{ opacity: 0, x: 80, rotateY: -30 }}
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
           transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
-          // Center image container on small screens using flexbox and auto margins
-          className="relative lg:col-span-1 order-1 lg:order-2 w-full overflow-visible"
+          className="relative lg:col-span-1 order-1 lg:order-2 w-full"
           style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] hero-image-container mx-auto overflow-visible" style={{ zIndex: 101 }}>
+          <div className="w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] mx-auto" style={{ zIndex: 101 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -326,24 +325,20 @@ const Hero = memo(function Hero() {
                   duration: 0.8,
                   ease: "easeInOut",
                 }}
-                className="w-full"
                 style={{
                   zIndex: 102,
                 }}
               >
-                {/* Simple image container - no forced dimensions */}
+                {/* Image with no constraints */}
                 <img
                   src={seafoodImages[currentIndex].src}
                   alt={seafoodImages[currentIndex].alt}
-                  className={`w-full h-auto object-contain filter brightness-110 contrast-105 rounded-2xl ${
+                  className={`w-full h-auto filter brightness-110 contrast-105 rounded-2xl ${
                     currentIndex === 1 ? "mix-blend-multiply" : ""
                   }`}
                   loading="eager"
                   style={{
-                    imageRendering: "auto",
-                    transform: "translateZ(0)",
-                    backfaceVisibility: "hidden",
-                    position: "relative",
+                    display: "block",
                     zIndex: 103,
                   }}
                 />
