@@ -43,11 +43,11 @@ export default function Sustainability() {
     {
       icon: Factory,
       title: "Plant Facilities",
-      description: "Our processing plant spans 2 acres with state-of-the-art facilities designed for optimal productivity and sustainability.",
+      description: "Our processing plant spans 87120 square feet with state-of-the-art facilities designed for optimal productivity and sustainability.",
       stats: "2 Acre Plant Area",
       backgroundImage: plantFacilityImg,
       details: [
-        "2 acres processing plant area",
+        "87120 square feet processing plant area",
         "Separate boarding facilities",
         "Boys capacity: 120",
         "Girls capacity: 500"
@@ -927,7 +927,7 @@ export default function Sustainability() {
                 viewport={{ once: true }}
                 className="text-center bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20"
               >
-                <div className="text-5xl md:text-6xl font-bold text-coral-accent mb-4">500MT</div>
+                <div className="text-5xl md:text-6xl font-bold text-coral-accent mb-4">1500MT</div>
                 <p className="text-light-marine text-lg font-medium">Cold Storage</p>
               </motion.div>
 

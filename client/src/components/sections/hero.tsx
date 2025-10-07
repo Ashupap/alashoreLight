@@ -1,4 +1,10 @@
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+} from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef, memo } from "react";
 import { Link } from "wouter";
@@ -22,7 +28,7 @@ const Hero = memo(function Hero() {
 
   const [currentText, setCurrentText] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
-  const seafoodTypes = ["Seafood", "Vannamei", "Pomfret"];
+  const seafoodTypes = ["Seafood", "Vannamei", "IQF Shrimp"];
 
   const seafoodImages = [
     {
@@ -78,7 +84,7 @@ const Hero = memo(function Hero() {
           height="1080"
           // Use object-cover to make sure the video fills the container without distortion
           className="w-full h-full object-cover"
-          style={{ willChange: 'transform' }}
+          style={{ willChange: "transform" }}
         >
           <source src={factoryVideo} type="video/mp4" />
         </video>
@@ -88,8 +94,8 @@ const Hero = memo(function Hero() {
             background: [
               "linear-gradient(45deg, rgba(20, 78, 117, 0.9), rgba(29, 155, 155, 0.85), rgba(15, 23, 42, 0.9))",
               "linear-gradient(45deg, rgba(29, 155, 155, 0.9), rgba(15, 23, 42, 0.85), rgba(20, 78, 117, 0.9))",
-              "linear-gradient(45deg, rgba(20, 78, 117, 0.9), rgba(29, 155, 155, 0.85), rgba(15, 23, 42, 0.9))"
-            ]
+              "linear-gradient(45deg, rgba(20, 78, 117, 0.9), rgba(29, 155, 155, 0.85), rgba(15, 23, 42, 0.9))",
+            ],
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute inset-0"
@@ -112,46 +118,46 @@ const Hero = memo(function Hero() {
         animate={{
           x: [-50, 1920 + 50],
           y: [0, -20, 0, 20, 0],
-          rotate: [0, 5, 0, -5, 0]
+          rotate: [0, 5, 0, -5, 0],
         }}
         transition={{
           duration: 25,
           repeat: Infinity,
           ease: "linear",
-          delay: 0
+          delay: 0,
         }}
         className="absolute top-1/4 -left-20 w-6 sm:w-8 h-3 sm:h-4 bg-gradient-to-r from-marine-teal/60 to-coral-accent/60 rounded-full z-5"
-        style={{ clipPath: 'polygon(0% 50%, 60% 0%, 100% 50%, 60% 100%)' }}
+        style={{ clipPath: "polygon(0% 50%, 60% 0%, 100% 50%, 60% 100%)" }}
       />
       <motion.div
         animate={{
           x: [1920 + 50, -100],
           y: [0, 15, 0, -15, 0],
-          rotate: [180, 185, 180, 175, 180]
+          rotate: [180, 185, 180, 175, 180],
         }}
         transition={{
           duration: 30,
           repeat: Infinity,
           ease: "linear",
-          delay: 8
+          delay: 8,
         }}
         className="absolute bottom-1/3 -right-20 w-4 sm:w-6 h-2 sm:h-3 bg-gradient-to-l from-white/50 to-marine-teal/50 rounded-full z-5"
-        style={{ clipPath: 'polygon(0% 50%, 60% 0%, 100% 50%, 60% 100%)' }}
+        style={{ clipPath: "polygon(0% 50%, 60% 0%, 100% 50%, 60% 100%)" }}
       />
       <motion.div
         animate={{
           x: [-40, 1920 + 40],
           y: [0, -10, 0, 10, 0],
-          rotate: [0, 3, 0, -3, 0]
+          rotate: [0, 3, 0, -3, 0],
         }}
         transition={{
           duration: 35,
           repeat: Infinity,
           ease: "linear",
-          delay: 15
+          delay: 15,
         }}
         className="absolute top-2/3 -left-16 w-3 sm:w-5 h-1 sm:h-2 bg-gradient-to-r from-coral-accent/40 to-golden-orange/40 rounded-full z-5"
-        style={{ clipPath: 'polygon(0% 50%, 70% 0%, 100% 50%, 70% 100%)' }}
+        style={{ clipPath: "polygon(0% 50%, 70% 0%, 100% 50%, 70% 100%)" }}
       />
 
       {/* Enhanced Responsive Layout */}
@@ -174,7 +180,9 @@ const Hero = memo(function Hero() {
             className="inline-flex items-center bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/20"
           >
             <Sparkles className="text-coral-accent mr-2" size={20} />
-            <span className="text-white/90 font-medium">Premium Quality Since 2012</span>
+            <span className="text-white/90 font-medium">
+              Premium Quality Since 2012
+            </span>
           </motion.div>
 
           <motion.h1
@@ -240,7 +248,7 @@ const Hero = memo(function Hero() {
               <motion.button
                 whileHover={{
                   scale: 1.08,
-                  boxShadow: "0 25px 50px rgba(255, 107, 107, 0.3)"
+                  boxShadow: "0 25px 50px rgba(255, 107, 107, 0.3)",
                 }}
                 whileTap={{ scale: 0.95 }}
                 className="relative bg-gradient-to-r from-coral-accent to-golden-orange hover:from-golden-orange hover:to-coral-accent text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl font-bold transition-all duration-500 shadow-2xl overflow-hidden group w-full sm:w-auto"
@@ -260,7 +268,7 @@ const Hero = memo(function Hero() {
                 whileHover={{
                   scale: 1.08,
                   backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  borderColor: "rgba(255, 107, 107, 1)"
+                  borderColor: "rgba(255, 107, 107, 1)",
                 }}
                 whileTap={{ scale: 0.95 }}
                 className="relative border-2 border-white/70 text-white backdrop-blur-md px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl font-bold transition-all duration-500 hover:text-coral-accent group overflow-hidden w-full sm:w-auto"
@@ -317,7 +325,7 @@ const Hero = memo(function Hero() {
                 // Ensures the motion.div takes up full space
                 className="absolute inset-0"
                 style={{
-                  zIndex: 25
+                  zIndex: 25,
                 }}
               >
                 {/* Static Container - No Ken Burns scaling */}
@@ -336,9 +344,9 @@ const Hero = memo(function Hero() {
                     priority={true}
                     placeholder="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYzJhM2E7c3RvcC1vcGFjaXR5OjAuMSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxNDRlNGE7c3RvcC1vcGFjaXR5OjAuMSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNncmFkKSIvPjwvc3ZnPg=="
                     style={{
-                      imageRendering: 'auto',
-                      transform: 'translateZ(0)',
-                      backfaceVisibility: 'hidden'
+                      imageRendering: "auto",
+                      transform: "translateZ(0)",
+                      backfaceVisibility: "hidden",
                     }}
                   />
                 </div>

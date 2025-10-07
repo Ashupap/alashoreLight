@@ -5,7 +5,7 @@ export default function Stats() {
   const stats = [
     { number: 15, suffix: "+", label: "Years Industry Experience" },
     { number: 800, suffix: "+", label: "Employees" },
-    { number: 2, suffix: "", label: "Acres Plant Premises" },
+    { number: 87120, suffix: "", label: "Square feet Plant Premises" },
     { number: 20, suffix: "MT", label: "Daily Production (IQF)" },
     { number: 10, suffix: "+", label: "Exported Countries" },
   ];
@@ -24,8 +24,8 @@ export default function Stats() {
               className="text-center"
             >
               <div className="text-3xl md:text-4xl font-bold text-coral-accent mb-2">
-                <AnimatedCounter 
-                  end={stat.number} 
+                <AnimatedCounter
+                  end={stat.number}
                   suffix={stat.suffix}
                   duration={2}
                 />

@@ -6,12 +6,20 @@ import logoImage from "@assets/Asset 3_1_1756973310181.png";
 
 export default function Footer() {
   const { settings } = useWebsiteSettings();
-  
+
   const groupCompanies = [
     "Balasore Marine Exports Pvt. Ltd.",
-    { name: "Natnov Bioscience Pvt. Ltd.", url: "http://www.natnovbioscience.com/" },
+    {
+      name: "Natnov Bioscience Pvt. Ltd.",
+      url: "http://www.natnovbioscience.com/",
+    },
     "Alashore Aqua Pvt. Ltd.",
     "Meghasani Pulp and Paper Pvt. Ltd.",
+    "Alashore Avenue Private Limited",
+    {
+      name: "Gelcotin Biotech Private Limited",
+      url: "https://www.gelcotinbiotech.com/",
+    },
   ];
 
   const quickLinks = [
@@ -50,8 +58,18 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center space-x-3 mb-6 overflow-visible logo-container" style={{ width: 'auto', minWidth: 'fit-content' }}>
-              <div className="relative overflow-visible" style={{ overflow: 'visible !important', width: 'auto', minWidth: 'fit-content' }}>
+            <div
+              className="flex items-center space-x-3 mb-6 overflow-visible logo-container"
+              style={{ width: "auto", minWidth: "fit-content" }}
+            >
+              <div
+                className="relative overflow-visible"
+                style={{
+                  overflow: "visible !important",
+                  width: "auto",
+                  minWidth: "fit-content",
+                }}
+              >
                 <PerformanceImage
                   src={logoImage}
                   alt="Alashore Marine Exports"
@@ -59,16 +77,17 @@ export default function Footer() {
                   priority={true}
                   loading="eager"
                   data-testid="footer-logo"
-                  style={{ 
-                    clipPath: 'none', 
-                    overflow: 'visible',
-                    maxWidth: 'none',
-                    width: 'auto',
-                    minWidth: 'fit-content',
-                    maxHeight: 'none',
-                    objectFit: 'contain',
-                    display: 'block',
-                    filter: 'drop-shadow(0 0 0 1px white) drop-shadow(0 0 0 2px rgba(255,255,255,0.5))'
+                  style={{
+                    clipPath: "none",
+                    overflow: "visible",
+                    maxWidth: "none",
+                    width: "auto",
+                    minWidth: "fit-content",
+                    maxHeight: "none",
+                    objectFit: "contain",
+                    display: "block",
+                    filter:
+                      "drop-shadow(0 0 0 1px white) drop-shadow(0 0 0 2px rgba(255,255,255,0.5))",
                   }}
                 />
                 {/* Glowing effect underneath */}
@@ -77,8 +96,8 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-light-marine mb-6">
-              At Alashore Marine - we care about our People, our Products & the Farmers. 
-              These are the core values we demonstrate in our actions.
+              At Alashore Marine - we care about our People, our Products & the
+              Farmers. These are the core values we demonstrate in our actions.
             </p>
           </motion.div>
 
@@ -154,11 +173,13 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-6">Contact Us</h4>
             <div className="space-y-4 text-light-marine">
               <p className="text-sm">
-                Plot No- D1/18(P), D1/19, D1/20 & D1/37, D1/38, D1/39(P)<br />
-                Somnathpur Industrial Estate, Balasore, Odisha, India, Pin- 755019
+                Plot No- D1/18(P), D1/19, D1/20 & D1/37, D1/38, D1/39(P)
+                <br />
+                Somnathpur Industrial Estate, Balasore, Odisha, India, Pin-
+                755019
               </p>
               <p>
-                <a 
+                <a
                   href={`mailto:${settings.email}`}
                   className="hover:text-white transition-colors"
                   data-testid="link-email"
@@ -167,8 +188,8 @@ export default function Footer() {
                 </a>
               </p>
               <p>
-                <a 
-                  href={`tel:${settings.phone.replace(/\s/g, '')}`}
+                <a
+                  href={`tel:${settings.phone.replace(/\s/g, "")}`}
                   className="hover:text-white transition-colors"
                   data-testid="link-phone"
                 >
@@ -178,28 +199,28 @@ export default function Footer() {
             </div>
 
             <div className="flex space-x-4 mt-6">
-              {socialLinks.filter(social => social.href).map((social) => (
-                <motion.a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 bg-ocean-blue rounded-lg flex items-center justify-center text-white hover:bg-marine-teal transition-colors"
-                  data-testid={`link-social-${social.name.toLowerCase()}`}
-                >
-                  <social.icon size={18} />
-                </motion.a>
-              ))}
+              {socialLinks
+                .filter((social) => social.href)
+                .map((social) => (
+                  <motion.a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-10 h-10 bg-ocean-blue rounded-lg flex items-center justify-center text-white hover:bg-marine-teal transition-colors"
+                    data-testid={`link-social-${social.name.toLowerCase()}`}
+                  >
+                    <social.icon size={18} />
+                  </motion.a>
+                ))}
             </div>
           </motion.div>
         </div>
 
         <div className="border-t border-gray-700 pt-8 text-center text-light-marine">
-          <p>
-            Copyright 2025 Alashore Marine Exports Pvt. Ltd.
-          </p>
+          <p>Copyright 2025 Alashore Marine Exports Pvt. Ltd.</p>
         </div>
       </div>
     </footer>

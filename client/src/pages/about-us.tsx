@@ -36,33 +36,36 @@ export default function AboutUs() {
 
     // Initialize Leadership Team Auto-Scroll Animation
     const initLeadershipScroll = () => {
-      const leadershipTrack = document.querySelector('.leadership-track');
-      const leadershipCards = document.querySelectorAll('.leadership-card');
-      
+      const leadershipTrack = document.querySelector(".leadership-track");
+      const leadershipCards = document.querySelectorAll(".leadership-card");
+
       if (leadershipTrack && leadershipCards.length > 0) {
         // Create infinite horizontal scroll animation
         const totalWidth = leadershipCards.length * (288 + 32); // card width + gap
-        
+
         // Set up the seamless loop animation
         gsap.set(leadershipTrack, { x: 0 });
-        
+
         const tl = gsap.timeline({ repeat: -1, ease: "none" });
         tl.to(leadershipTrack, {
           x: -totalWidth / 2, // Move by half the total width (due to duplication)
           duration: 30, // 30 seconds for full loop
-          ease: "none"
+          ease: "none",
         });
-        
+
         // Add hover pause functionality
-        const leadershipContainer = document.querySelector('.leadership-scroll-container');
+        const leadershipContainer = document.querySelector(
+          ".leadership-scroll-container",
+        );
         if (leadershipContainer) {
-          leadershipContainer.addEventListener('mouseenter', () => tl.pause());
-          leadershipContainer.addEventListener('mouseleave', () => tl.play());
+          leadershipContainer.addEventListener("mouseenter", () => tl.pause());
+          leadershipContainer.addEventListener("mouseleave", () => tl.play());
         }
-        
+
         // Card entrance animations
         leadershipCards.forEach((card, index) => {
-          gsap.fromTo(card,
+          gsap.fromTo(
+            card,
             { opacity: 0, y: 50, scale: 0.9 },
             {
               opacity: 1,
@@ -74,9 +77,9 @@ export default function AboutUs() {
               scrollTrigger: {
                 trigger: card,
                 start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
-            }
+                toggleActions: "play none none reverse",
+              },
+            },
           );
         });
       }
@@ -286,11 +289,11 @@ export default function AboutUs() {
         {/* Enhanced Hero Section with Parallax */}
         <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
           {/* Background Image */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ 
+            style={{
               backgroundImage: `url(${processingFacilityBg})`,
-              filter: 'brightness(0.3) contrast(1.1)'
+              filter: "brightness(0.3) contrast(1.1)",
             }}
           />
           {/* Gradient Overlay */}
@@ -578,7 +581,8 @@ export default function AboutUs() {
                 Meet Our Leadership Team
               </h3>
               <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-                Visionary leaders driving our success in the global seafood industry
+                Visionary leaders driving our success in the global seafood
+                industry
               </p>
             </motion.div>
 
@@ -586,7 +590,7 @@ export default function AboutUs() {
             <div className="relative mb-20 overflow-hidden">
               {/* Background Gradient */}
               <div className="absolute inset-0 bg-gradient-to-r from-ocean-blue/5 via-transparent to-marine-teal/5 pointer-events-none"></div>
-              
+
               {/* Scrolling Container */}
               <div className="leadership-scroll-container relative py-8">
                 <div className="leadership-track flex gap-8 w-max animate-none">
@@ -599,27 +603,27 @@ export default function AboutUs() {
                     {
                       name: "Madhusudan Dash",
                       position: "Director",
-                      avatar: "https://ui-avatars.com/api/?name=M+D&size=400&background=9ca3af&color=fff&format=png",
+                      avatar:
+                        "https://ui-avatars.com/api/?name=M+D&size=400&background=9ca3af&color=fff&format=png",
                     },
-                    {
-                      name: "Bishnupriya Dash",
-                      position: "Shareholder",
-                      avatar: "https://ui-avatars.com/api/?name=B+D&size=400&background=9ca3af&color=fff&format=png",
-                    },
+                    
                     {
                       name: "Monalina Panda",
                       position: "Director",
-                      avatar: "https://ui-avatars.com/api/?name=M+P&size=400&background=9ca3af&color=fff&format=png",
+                      avatar:
+                        "https://ui-avatars.com/api/?name=M+P&size=400&background=9ca3af&color=fff&format=png",
                     },
                     {
                       name: "Rashmikanta Panda",
                       position: "Director",
-                      avatar: "https://ui-avatars.com/api/?name=R+P&size=400&background=9ca3af&color=fff&format=png",
+                      avatar:
+                        "https://ui-avatars.com/api/?name=R+P&size=400&background=9ca3af&color=fff&format=png",
                     },
                     {
                       name: "Debasish Dash",
                       position: "Director",
-                      avatar: "https://ui-avatars.com/api/?name=D+D&size=400&background=9ca3af&color=fff&format=png",
+                      avatar:
+                        "https://ui-avatars.com/api/?name=D+D&size=400&background=9ca3af&color=fff&format=png",
                     },
                     // Duplicate for seamless loop
                     {
@@ -630,18 +634,19 @@ export default function AboutUs() {
                     {
                       name: "Madhusudan Dash",
                       position: "Director",
-                      avatar: "https://ui-avatars.com/api/?name=M+D&size=400&background=9ca3af&color=fff&format=png",
+                      avatar:
+                        "https://ui-avatars.com/api/?name=M+D&size=400&background=9ca3af&color=fff&format=png",
                     },
                   ].map((leader, index) => (
                     <motion.div
                       key={`${leader.name}-${index}`}
                       initial={{ opacity: 0, y: 50, scale: 0.9 }}
                       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ 
-                        duration: 0.6, 
+                      transition={{
+                        duration: 0.6,
                         delay: index * 0.1,
                         type: "spring",
-                        stiffness: 100
+                        stiffness: 100,
                       }}
                       viewport={{ once: true }}
                       className="leadership-card group relative flex-shrink-0 w-72 h-96"
@@ -651,57 +656,62 @@ export default function AboutUs() {
                       <div className="relative w-full h-full bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:rotate-2 hover:shadow-2xl">
                         {/* Background Gradient */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-ocean-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        
+
                         {/* Photo Container */}
                         <div className="relative h-64 overflow-hidden">
                           <PerformanceImage
-                            src={leader.avatar && leader.avatar.includes('unsplash') ? `${leader.avatar}&q=85&w=800&h=600` : leader.avatar || '/placeholder-avatar.jpg'}
+                            src={
+                              leader.avatar &&
+                              leader.avatar.includes("unsplash")
+                                ? `${leader.avatar}&q=85&w=800&h=600`
+                                : leader.avatar || "/placeholder-avatar.jpg"
+                            }
                             alt={leader.name}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             sizes="(max-width: 768px) 200px, 288px"
                             priority={index < 2}
                           />
-                          
+
                           {/* Photo Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent group-hover:from-ocean-blue/40 transition-all duration-500"></div>
-                          
+
                           {/* Floating Decoration */}
                           <div className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
                             <div className="w-6 h-6 bg-gradient-to-r from-ocean-blue to-marine-teal rounded-full animate-pulse"></div>
                           </div>
                         </div>
-                        
+
                         {/* Content Section */}
                         <div className="relative p-6 text-center">
-                          <motion.h4 
+                          <motion.h4
                             className="text-xl font-bold text-gray-900 mb-2 group-hover:text-ocean-blue transition-colors duration-300"
                             whileHover={{ scale: 1.05 }}
                           >
                             {leader.name}
                           </motion.h4>
-                          
+
                           <p className="text-coral-accent font-semibold text-sm uppercase tracking-wide group-hover:text-marine-teal transition-colors duration-300">
                             {leader.position}
                           </p>
-                          
+
                           {/* Animated Underline */}
                           <div className="w-16 h-1 bg-gradient-to-r from-ocean-blue to-marine-teal mx-auto rounded-full mt-4 transform scale-0 group-hover:scale-100 transition-transform duration-500"></div>
                         </div>
-                        
+
                         {/* Hover Effects */}
                         <div className="absolute inset-0 border-2 border-ocean-blue/0 group-hover:border-ocean-blue/20 rounded-3xl transition-all duration-500"></div>
-                        
+
                         {/* Corner Accent */}
                         <div className="absolute bottom-0 right-0 w-0 h-0 border-b-[30px] border-r-[30px] border-b-marine-teal/20 border-r-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       </div>
-                      
+
                       {/* Shadow Effect */}
                       <div className="absolute inset-0 rounded-3xl shadow-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500 transform translate-y-2 -z-10 bg-ocean-blue/10"></div>
                     </motion.div>
                   ))}
                 </div>
               </div>
-              
+
               {/* Gradient Fade Edges */}
               <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
               <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
@@ -989,8 +999,6 @@ export default function AboutUs() {
               <InteractiveGlobalMap />
             </motion.div>
 
-
-
             {/* Call to Action */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -1023,9 +1031,9 @@ export default function AboutUs() {
 
       <Footer />
 
-      <ContactFormModal 
-        isOpen={isContactModalOpen} 
-        onClose={() => setIsContactModalOpen(false)} 
+      <ContactFormModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
       />
     </div>
   );
