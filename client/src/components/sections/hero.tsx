@@ -300,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl max-h-[45vh] sm:max-h-[55vh] lg:max-h-[480px] aspect-[4/5] sm:aspect-square hero-image-container overflow-hidden mx-auto rounded-3xl shadow-xl">
+          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl max-h-[60vh] flex items-center justify-center hero-image-container mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -329,11 +329,11 @@ const Hero = memo(function Hero() {
                 }}
               >
                 {/* Static Container - No Ken Burns scaling */}
-                <div className="w-full h-full flex items-center justify-center">
+                <div className="w-full h-auto flex items-center justify-center">
                   <PerformanceImage
                     src={seafoodImages[currentIndex].src}
                     alt={seafoodImages[currentIndex].alt}
-                    className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
+                    className={`w-full h-auto object-contain filter brightness-110 contrast-105 ${
                       currentIndex === 1 ? "mix-blend-multiply" : ""
                     }`}
                     sizes="(max-width: 640px) 320px, (max-width: 768px) 384px, (max-width: 1024px) 448px, (max-width: 1280px) 512px, 576px"
