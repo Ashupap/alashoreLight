@@ -69,7 +69,7 @@ const Hero = memo(function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex flex-col py-12 md:py-16 lg:py-20"
+      className="relative py-20 md:py-24 lg:py-32"
     >
       {/* Background Video with Parallax */}
       <motion.div
@@ -166,7 +166,7 @@ const Hero = memo(function Hero() {
       <motion.div
         style={{ y }}
         // Use a grid with dynamic ordering to handle mobile vs desktop layout
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 max-w-full"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 lg:items-start gap-8 lg:gap-12 max-w-full"
       >
         {/* Enhanced Text and Buttons */}
         <motion.div
@@ -300,45 +300,32 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="hero-image-container w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto" style={{ zIndex: 101 }}>
+          <div className="hero-image-container w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
                 initial={{
                   x: 300,
                   opacity: 0,
-                  scale: 0.8,
                 }}
                 animate={{
                   x: 0,
                   opacity: 1,
-                  scale: currentIndex === 0 ? 1 : 0.9,
                 }}
                 exit={{
                   x: -300,
                   opacity: 0,
-                  scale: 0.8,
                 }}
                 transition={{
                   duration: 0.8,
                   ease: "easeInOut",
                 }}
-                style={{
-                  zIndex: 102,
-                }}
               >
-                {/* Image with no constraints */}
                 <img
                   src={seafoodImages[currentIndex].src}
                   alt={seafoodImages[currentIndex].alt}
-                  className={`w-full h-auto filter brightness-110 contrast-105 rounded-2xl ${
-                    currentIndex === 1 ? "mix-blend-multiply" : ""
-                  }`}
+                  className="w-full filter brightness-110 contrast-105 rounded-2xl"
                   loading="eager"
-                  style={{
-                    display: "block",
-                    zIndex: 103,
-                  }}
                 />
               </motion.div>
             </AnimatePresence>
