@@ -331,22 +331,20 @@ const Hero = memo(function Hero() {
                   zIndex: 25,
                 }}
               >
-                {/* Image wrapper with aspect ratio to prevent clipping */}
-                <div className="w-full aspect-[4/5] flex items-center justify-center">
-                  <img
-                    src={seafoodImages[currentIndex].src}
-                    alt={seafoodImages[currentIndex].alt}
-                    className={`w-full h-full object-contain filter brightness-110 contrast-105 rounded-2xl ${
-                      currentIndex === 1 ? "mix-blend-multiply" : ""
-                    }`}
-                    loading="eager"
-                    style={{
-                      imageRendering: "auto",
-                      transform: "translateZ(0)",
-                      backfaceVisibility: "hidden",
-                    }}
-                  />
-                </div>
+                {/* Simple image container - no forced dimensions */}
+                <img
+                  src={seafoodImages[currentIndex].src}
+                  alt={seafoodImages[currentIndex].alt}
+                  className={`w-full h-auto object-contain filter brightness-110 contrast-105 rounded-2xl ${
+                    currentIndex === 1 ? "mix-blend-multiply" : ""
+                  }`}
+                  loading="eager"
+                  style={{
+                    imageRendering: "auto",
+                    transform: "translateZ(0)",
+                    backfaceVisibility: "hidden",
+                  }}
+                />
               </motion.div>
             </AnimatePresence>
 
