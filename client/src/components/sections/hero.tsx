@@ -312,7 +312,7 @@ const Hero = memo(function Hero() {
                 animate={{
                   x: 0,
                   opacity: 1,
-                  scale: currentIndex === 0 ? 1 : 0.6,
+                  scale: currentIndex === 0 ? 1 : 0.7,
                 }}
                 exit={{
                   x: -300,
