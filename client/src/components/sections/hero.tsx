@@ -335,9 +335,13 @@ const Hero = memo(function Hero() {
                     src={seafoodImages[currentIndex].src}
                     alt={seafoodImages[currentIndex].alt}
                     // Use object-contain to prevent the image from being cropped or distorted
-                    // Ensure the image scales down correctly within its parent container
-                    className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
-                      currentIndex === 1 ? "mix-blend-multiply" : ""
+                    // Reduce size for vannamei (index 1) and IQF (index 2)
+                    className={`object-contain filter brightness-110 contrast-105 ${
+                      currentIndex === 1 ? "mix-blend-multiply w-[70%] h-[70%]" : ""
+                    } ${
+                      currentIndex === 2 ? "w-[70%] h-[70%]" : ""
+                    } ${
+                      currentIndex === 0 ? "w-full h-full" : ""
                     }`}
                     sizes="(max-width: 384px) 80px, (max-width: 640px) 100px, (max-width: 768px) 140px, (max-width: 1024px) 350px, 450px"
                     width={512}
@@ -351,6 +355,79 @@ const Hero = memo(function Hero() {
                     }}
                   />
                 </div>
+                
+                {/* Smoke Effect for Cooked Shrimp */}
+                {currentIndex === 0 && (
+                  <>
+                    <motion.div
+                      animate={{ 
+                        y: [0, -80, -100], 
+                        x: [0, 10, -5],
+                        opacity: [0, 0.6, 0],
+                        scale: [0.5, 1.2, 1.5]
+                      }}
+                      transition={{ 
+                        duration: 3, 
+                        repeat: Infinity, 
+                        ease: "easeOut",
+                        repeatDelay: 0.2
+                      }}
+                      className="absolute top-1/3 left-1/2 w-12 h-12 bg-white/40 rounded-full blur-xl"
+                      style={{ zIndex: 30 }}
+                    />
+                    <motion.div
+                      animate={{ 
+                        y: [0, -70, -90], 
+                        x: [0, -8, 8],
+                        opacity: [0, 0.5, 0],
+                        scale: [0.6, 1.1, 1.4]
+                      }}
+                      transition={{ 
+                        duration: 3.5, 
+                        repeat: Infinity, 
+                        ease: "easeOut",
+                        delay: 0.5,
+                        repeatDelay: 0.3
+                      }}
+                      className="absolute top-1/3 left-1/3 w-10 h-10 bg-white/30 rounded-full blur-xl"
+                      style={{ zIndex: 30 }}
+                    />
+                    <motion.div
+                      animate={{ 
+                        y: [0, -60, -85], 
+                        x: [0, 5, -10],
+                        opacity: [0, 0.4, 0],
+                        scale: [0.4, 1, 1.3]
+                      }}
+                      transition={{ 
+                        duration: 4, 
+                        repeat: Infinity, 
+                        ease: "easeOut",
+                        delay: 1,
+                        repeatDelay: 0.4
+                      }}
+                      className="absolute top-1/3 right-1/3 w-14 h-14 bg-white/35 rounded-full blur-2xl"
+                      style={{ zIndex: 30 }}
+                    />
+                    <motion.div
+                      animate={{ 
+                        y: [0, -75, -95], 
+                        x: [0, -12, 3],
+                        opacity: [0, 0.55, 0],
+                        scale: [0.5, 1.15, 1.6]
+                      }}
+                      transition={{ 
+                        duration: 3.2, 
+                        repeat: Infinity, 
+                        ease: "easeOut",
+                        delay: 1.5,
+                        repeatDelay: 0.5
+                      }}
+                      className="absolute top-1/2 left-1/2 w-16 h-16 bg-white/25 rounded-full blur-2xl"
+                      style={{ zIndex: 30 }}
+                    />
+                  </>
+                )}
               </motion.div>
             </AnimatePresence>
 
