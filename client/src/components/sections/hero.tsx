@@ -174,14 +174,14 @@ const Hero = memo(function Hero() {
       <motion.div
         style={{ y }}
         // Use a grid with dynamic ordering to handle mobile vs desktop layout
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-0 items-center justify-center h-full max-w-full"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-0 items-center justify-center h-full max-w-full"
       >
         {/* Enhanced Text and Buttons */}
         <motion.div
           initial={{ opacity: 0, x: -80, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="text-white space-y-4 sm:space-y-6 lg:space-y-8 lg:col-span-1 order-2 lg:order-1 text-center lg:text-left"
+          className="text-white space-y-2 sm:space-y-4 lg:space-y-8 lg:col-span-1 order-2 lg:order-1 text-center lg:text-left"
         >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -309,7 +309,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 20 }}
         >
           {/* Responsive Container with Strict Mobile Constraints */}
-          <div className="relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[180px] md:h-[180px] lg:w-[400px] lg:h-[400px] xl:w-[500px] xl:h-[500px] hero-image-container overflow-hidden mx-auto">
+          <div className="relative w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[140px] md:h-[140px] lg:w-[350px] lg:h-[350px] xl:w-[450px] xl:h-[450px] hero-image-container overflow-hidden mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentImage}
@@ -348,7 +348,7 @@ const Hero = memo(function Hero() {
                     className={`w-full h-full object-contain filter brightness-110 contrast-105 ${
                       currentImage === 1 ? "mix-blend-multiply" : ""
                     }`}
-                    sizes="(max-width: 384px) 100px, (max-width: 640px) 120px, (max-width: 768px) 180px, (max-width: 1024px) 400px, 500px"
+                    sizes="(max-width: 384px) 80px, (max-width: 640px) 100px, (max-width: 768px) 140px, (max-width: 1024px) 350px, 450px"
                     width={512}
                     height={512}
                     priority={true}
