@@ -299,11 +299,11 @@ const Hero = memo(function Hero() {
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
           transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
           // Center image container on small screens using flexbox and auto margins
-          className="relative lg:col-span-1 order-1 lg:order-2 w-full flex items-center justify-center lg:block overflow-visible"
-          style={{ zIndex: 20 }}
+          className="relative lg:col-span-1 order-1 lg:order-2 w-full overflow-visible"
+          style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] hero-image-container mx-auto overflow-visible">
+          <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] hero-image-container mx-auto overflow-visible" style={{ zIndex: 101 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -328,7 +328,7 @@ const Hero = memo(function Hero() {
                 }}
                 className="w-full"
                 style={{
-                  zIndex: 25,
+                  zIndex: 102,
                 }}
               >
                 {/* Simple image container - no forced dimensions */}
@@ -343,6 +343,8 @@ const Hero = memo(function Hero() {
                     imageRendering: "auto",
                     transform: "translateZ(0)",
                     backfaceVisibility: "hidden",
+                    position: "relative",
+                    zIndex: 103,
                   }}
                 />
               </motion.div>
