@@ -11,7 +11,8 @@ import { Link } from "wouter";
 import { PerformanceImage } from "@/components/ui/performance-image";
 import factoryVideo from "@assets/Alashore-Marine-Factory_1755929476699.mp4";
 import shrimpImage from "@assets/shrimp-optimized.webp";
-import pomfretImage from "@assets/Pomfret_1755943114147.png";
+import iqfImage from "@assets/IQF_1759820332061.png";
+import rtcImage from "@assets/RTC_1759820339215.png";
 
 const Hero = memo(function Hero() {
   const containerRef = useRef(null);
@@ -28,7 +29,7 @@ const Hero = memo(function Hero() {
 
   const [currentText, setCurrentText] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
-  const seafoodTypes = ["Seafood", "Vannamei", "IQF Shrimp"];
+  const seafoodTypes = ["Seafood", "Vannamei", "IQF Shrimp", "RTC Shrimp"];
 
   const seafoodImages = [
     {
@@ -36,7 +37,16 @@ const Hero = memo(function Hero() {
       alt: "Premium Vannamei Shrimp",
       title: "Vannamei Shrimp",
     },
-    { src: pomfretImage, alt: "Fresh Pomfret Fish", title: "Pomfret Fish" },
+    {
+      src: iqfImage,
+      alt: "IQF Frozen Shrimp",
+      title: "IQF Shrimp",
+    },
+    {
+      src: rtcImage,
+      alt: "Ready To Cook Breaded Shrimp",
+      title: "RTC Shrimp",
+    },
   ];
 
   useEffect(() => {
