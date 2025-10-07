@@ -69,9 +69,7 @@ const Hero = memo(function Hero() {
   return (
     <section
       ref={containerRef}
-      // Use min-h-screen to ensure content fits, especially on mobile.
-      // Use flexbox for vertical centering, which is more reliable than absolute positioning.
-      className="relative min-h-screen flex flex-col justify-center py-12 md:py-16 lg:py-0"
+      className="relative min-h-screen flex flex-col py-12 md:py-16 lg:py-20"
     >
       {/* Background Video with Parallax */}
       <motion.div
@@ -302,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] mx-auto" style={{ zIndex: 101 }}>
+          <div className="hero-image-container w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] mx-auto" style={{ zIndex: 101 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -333,13 +331,12 @@ const Hero = memo(function Hero() {
                 <img
                   src={seafoodImages[currentIndex].src}
                   alt={seafoodImages[currentIndex].alt}
-                  className={`w-full h-auto filter brightness-110 contrast-105 rounded-2xl ${
-                    currentIndex === 1 ? "mix-blend-multiply" : ""
-                  }`}
+                  className="w-full h-auto rounded-2xl"
                   loading="eager"
                   style={{
                     display: "block",
                     zIndex: 103,
+                    backgroundColor: "rgba(255,0,0,0.2)",
                   }}
                 />
               </motion.div>
