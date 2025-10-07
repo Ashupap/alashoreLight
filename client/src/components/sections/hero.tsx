@@ -300,7 +300,7 @@ const Hero = memo(function Hero() {
           style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="hero-image-container w-full max-w-[200px] sm:max-w-[280px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[550px] mx-auto" style={{ zIndex: 101 }}>
+          <div className="hero-image-container w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto" style={{ zIndex: 101 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -331,12 +331,13 @@ const Hero = memo(function Hero() {
                 <img
                   src={seafoodImages[currentIndex].src}
                   alt={seafoodImages[currentIndex].alt}
-                  className="w-full h-auto rounded-2xl"
+                  className={`w-full h-auto filter brightness-110 contrast-105 rounded-2xl ${
+                    currentIndex === 1 ? "mix-blend-multiply" : ""
+                  }`}
                   loading="eager"
                   style={{
                     display: "block",
                     zIndex: 103,
-                    backgroundColor: "rgba(255,0,0,0.2)",
                   }}
                 />
               </motion.div>
