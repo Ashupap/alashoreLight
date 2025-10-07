@@ -331,24 +331,20 @@ const Hero = memo(function Hero() {
                   zIndex: 25,
                 }}
               >
-                {/* Ratio-aware padding box to prevent clipping */}
-                <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: seafoodImages[currentIndex].aspectRatio }}>
-                  <PerformanceImage
-                    src={seafoodImages[currentIndex].src}
-                    alt={seafoodImages[currentIndex].alt}
-                    className={`absolute inset-0 w-full h-full object-contain filter brightness-110 contrast-105 ${
-                      currentIndex === 1 ? "mix-blend-multiply" : ""
-                    }`}
-                    sizes="(max-width: 640px) 200px, (max-width: 768px) 280px, (max-width: 1024px) 350px, (max-width: 1280px) 450px, 550px"
-                    priority={true}
-                    placeholder="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYzJhM2E7c3RvcC1vcGFjaXR5OjAuMSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxNDRlNGE7c3RvcC1vcGFjaXR5OjAuMSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNncmFkKSIvPjwvc3ZnPg=="
-                    style={{
-                      imageRendering: "auto",
-                      transform: "translateZ(0)",
-                      backfaceVisibility: "hidden",
-                    }}
-                  />
-                </div>
+                {/* Simple image container */}
+                <img
+                  src={seafoodImages[currentIndex].src}
+                  alt={seafoodImages[currentIndex].alt}
+                  className={`w-full h-auto object-contain filter brightness-110 contrast-105 rounded-2xl ${
+                    currentIndex === 1 ? "mix-blend-multiply" : ""
+                  }`}
+                  loading="eager"
+                  style={{
+                    imageRendering: "auto",
+                    transform: "translateZ(0)",
+                    backfaceVisibility: "hidden",
+                  }}
+                />
               </motion.div>
             </AnimatePresence>
 
