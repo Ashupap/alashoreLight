@@ -438,10 +438,7 @@ export default function Contact() {
                             <SelectContent>
                               {inquiryTopics.map((topic) => (
                                 <SelectItem key={topic.value} value={topic.value}>
-                                  <div className="flex items-center gap-2">
-                                    <topic.icon size={16} />
-                                    {topic.label}
-                                  </div>
+                                  {topic.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>

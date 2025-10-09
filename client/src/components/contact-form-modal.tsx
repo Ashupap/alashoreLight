@@ -252,13 +252,10 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
                                 <SelectValue placeholder="Select inquiry topic" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent className="z-[120]">
                               {inquiryTopics.map((topic) => (
                                 <SelectItem key={topic.value} value={topic.value}>
-                                  <div className="flex items-center gap-2">
-                                    <topic.icon size={16} />
-                                    {topic.label}
-                                  </div>
+                                  {topic.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>
