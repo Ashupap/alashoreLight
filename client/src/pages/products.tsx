@@ -467,17 +467,14 @@ export default function Products() {
                     }}
                     transition={{ duration: 0.8, type: "spring" }}
                   >
-                    <div className="bg-white/95 rounded-full shadow-lg w-full h-full flex items-center justify-center">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center overflow-hidden">
-                        <PerformanceImage
-                          src={fssaiLogo}
-                          alt="FSSAI Certification"
-                          className="w-full h-full object-contain"
-                          sizes="96px"
-                          priority={false}
-                          style={{ overflow: "visible" }}
-                        />
-                      </div>
+                    <div className="bg-white/95 rounded-full p-3 shadow-lg">
+                      <PerformanceImage
+                        src={fssaiLogo}
+                        alt="FSSAI Certification"
+                        className="w-full h-full object-contain filter drop-shadow-md"
+                        sizes="96px"
+                        priority={false}
+                      />
                     </div>
                   </motion.div>
                   <h3 className="text-xl font-heading font-bold text-yellow-900 mb-3 drop-shadow-sm">
@@ -544,17 +541,14 @@ export default function Products() {
                     }}
                     transition={{ duration: 0.8, type: "spring" }}
                   >
-                    <div className="bg-white/95 rounded-full shadow-lg w-full h-full flex items-center justify-center">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center overflow-hidden">
-                        <PerformanceImage
-                          src={bapLogo}
-                          alt="BAP Best Aquaculture Practices Certification"
-                          className="w-full h-full object-contain"
-                          sizes="96px"
-                          priority={false}
-                          style={{ overflow: "visible" }}
-                        />
-                      </div>
+                    <div className="bg-white/95 rounded-full p-3 shadow-lg">
+                      <PerformanceImage
+                        src={bapLogo}
+                        alt="BAP Best Aquaculture Practices Certification"
+                        className="w-full h-full object-contain filter drop-shadow-md"
+                        sizes="96px"
+                        priority={false}
+                      />
                     </div>
                   </motion.div>
                   <h3 className="text-xl font-heading font-bold text-yellow-900 mb-3 drop-shadow-sm">
@@ -621,17 +615,14 @@ export default function Products() {
                     }}
                     transition={{ duration: 0.8, type: "spring" }}
                   >
-                    <div className="bg-white/95 rounded-full shadow-lg w-full h-full flex items-center justify-center">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center overflow-hidden">
-                        <PerformanceImage
-                          src={haccpLogo}
-                          alt="HACCP Food Safety Certification"
-                          className="w-full h-full object-contain"
-                          sizes="96px"
-                          priority={false}
-                          style={{ overflow: "visible" }}
-                        />
-                      </div>
+                    <div className="bg-white/95 rounded-full p-3 shadow-lg">
+                      <PerformanceImage
+                        src={haccpLogo}
+                        alt="HACCP Food Safety Certification"
+                        className="w-full h-full object-contain filter drop-shadow-md"
+                        sizes="96px"
+                        priority={false}
+                      />
                     </div>
                   </motion.div>
                   <h3 className="text-xl font-heading font-bold text-yellow-900 mb-3 drop-shadow-sm">
@@ -698,17 +689,14 @@ export default function Products() {
                     }}
                     transition={{ duration: 0.8, type: "spring" }}
                   >
-                    <div className="bg-white/95 rounded-full shadow-lg w-full h-full flex items-center justify-center">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center overflow-hidden">
-                        <PerformanceImage
-                          src={fdaLogo}
-                          alt="FDA Approved"
-                          className="w-full h-full object-contain"
-                          sizes="96px"
-                          priority={false}
-                          style={{ overflow: "visible" }}
-                        />
-                      </div>
+                    <div className="bg-white/95 rounded-full p-3 shadow-lg">
+                      <PerformanceImage
+                        src={fdaLogo}
+                        alt="FDA Approved"
+                        className="w-full h-full object-contain filter drop-shadow-md"
+                        sizes="96px"
+                        priority={false}
+                      />
                     </div>
                   </motion.div>
                   <h3 className="text-xl font-heading font-bold text-yellow-900 mb-3 drop-shadow-sm">

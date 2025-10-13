@@ -483,13 +483,13 @@ export default function Header({ onEnquiryClick }: HeaderProps = {}) {
                 <PerformanceImage
                   src={logoImage}
                   alt="Alashore Marine Exports"
-                  className="h-16 sm:h-18 lg:h-20 w-auto object-contain rounded-full border-2 border-white/60 shadow-lg"
+                  className="h-16 sm:h-18 lg:h-20 w-auto object-contain"
                   data-testid="header-logo"
                   priority={true}
                   loading="eager"
                   style={{ 
-                    clipPath: 'circle(50%)',
-                    overflow: 'hidden',
+                    clipPath: 'none', 
+                    overflow: 'visible',
                     maxWidth: 'none',
                     maxHeight: 'none',
                     objectFit: 'contain',
