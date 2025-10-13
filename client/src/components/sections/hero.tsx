@@ -69,7 +69,7 @@ const Hero = memo(function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative py-20 md:py-24 lg:py-32"
+      className="relative flex flex-col justify-center min-h-screen md:min-h-[calc(100vh-4rem)] pt-20 pb-12 md:pt-24 md:pb-16 lg:pt-28 lg:pb-20 overflow-visible"
     >
       {/* Background Video with Parallax */}
       <motion.div
@@ -166,7 +166,7 @@ const Hero = memo(function Hero() {
       <motion.div
         style={{ y }}
         // Use a grid with dynamic ordering to handle mobile vs desktop layout
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-16 lg:pt-20 xl:pt-24 flex flex-col lg:grid lg:grid-cols-2 lg:items-start gap-8 lg:gap-12 max-w-full"
+        className="relative z-10 container mx-auto px-3 sm:px-5 lg:px-8 flex flex-col lg:grid lg:grid-cols-2 lg:items-center gap-8 lg:gap-12 max-w-full"
       >
         {/* Enhanced Text and Buttons */}
         <motion.div
@@ -296,11 +296,11 @@ const Hero = memo(function Hero() {
           initial={{ opacity: 0, x: 80, rotateY: -30 }}
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
           transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
-          className="relative lg:col-span-1 order-1 lg:order-2 w-full flex justify-center"
+          className="relative lg:col-span-1 order-1 lg:order-2 w-full flex justify-center h-full"
           style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
-          <div className="hero-image-container w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
+          <div className="hero-image-container relative z-20 w-full mx-auto h-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -320,15 +320,14 @@ const Hero = memo(function Hero() {
                   duration: 0.8,
                   ease: "easeInOut",
                 }}
+                className="hero-image-inner"
               >
-                <div className="relative flex items-center justify-center">
-                  <img
-                    src={seafoodImages[currentIndex].src}
-                    alt={seafoodImages[currentIndex].alt}
-                    className="hero-image w-full filter brightness-110 contrast-105 rounded-2xl"
-                    loading="eager"
-                  />
-                </div>
+                <img
+                  src={seafoodImages[currentIndex].src}
+                  alt={seafoodImages[currentIndex].alt}
+                  className="hero-image filter brightness-110 contrast-105 rounded-2xl"
+                  loading="eager"
+                />
               </motion.div>
             </AnimatePresence>
 
