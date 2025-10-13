@@ -179,8 +179,10 @@ export function preventLayoutShifts() {
   const style = document.createElement('style');
   style.textContent = `
     img:not([width]):not([height]) {
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
+      aspect-ratio: auto;
+      object-fit: contain;
+      height: auto;
+      width: auto;
     }
     
     /* Prevent font swap flash */
