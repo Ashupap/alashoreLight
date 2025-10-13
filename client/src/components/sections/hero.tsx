@@ -69,7 +69,7 @@ const Hero = memo(function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative flex flex-col justify-center min-h-screen md:min-h-[calc(100vh-4rem)] pt-20 pb-12 md:pt-24 md:pb-16 lg:pt-28 lg:pb-20 overflow-visible"
+      className="relative flex flex-col justify-center min-h-screen md:min-h-[calc(100vh-4rem)] pt-20 pb-12 md:pt-24 md:pb-16 lg:pt-32 lg:pb-20 overflow-visible"
     >
       {/* Background Video with Parallax */}
       <motion.div
