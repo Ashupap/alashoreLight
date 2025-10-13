@@ -296,7 +296,7 @@ const Hero = memo(function Hero() {
           initial={{ opacity: 0, x: 80, rotateY: -30 }}
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
           transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
-          className="relative lg:col-span-1 order-1 lg:order-2 w-full"
+          className="relative lg:col-span-1 order-1 lg:order-2 w-full flex justify-center"
           style={{ zIndex: 100 }}
         >
           {/* Responsive Container with Flexible Sizing */}
@@ -321,12 +321,14 @@ const Hero = memo(function Hero() {
                   ease: "easeInOut",
                 }}
               >
-                <img
-                  src={seafoodImages[currentIndex].src}
-                  alt={seafoodImages[currentIndex].alt}
-                  className="w-full filter brightness-110 contrast-105 rounded-2xl"
-                  loading="eager"
-                />
+                <div className="relative flex items-center justify-center">
+                  <img
+                    src={seafoodImages[currentIndex].src}
+                    alt={seafoodImages[currentIndex].alt}
+                    className="hero-image w-full filter brightness-110 contrast-105 rounded-2xl"
+                    loading="eager"
+                  />
+                </div>
               </motion.div>
             </AnimatePresence>
 
