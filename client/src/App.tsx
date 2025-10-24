@@ -20,6 +20,7 @@ const Blog = lazy(() => import("@/pages/blog"));
 const SubmitTestimonial = lazy(() => import("@/pages/submit-testimonial"));
 const Admin = lazy(() => import("@/pages/admin"));
 const AuthPage = lazy(() => import("@/pages/auth-page"));
+const MarketingTeam = lazy(() => import("@/pages/marketing-team"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Beautiful loading component
@@ -37,6 +38,7 @@ function Router() {
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={Blog} />
         <Route path="/submit-testimonial" component={SubmitTestimonial} />
+        <Route path="/connect" component={MarketingTeam} />
         <Route path="/meadmin" component={AuthPage} />
         <ProtectedRoute path="/admin" component={Admin} requireAdmin={true} />
         <Route component={NotFound} />
