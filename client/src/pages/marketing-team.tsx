@@ -16,7 +16,7 @@ import { Link } from "wouter";
 const marketingTeam = [
   {
     name: "Rashmi Kanta Panda",
-    title: "Head of Global Marketing",
+    title: "Director, Marketing & Business Development",
     photo: "",
     email: "alashoremarine@gmail.com",
     phone: "+91 7381050536",
