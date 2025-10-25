@@ -36,7 +36,7 @@ const marketingTeam = [
     photo: "",
     email: "n.behera@alashoremarine.com",
     phone: "+91 7381050535",
-    linkedin: "https://www.linkedin.com/in/narendrabehera",
+    linkedin: "",
   },
   {
     name: "Dr. Siddhartha Pati",
