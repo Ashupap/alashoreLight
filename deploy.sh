@@ -180,34 +180,35 @@ fi
 # initialized on server startup if they don't exist. Existing settings are preserved.
 
 # Use safe SQL migration instead of drizzle-kit for production
-print_status "Applying safe schema migration for featured_image column..."
-if [ ! -z "$DATABASE_URL" ]; then
-    # Safe migration: ALTER COLUMN instead of recreating table
-    psql "$DATABASE_URL" -c "
-        DO \$\$
-        BEGIN
-            -- Only alter if column exists and is varchar
-            IF EXISTS (
-                SELECT 1 FROM information_schema.columns 
-                WHERE table_name = 'products' 
-                AND column_name = 'featured_image' 
-                AND data_type = 'character varying'
-            ) THEN
-                ALTER TABLE products ALTER COLUMN featured_image TYPE text;
-                RAISE NOTICE 'Successfully updated featured_image column to text type';
-            ELSE
-                RAISE NOTICE 'Column already correct type or does not exist';
-            END IF;
-        END \$\$;
-    " && {
-        print_success "Database schema updated safely"
-    } || {
-        print_error "Safe migration failed. Database unchanged."
-        exit 1
-    }
-else
-    print_warning "No DATABASE_URL found, skipping migration"
-fi
+print_status "Applying safe schema migration for featured_image column (DISABLED BY REQUEST)..."
+# if [ ! -z "$DATABASE_URL" ]; then
+#     # Safe migration: ALTER COLUMN instead of recreating table
+#     psql "$DATABASE_URL" -c "
+#         DO \$\$
+#         BEGIN
+#             -- Only alter if column exists and is varchar
+#             IF EXISTS (
+#                 SELECT 1 FROM information_schema.columns 
+#                 WHERE table_name = 'products' 
+#                 AND column_name = 'featured_image' 
+#                 AND data_type = 'character varying'
+#             ) THEN
+#                 ALTER TABLE products ALTER COLUMN featured_image TYPE text;
+#                 RAISE NOTICE 'Successfully updated featured_image column to text type';
+#             ELSE
+#                 RAISE NOTICE 'Column already correct type or does not exist';
+#             END IF;
+#         END \$\$;
+#     " && {
+#         print_success "Database schema updated safely"
+#     } || {
+#         print_error "Safe migration failed. Database unchanged."
+#         exit 1
+#     }
+# else
+#     print_warning "No DATABASE_URL found, skipping migration"
+# fi
+print_warning "Database modifications are disabled for production deployment."
 
 # Build the application
 print_status "Building application for production..."

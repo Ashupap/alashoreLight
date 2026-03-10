@@ -15,11 +15,27 @@ import { Link } from "wouter";
 
 const marketingTeam = [
   {
+    name: "Gyana Ranjan Dash",
+    title: "Managing Director",
+    photo: "",
+    email: "alashoremarine@gmail.com",
+    phone: "+91 7381050506",
+    linkedin: "",
+  },
+  {
     name: "Rashmi Kanta Panda",
     title: "Director, Marketing & Business Development",
     photo: "",
     email: "alashoremarine@gmail.com",
     phone: "+91 7381050536",
+    linkedin: "",
+  },
+  {
+    name: "Bhogadi Satyanarayan",
+    title: "VP, Business Development",
+    photo: "",
+    email: "alashoremarine@gmail.com",
+    phone: "+91 9347104801",
     linkedin: "",
   },
   {
@@ -98,20 +114,30 @@ export default function MarketingTeamPage() {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-5xl mx-auto text-center space-y-6"
+            className="max-w-5xl mx-auto text-center space-y-8"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs sm:text-sm font-medium tracking-wide uppercase">
-              <Sparkles size={16} className="text-cyan-300" />
-              Alashore Marine Exports · Brand Studio
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs sm:text-sm font-medium tracking-wide uppercase">
+                <Sparkles size={16} className="text-cyan-300" />
+                Alashore Marine Connect
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold tracking-tight text-white leading-tight">
+                Global Network & <span className="text-cyan-300">Brand Vision</span>
+              </h1>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold tracking-tight text-white leading-tight">
-              Crafting global trust for <span className="text-cyan-300">sustainably sourced seafood</span>
-            </h1>
-            <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              From ocean-to-plate storytelling to data-driven buyer journeys, our marketing organisation amplifies the reliability and
-              responsibility that Alashore Marine delivers worldwide. Scan the QR distributed at our events or media kits to reconnect with
-              the team below.
-            </p>
+
+            <div className="relative w-full mx-auto rounded-[2rem] border border-white/10 p-2 sm:p-4 bg-white/5 backdrop-blur-md shadow-[0_30px_80px_rgba(15,23,42,0.6)]">
+              <div className="relative w-full overflow-hidden rounded-2xl bg-black">
+                <video
+                  src="/New.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto max-h-[70vh] object-contain"
+                />
+              </div>
+            </div>
           </motion.div>
 
           <motion.div
@@ -191,6 +217,17 @@ export default function MarketingTeamPage() {
                       <div className="text-center space-y-1">
                         <h3 className="text-2xl font-heading font-semibold text-white">{member.name}</h3>
                         <p className="text-sm font-medium text-cyan-200">{member.title}</p>
+
+                        <div className="h-0 opacity-0 overflow-hidden group-hover:h-16 group-hover:opacity-100 transition-all duration-300 ease-out flex flex-col items-center justify-center gap-2 pt-2">
+                          <div className="inline-flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/50 px-3 py-1.5 rounded-full border border-white/5">
+                            <Mail size={12} className="text-rose-400" />
+                            <span className="select-all">{member.email}</span>
+                          </div>
+                          <div className="inline-flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/50 px-3 py-1.5 rounded-full border border-white/5">
+                            <Phone size={12} className="text-emerald-400" />
+                            <span className="select-all">{member.phone}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="pt-5 border-t border-white/5 space-y-4 text-sm text-slate-200">
