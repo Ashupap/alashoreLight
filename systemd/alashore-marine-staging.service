@@ -1,0 +1,19 @@
+# Update the paths below if your staging directory lives elsewhere.
+
+[Unit]
+Description=ShorelineVision Staging Instance
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/testAlashore/ShorelineVision-staging
+EnvironmentFile=/var/www/testAlashore/ShorelineVision-staging/.env.staging
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=shorelinevision-staging
+
+[Install]
+WantedBy=multi-user.target

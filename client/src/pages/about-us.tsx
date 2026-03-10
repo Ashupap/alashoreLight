@@ -609,19 +609,19 @@ export default function AboutUs() {
                     
                     {
                       name: "Monalina Panda",
-                      position: "Director",
+                      position: "Director - Administration",
                       avatar:
                         "https://ui-avatars.com/api/?name=M+P&size=400&background=9ca3af&color=fff&format=png",
                     },
                     {
                       name: "Rashmikanta Panda",
-                      position: "Director",
+                      position: "Director - Marketing & Business Development",
                       avatar:
                         "https://ui-avatars.com/api/?name=R+P&size=400&background=9ca3af&color=fff&format=png",
                     },
                     {
                       name: "Debasish Dash",
-                      position: "Director",
+                      position: "Director - Purchase",
                       avatar:
                         "https://ui-avatars.com/api/?name=D+D&size=400&background=9ca3af&color=fff&format=png",
                     },
@@ -637,84 +637,98 @@ export default function AboutUs() {
                       avatar:
                         "https://ui-avatars.com/api/?name=M+D&size=400&background=9ca3af&color=fff&format=png",
                     },
-                  ].map((leader, index) => (
-                    <motion.div
-                      key={`${leader.name}-${index}`}
-                      initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{
-                        duration: 0.6,
-                        delay: index * 0.1,
-                        type: "spring",
-                        stiffness: 100,
-                      }}
-                      viewport={{ once: true }}
-                      className="leadership-card group relative flex-shrink-0 w-72 h-96"
-                      data-testid={`leadership-card-${index}`}
-                    >
-                      {/* Main Card */}
-                      <div className="relative w-full h-full bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:rotate-2 hover:shadow-2xl">
-                        {/* Background Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-ocean-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  ].map((leader, index) => {
+                    const isManagingDirector =
+                      leader.position === "Managing Director";
 
-                        {/* Photo Container */}
-                        <div className="relative h-64 overflow-hidden">
-                          <PerformanceImage
-                            src={
-                              leader.avatar &&
-                              leader.avatar.includes("unsplash")
-                                ? `${leader.avatar}&q=85&w=800&h=600`
-                                : leader.avatar || "/placeholder-avatar.jpg"
-                            }
-                            alt={leader.name}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            sizes="(max-width: 768px) 200px, 288px"
-                            priority={index < 2}
-                          />
-
-                          {/* Photo Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent group-hover:from-ocean-blue/40 transition-all duration-500"></div>
-
-                          {/* Floating Decoration */}
-                          <div className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
-                            <div className="w-6 h-6 bg-gradient-to-r from-ocean-blue to-marine-teal rounded-full animate-pulse"></div>
+                    return (
+                      <motion.div
+                        key={`${leader.name}-${index}`}
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{
+                          duration: 0.6,
+                          delay: index * 0.1,
+                          type: "spring",
+                          stiffness: 100,
+                        }}
+                        viewport={{ once: true }}
+                        className="leadership-card group relative flex-shrink-0 w-72 h-auto"
+                        data-testid={`leadership-card-${index}`}
+                      >
+                        {/* Main Card */}
+                        <div className="relative w-full h-80 md:h-88 bg-slate-900 rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:rotate-2 hover:shadow-2xl">
+                          {/* Image / Background */}
+                          <div className="absolute inset-0">
+                            {isManagingDirector ? (
+                              <PerformanceImage
+                                src={mdImage}
+                                alt={leader.name}
+                                className="w-full h-full object-cover"
+                                style={{ width: "100%", height: "100%" }}
+                                sizes="(max-width: 768px) 200px, 288px"
+                                priority={index < 2}
+                              />
+                            ) : (
+                              <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+                            )}
                           </div>
+
+                          {/* Text Overlay */}
+                          {isManagingDirector ? (
+                            <div className="absolute inset-x-0 bottom-0 px-0 pb-4 pt-6 text-center bg-gradient-to-t from-black/60 via-black/30 to-transparent">
+                              <div className="w-full bg-slate-900/75 backdrop-blur-sm px-4 py-2 mb-2">
+                                <motion.h4
+                                className="text-lg font-bold text-white leading-tight mb-0"
+                                whileHover={{ scale: 1.05 }}
+                              >
+                                {leader.name}
+                              </motion.h4>
+                              </div>
+                              <p className="text-marine-teal font-semibold text-xs md:text-sm uppercase tracking-wide leading-tight">
+                                {leader.position}
+                              </p>
+                              <div className="w-10 h-1 bg-gradient-to-r from-ocean-blue to-marine-teal mx-auto rounded-full mt-1"></div>
+                            </div>
+                          ) : (
+                            <div className="absolute inset-0">
+                              <div className="absolute inset-0 flex items-center justify-center px-4">
+                                <div className="w-full bg-slate-900/80 backdrop-blur-sm px-4 py-2">
+                                  <motion.h4
+                                    className="text-lg font-bold text-white leading-tight mb-0 text-center"
+                                    whileHover={{ scale: 1.05 }}
+                                  >
+                                    {leader.name}
+                                  </motion.h4>
+                                </div>
+                              </div>
+                              <div className="absolute inset-x-0 bottom-0 px-4 pb-4 text-center space-y-1">
+                                <p className="text-marine-teal font-semibold text-xs md:text-sm uppercase tracking-wide leading-tight">
+                                  {leader.position}
+                                </p>
+                                <div className="w-10 h-1 bg-gradient-to-r from-ocean-blue to-marine-teal mx-auto rounded-full"></div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Hover border accent */}
+                          <div className="absolute inset-0 border-2 border-ocean-blue/0 group-hover:border-ocean-blue/20 rounded-3xl transition-all duration-500"></div>
+
+                          {/* Corner Accent */}
+                          <div className="absolute bottom-0 right-0 w-0 h-0 border-b-[30px] border-r-[30px] border-b-marine-teal/20 border-r-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         </div>
 
-                        {/* Content Section */}
-                        <div className="relative p-6 text-center">
-                          <motion.h4
-                            className="text-xl font-bold text-gray-900 mb-2 group-hover:text-ocean-blue transition-colors duration-300"
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            {leader.name}
-                          </motion.h4>
-
-                          <p className="text-coral-accent font-semibold text-sm uppercase tracking-wide group-hover:text-marine-teal transition-colors duration-300">
-                            {leader.position}
-                          </p>
-
-                          {/* Animated Underline */}
-                          <div className="w-16 h-1 bg-gradient-to-r from-ocean-blue to-marine-teal mx-auto rounded-full mt-4 transform scale-0 group-hover:scale-100 transition-transform duration-500"></div>
-                        </div>
-
-                        {/* Hover Effects */}
-                        <div className="absolute inset-0 border-2 border-ocean-blue/0 group-hover:border-ocean-blue/20 rounded-3xl transition-all duration-500"></div>
-
-                        {/* Corner Accent */}
-                        <div className="absolute bottom-0 right-0 w-0 h-0 border-b-[30px] border-r-[30px] border-b-marine-teal/20 border-r-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      </div>
-
-                      {/* Shadow Effect */}
-                      <div className="absolute inset-0 rounded-3xl shadow-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500 transform translate-y-2 -z-10 bg-ocean-blue/10"></div>
-                    </motion.div>
-                  ))}
+                        {/* Shadow Effect */}
+                        <div className="absolute inset-0 rounded-3xl shadow-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500 transform translate-y-2 -z-10 bg-ocean-blue/10"></div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Gradient Fade Edges */}
-              <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
-              <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute top-0 left-0 w-10 sm:w-20 lg:w-32 h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-10 sm:w-20 lg:w-32 h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
             </div>
 
             {/* Horizontal Journey Timeline */}
