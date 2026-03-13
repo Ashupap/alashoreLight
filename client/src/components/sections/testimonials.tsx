@@ -1,32 +1,29 @@
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { Star, User, Quote, MessageSquarePlus } from "lucide-react";
+import { Star, User, Quote } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
 import type { Testimonial } from "@shared/schema";
+import { STATIC_TESTIMONIALS } from "@/data/testimonials";
 
 export default function Testimonials() {
-  const { data: testimonials, isLoading } = useQuery<Testimonial[]>({
-    queryKey: ["/api/testimonials?published=true"],
-  });
-  
+  const isLoading = false;
+  const testimonials = STATIC_TESTIMONIALS;
+
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
 
   // Only show testimonials from database
   const displayTestimonials = testimonials || [];
-  
+
   // Auto-rotate testimonials every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTestimonialIndex(prev => 
+      setCurrentTestimonialIndex(prev =>
         prev === displayTestimonials.length - 1 ? 0 : prev + 1
       );
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [displayTestimonials.length]);
-  
+
   const currentTestimonial = displayTestimonials[currentTestimonialIndex];
 
   return (
@@ -47,24 +44,7 @@ export default function Testimonials() {
           <p className="text-white/90 text-lg leading-relaxed mb-8">
             Witness it first hand, directly from our lovely customers
           </p>
-          
-          {/* Call-to-Action Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            <Link href="/submit-testimonial">
-              <Button 
-                className="bg-white text-teal-600 hover:bg-gray-50 hover:text-teal-700 px-6 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                data-testid="button-share-experience"
-              >
-                <MessageSquarePlus className="w-5 h-5 mr-2" />
-                Share Your Experience
-              </Button>
-            </Link>
-          </motion.div>
+
         </motion.div>
 
         {/* Right Side - White Background with Centered Card */}
@@ -81,9 +61,9 @@ export default function Testimonials() {
             <motion.div
               key={currentTestimonialIndex}
               initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={{ 
-                opacity: 1, 
-                y: [0, -8, 0], 
+              animate={{
+                opacity: 1,
+                y: [0, -8, 0],
                 scale: [1, 1.02, 1],
                 rotate: [0, 1, -1, 0]
               }}
@@ -107,7 +87,7 @@ export default function Testimonials() {
               {currentTestimonial && (
                 <>
                   {/* Animated Stars Rating */}
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
@@ -119,28 +99,28 @@ export default function Testimonials() {
                         key={index}
                         initial={{ opacity: 0, scale: 0, rotate: -180 }}
                         whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                        transition={{ 
-                          duration: 0.5, 
+                        transition={{
+                          duration: 0.5,
                           delay: 0.5 + index * 0.1,
                           type: "spring",
                           stiffness: 200
                         }}
                         viewport={{ once: true }}
-                        whileHover={{ 
-                          scale: 1.3, 
+                        whileHover={{
+                          scale: 1.3,
                           rotate: 360,
                           transition: { duration: 0.3 }
                         }}
                       >
-                        <Star 
-                          className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-sm" 
+                        <Star
+                          className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-sm"
                         />
                       </motion.div>
                     ))}
                   </motion.div>
 
                   {/* Testimonial Quote with enhanced styling */}
-                  <motion.blockquote 
+                  <motion.blockquote
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.8 }}
@@ -165,26 +145,26 @@ export default function Testimonials() {
                   </motion.blockquote>
 
                   {/* Customer Info with enhanced animations */}
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 1 }}
                     viewport={{ once: true }}
                     className="flex items-center gap-4"
                   >
-                    <motion.div 
+                    <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                       className="w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-teal-100 shadow-lg"
                     >
                       {currentTestimonial.avatar ? (
-                        <img 
-                          src={currentTestimonial.avatar} 
+                        <img
+                          src={currentTestimonial.avatar}
                           alt={currentTestimonial.name}
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <motion.div 
+                        <motion.div
                           whileHover={{ scale: 1.2 }}
                           className="w-full h-full bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center"
                         >
@@ -192,15 +172,15 @@ export default function Testimonials() {
                         </motion.div>
                       )}
                     </motion.div>
-                    
+
                     <div>
-                      <motion.h4 
+                      <motion.h4
                         whileHover={{ scale: 1.05 }}
                         className="font-bold text-gray-900 text-lg mb-1 cursor-default"
                       >
                         {currentTestimonial.name}
                       </motion.h4>
-                      <motion.p 
+                      <motion.p
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 1.2 }}

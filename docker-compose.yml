@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  alashore-light:
+    build: .
+    container_name: alashore-light
+    ports:
+      - "5100:5100"
+    restart: always
+    environment:
+      - PORT=5100
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
+    env_file:
+      - .env

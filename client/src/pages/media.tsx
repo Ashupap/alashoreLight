@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/
 import { gsap } from "gsap";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
-import { useQuery } from "@tanstack/react-query";
+import { STATIC_MEDIA } from "@/data/media";
 
 interface MediaFile {
   id: number;
@@ -35,7 +35,7 @@ export default function Media() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -61,14 +61,14 @@ export default function Media() {
     // GSAP 3D Slider Animation
     const slides = slideRefs.current;
     const totalSlides = recognitionAwards.length;
-    
+
     slides.forEach((slide, index) => {
       if (!slide) return;
-      
+
       const isActive = index === currentSlide;
       const isPrev = index === (currentSlide - 1 + totalSlides) % totalSlides;
       const isNext = index === (currentSlide + 1) % totalSlides;
-      
+
       if (isActive) {
         gsap.to(slide, {
           duration: 0.8,
@@ -123,34 +123,34 @@ export default function Media() {
 
   const recognitionAwards = [
     {
-      title: "Quality Certification",
-      description: "Certified for maintaining highest quality standards in seafood processing",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/3.jpg",
-      year: "2024"
+      title: "HACCP Compliance Certificate",
+      description: "Certified by Export Inspection Agency – Kolkata (Ministry of Commerce and Industry, Govt. of India) for implementing HACCP at all stages of production for freezing of raw fish & fishery products.",
+      image: "/attached_assets/awards/haccp.jpg",
+      year: "2023"
     },
     {
-      title: "Professional Excellence Award",
-      description: "Recognition for maintaining professional standards and business excellence in seafood industry",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/2.jpg",
-      year: "2024"
+      title: "Export Inspection Council – Certificate of Approval",
+      description: "Granted renewal of approval for Freezing of Raw Fish & Fishery Products (IQF) Crustaceans Only under Approval Number 1312, valid for exports to all countries.",
+      image: "/attached_assets/awards/eic-approval.jpg",
+      year: "2021"
     },
     {
-      title: "Outstanding Performance Recognition",
-      description: "Awarded for exceptional performance and contribution to the marine export sector",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/1.jpg",
-      year: "2024"
+      title: "Global Aquaculture Alliance – BAP Certificate",
+      description: "Assessed and certified by SGS for meeting the Best Aquaculture Practices (BAP) Seafood Processing Standard for processing of frozen raw shrimps – Farm Raised Shrimp (Litopenaeus vannamei).",
+      image: "/attached_assets/awards/bap.jpg",
+      year: "2021"
     },
     {
-      title: "Business Excellence Certificate",
-      description: "Certified for excellence in business operations and sustainable practices",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/4.jpg",
-      year: "2024"
+      title: "FSSAI Central License",
+      description: "Licensed under the Food Safety and Standards Authority of India (Form C) for manufacturing and exporting seafood products from our Somnathpur Industrial Area facility.",
+      image: "/attached_assets/awards/fssai.jpg",
+      year: "2021"
     },
     {
-      title: "Industry Innovation Award",
-      description: "Recognized for innovative approaches in seafood processing and export excellence",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/5.jpg",
-      year: "2024"
+      title: "U.S. FDA Certificate of Registration",
+      description: "Registered with the U.S. Food and Drug Administration (FDA Registration No. 11617257610) pursuant to the Federal Food Drug and Cosmetic Act and the FDA Food Safety Modernization Act.",
+      image: "/attached_assets/awards/fda.jpg",
+      year: "2018"
     }
   ];
 
@@ -173,60 +173,47 @@ export default function Media() {
     }
   ];
 
-  // Fetch gallery images from database
-  const { data: galleryFiles } = useQuery<MediaFile[]>({
-    queryKey: ["/api/media"],
-  });
-
-  // Extract gallery category from alt text tags
-  const getGalleryCategory = (alt?: string | null) => {
-    if (!alt) return null;
-    const hashTags = alt.match(/#(\w+)/g) || [];
-    const categoryTags = hashTags.map(tag => tag.substring(1).toLowerCase());
-    
-    // Look for any gallery-related categories in tags (expanded list)
-    const galleryCategories = ["facility", "processing", "operations", "team", "quality", "sustainability", "awards", "community", "csr"];
-    const foundCategory = categoryTags.find(tag => galleryCategories.includes(tag));
-    
-    return foundCategory ? foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1) : null;
-  };
-
-  // Filter gallery files and transform to gallery format
-  const galleryImages = galleryFiles ? galleryFiles
-    .filter(file => file.category === 'gallery' && getGalleryCategory(file.alt))
-    .map(file => ({
-      src: file.url,
-      alt: file.alt || file.originalName,
-      category: getGalleryCategory(file.alt)!,
+  // Gallery images sourced securely from the CSR folder
+  const galleryImages = [
+    {
+      src: "/attached_assets/gallery/1.jpg",
+      alt: "Alashore Marine CSR Activity 1",
+      category: "CSR",
       width: 1200,
       height: 800
-    })) : [
-    // Fallback static images if no database images available
+    },
     {
-      src: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.03.31-PM.jpg",
-      alt: "Modern seafood processing facility",
+      src: "/attached_assets/gallery/2.jpg",
+      alt: "Alashore Marine CSR Activity 2",
+      category: "Community",
+      width: 1200,
+      height: 800
+    },
+    {
+      src: "/attached_assets/gallery/3.jpg",
+      alt: "Alashore Marine CSR Activity 3",
+      category: "CSR",
+      width: 1200,
+      height: 800
+    },
+    {
+      src: "/attached_assets/gallery/4.jpg",
+      alt: "Alashore Marine CSR Activity 4",
       category: "Facility",
       width: 1200,
       height: 800
     },
     {
-      src: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.06.23-PM-1.jpg",
-      alt: "Quality control and packaging operations",
-      category: "Processing",
-      width: 1200,
-      height: 900
-    },
-    {
-      src: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.12.23-PM.jpg",
-      alt: "Export operations and logistics",
-      category: "Operations",
+      src: "/attached_assets/gallery/5.jpg",
+      alt: "Alashore Marine CSR Activity 5",
+      category: "Team",
       width: 1200,
       height: 800
     },
     {
-      src: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.12.24-PM-1.jpg",
-      alt: "Team collaboration and workplace culture",
-      category: "Team",
+      src: "/attached_assets/gallery/6.jpg",
+      alt: "Alashore Marine CSR Activity 6",
+      category: "Community",
       width: 1200,
       height: 800
     }
@@ -236,25 +223,25 @@ export default function Media() {
     {
       title: "Enhancing Road Safety in Balasore",
       description: "We've reinforced Balasore's road safety by contributing 4 CCTV cameras in collaboration with Balasore SP Sagarika Nath. These cameras aim to improve traffic monitoring and ensure safer roads for the community.",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.06.23-PM-1.jpg",
+      image: "/attached_assets/gallery/3.jpg",
       impact: "4 CCTV Cameras Installed"
     },
     {
-      title: "Promoting Mobility and Inclusivity for the Handicapped in Balasore", 
+      title: "Promoting Mobility and Inclusivity for the Handicapped in Balasore",
       description: "In collaboration with Balasore Collector, we've donated 2 e-tricycles to empower handicapped individuals in Balasore. This initiative reflects our dedication to inclusive community development.",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.12.24-PM-1.jpg",
+      image: "/attached_assets/gallery/6.jpg",
       impact: "2 E-Tricycles Donated"
     },
     {
       title: "Supporting Community Development",
       description: "Contributed towards the growth of RSS, Balasore, supporting various community development initiatives.",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/Untitled-design-17.png",
+      image: "/attached_assets/gallery/csr-article-3.png",
       impact: "Community Growth"
     },
     {
       title: "Advancing Education",
       description: "Contributed 20 lakhs towards rural school development initiatives, enhancing educational opportunities for underprivileged communities.",
-      image: "https://alashoremarine.com/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-02-at-6.12.23-PM.jpg",
+      image: "/attached_assets/gallery/csr-article-4.png",
       impact: "₹20 Lakhs Investment"
     }
   ];
@@ -264,14 +251,14 @@ export default function Media() {
     if (!galleryImages || galleryImages.length === 0) {
       return ["All"];
     }
-    
+
     const imageCategories = Array.from(new Set(galleryImages.map(img => img.category)));
     return ["All", ...imageCategories.sort()];
   };
 
   const categories = getAvailableCategories();
-  const filteredImages = selectedCategory === "All" 
-    ? galleryImages 
+  const filteredImages = selectedCategory === "All"
+    ? galleryImages
     : galleryImages.filter(img => img.category === selectedCategory);
 
   return (
@@ -281,25 +268,25 @@ export default function Media() {
         {/* Enhanced Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
           {/* Background Image */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ 
+            style={{
               backgroundImage: `url(${mediaBg})`,
               filter: 'brightness(0.3) contrast(1.1)'
             }}
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-ocean-blue/80 via-marine-teal/70 to-deep-navy/85" />
-          <motion.div 
+          <motion.div
             style={{ y, opacity: parallaxOpacity }}
             className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"
           />
           <motion.div
-            animate={{ 
+            animate={{
               rotate: [0, 360],
               scale: [1, 1.3, 1]
             }}
-            transition={{ 
+            transition={{
               duration: 25,
               repeat: Infinity,
               ease: "linear"
@@ -307,11 +294,11 @@ export default function Media() {
             className="absolute top-10 right-10 w-56 h-56 bg-white/10 rounded-full backdrop-blur-sm"
           />
           <motion.div
-            animate={{ 
+            animate={{
               y: [0, -40, 0],
               x: [0, 30, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 18,
               repeat: Infinity,
               ease: "easeInOut",
@@ -335,7 +322,7 @@ export default function Media() {
                 <Camera className="text-coral-accent mr-2" size={20} />
                 <span className="text-white/90 font-medium">Media & Recognition</span>
               </motion.div>
-              <motion.h1 
+              <motion.h1
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.5, delay: 0.2 }}
@@ -344,7 +331,7 @@ export default function Media() {
                 Media <span className="text-coral-accent">&</span>
                 <br />Recognition
               </motion.h1>
-              <motion.p 
+              <motion.p
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1, delay: 0.8 }}
@@ -357,16 +344,16 @@ export default function Media() {
         </section>
 
         {/* Recognition Section */}
-        <motion.section 
+        <motion.section
           style={{ y: useTransform(scrollYProgress, [0.1, 0.3], [50, 0]) }}
           className="py-16 md:py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden"
         >
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
               opacity: [0.1, 0.3, 0.1]
             }}
-            transition={{ 
+            transition={{
               duration: 20,
               repeat: Infinity,
               ease: "easeInOut"
@@ -408,34 +395,34 @@ export default function Media() {
                 className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full mt-4"
               />
             </motion.div>
-            
+
             {/* Modern 3D GSAP Slider */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
-              className="relative max-w-6xl mx-auto h-[500px] md:h-[600px] overflow-hidden"
+              className="relative max-w-6xl mx-auto h-[520px] md:h-[600px] overflow-hidden"
             >
               {/* Slider Container with 3D Perspective */}
-              <div 
+              <div
                 ref={sliderRef}
                 className="relative w-full h-full"
-                style={{ 
+                style={{
                   perspective: "1200px",
                   perspectiveOrigin: "center center"
                 }}
               >
                 {/* Glass Morphism Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-800/20 via-transparent to-blue-900/10 backdrop-blur-xl rounded-3xl border border-white/10" />
-                
+
                 {/* Awards Slides */}
                 {recognitionAwards.map((award, index) => (
                   <div
                     key={index}
                     ref={(el) => (slideRefs.current[index] = el)}
-                    className="absolute top-1/2 left-1/2 w-72 h-80 md:w-80 md:h-96 transform -translate-x-1/2 -translate-y-1/2"
-                    style={{ 
+                    className="absolute top-1/2 left-1/2 w-56 md:w-64 transform -translate-x-1/2 -translate-y-1/2"
+                    style={{
                       transformStyle: "preserve-3d",
                       zIndex: index === currentSlide ? 10 : 5 - Math.abs(index - currentSlide)
                     }}
@@ -443,79 +430,67 @@ export default function Media() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <motion.div
-                          whileHover={{ 
+                          whileHover={{
                             scale: 1.05,
                             rotateX: 5,
                             rotateY: 5
                           }}
-                          className="group relative w-full h-full cursor-pointer"
+                          className="group relative w-full cursor-pointer"
+                          style={{ aspectRatio: '3/4' }}
                         >
-                          {/* Floating Card with Glass Effect */}
-                          <div className="relative w-full h-full bg-gradient-to-br from-slate-800/40 via-gray-800/30 to-slate-900/40 backdrop-blur-lg rounded-2xl border border-white/20 shadow-2xl overflow-hidden">
-                            {/* Gradient Overlay */}
+                          {/* Glass card background (overflow-hidden only here for rounded corners) */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-slate-800/40 via-gray-800/30 to-slate-900/40 backdrop-blur-lg rounded-2xl border border-white/20 shadow-2xl overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10" />
-                            
-                            {/* Certificate Image */}
-                            <div className="relative p-4 h-full flex items-center justify-center">
-                              <PerformanceImage
-                                src={award.image}
-                                alt="Award Certificate"
-                                className="w-full h-full object-contain rounded-lg"
-                                style={{ 
-                                  filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))',
-                                  maxWidth: '100%',
-                                  maxHeight: '100%'
-                                }}
-                                sizes="(max-width: 768px) 280px, 320px"
-                                priority={index === currentSlide}
-                                data-testid={`award-image-${index}`}
-                              />
-                            </div>
+                          </div>
 
-                            {/* Interactive Hover Overlay */}
-                            <motion.div 
-                              initial={{ opacity: 0 }}
-                              whileHover={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                              className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-center justify-center"
-                            >
-                              <motion.div
-                                initial={{ scale: 0, rotate: 0 }}
-                                whileHover={{ scale: 1, rotate: 360 }}
-                                transition={{ duration: 0.5, ease: "backOut" }}
-                                className="bg-blue-500/20 backdrop-blur-md p-4 rounded-full shadow-xl border border-blue-400/30"
-                              >
-                                <ImageIcon size={28} className="text-blue-400" />
-                              </motion.div>
-                            </motion.div>
-
-                            {/* Floating Elements */}
-                            <motion.div
-                              animate={{ 
-                                y: [0, -10, 0],
-                                rotate: [0, 5, 0]
+                          {/* Certificate image — NOT inside overflow-hidden, so never clipped */}
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ padding: '8px', zIndex: 1 }}>
+                            <img
+                              src={award.image}
+                              alt="Award Certificate"
+                              style={{
+                                display: 'block',
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain',
+                                borderRadius: '8px',
+                                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))'
                               }}
-                              transition={{ 
-                                duration: 3,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                              }}
-                              className="absolute top-4 right-4 w-3 h-3 bg-blue-400/60 rounded-full blur-sm"
-                            />
-                            <motion.div
-                              animate={{ 
-                                y: [0, 15, 0],
-                                x: [0, 5, 0]
-                              }}
-                              transition={{ 
-                                duration: 4,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: 1
-                              }}
-                              className="absolute bottom-6 left-6 w-2 h-2 bg-purple-400/40 rounded-full blur-sm"
+                              loading={index === currentSlide ? "eager" : "lazy"}
                             />
                           </div>
+
+                          {/* Hover overlay */}
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-center justify-center"
+                            style={{ zIndex: 2 }}
+                          >
+                            <motion.div
+                              initial={{ scale: 0, rotate: 0 }}
+                              whileHover={{ scale: 1, rotate: 360 }}
+                              transition={{ duration: 0.5, ease: "backOut" }}
+                              className="bg-blue-500/20 backdrop-blur-md p-4 rounded-full shadow-xl border border-blue-400/30"
+                            >
+                              <ImageIcon size={28} className="text-blue-400" />
+                            </motion.div>
+                          </motion.div>
+
+                          {/* Floating decorative elements */}
+                          <motion.div
+                            animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute top-4 right-4 w-3 h-3 bg-blue-400/60 rounded-full blur-sm"
+                            style={{ zIndex: 3 }}
+                          />
+                          <motion.div
+                            animate={{ y: [0, 15, 0], x: [0, 5, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                            className="absolute bottom-6 left-6 w-2 h-2 bg-purple-400/40 rounded-full blur-sm"
+                            style={{ zIndex: 3 }}
+                          />
 
                           {/* 3D Shadow */}
                           <div className="absolute -bottom-8 left-1/2 w-64 h-16 bg-black/10 rounded-full blur-xl transform -translate-x-1/2 scale-75 group-hover:scale-90 transition-transform duration-500" />
@@ -524,13 +499,10 @@ export default function Media() {
                       <DialogContent className="max-w-4xl w-full h-auto max-h-[90vh] p-0 bg-transparent border-none">
                         <DialogTitle className="sr-only">Award Certificate - Enlarged View</DialogTitle>
                         <div className="relative bg-slate-900/95 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/20">
-                          <PerformanceImage
+                          <img
                             src={award.image}
                             alt="Award Certificate - Enlarged View"
-                            className="w-full h-auto object-contain"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 60vw"
-                            priority={true}
-                            data-testid={`award-enlarged-${index}`}
+                            className="w-full h-auto object-contain block"
                           />
                         </div>
                       </DialogContent>
@@ -548,7 +520,7 @@ export default function Media() {
                 >
                   <ChevronLeft size={24} />
                 </motion.button>
-                
+
                 <motion.button
                   onClick={nextSlide}
                   whileHover={{ scale: 1.1, x: 5 }}
@@ -567,11 +539,10 @@ export default function Media() {
                       onClick={() => setCurrentSlide(index)}
                       whileHover={{ scale: 1.2 }}
                       whileTap={{ scale: 0.8 }}
-                      className={`w-3 h-3 rounded-full border-2 transition-all duration-300 ${
-                        index === currentSlide
-                          ? "bg-blue-400 border-blue-400 shadow-lg shadow-blue-400/30"
-                          : "bg-white/40 border-white/60 hover:bg-white/60"
-                      }`}
+                      className={`w-3 h-3 rounded-full border-2 transition-all duration-300 ${index === currentSlide
+                        ? "bg-blue-400 border-blue-400 shadow-lg shadow-blue-400/30"
+                        : "bg-white/40 border-white/60 hover:bg-white/60"
+                        }`}
                       data-testid={`slide-indicator-${index}`}
                     />
                   ))}
@@ -579,16 +550,16 @@ export default function Media() {
               </div>
             </motion.div>
           </div>
-        </motion.section>
+        </motion.section >
 
         {/* News Section */}
-        <section className="py-24 bg-gradient-to-br from-light-marine/20 to-white relative overflow-hidden">
+        < section className="py-24 bg-gradient-to-br from-light-marine/20 to-white relative overflow-hidden" >
           <motion.div
-            animate={{ 
+            animate={{
               x: [0, 50, 0],
               y: [0, -30, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 15,
               repeat: Infinity,
               ease: "easeInOut"
@@ -632,7 +603,7 @@ export default function Media() {
                 Stay updated with our latest news and sponsorship activities, highlighting our commitment to community engagement
               </motion.p>
             </motion.div>
-            
+
             <div className="grid md:grid-cols-2 gap-10">
               {newsItems.map((news, index) => (
                 <motion.div
@@ -641,7 +612,7 @@ export default function Media() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  whileHover={{ 
+                  whileHover={{
                     y: -10,
                     boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)"
                   }}
@@ -690,15 +661,15 @@ export default function Media() {
               ))}
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Gallery Section */}
-        <section className="py-24 bg-gradient-to-br from-gray-900 via-slate-800 to-black relative overflow-hidden">
+        < section className="py-24 bg-gradient-to-br from-gray-900 via-slate-800 to-black relative overflow-hidden" >
           {/* Modern Gradient Overlays */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_40%)]" />
+          < div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_40%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.08),transparent_40%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_90%,rgba(34,197,94,0.06),transparent_40%)]" />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -726,7 +697,7 @@ export default function Media() {
               >
                 Visual <span className="text-purple-400">Journey</span>
               </motion.h2>
-              
+
               {/* Category Filter */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -737,7 +708,7 @@ export default function Media() {
               >
                 {categories.map((category, index) => {
                   const categoryCount = category === "All" ? galleryImages.length : galleryImages.filter(img => img.category === category).length;
-                  
+
                   return (
                     <motion.button
                       key={category}
@@ -748,11 +719,10 @@ export default function Media() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedCategory(category)}
-                      className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 backdrop-blur-md border ${
-                        selectedCategory === category
-                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent shadow-lg"
-                          : "bg-white/20 text-white border-white/30 hover:bg-white/30 hover:border-purple-400"
-                      }`}
+                      className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 backdrop-blur-md border ${selectedCategory === category
+                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent shadow-lg"
+                        : "bg-white/20 text-white border-white/30 hover:bg-white/30 hover:border-purple-400"
+                        }`}
                     >
                       {category} ({categoryCount})
                     </motion.button>
@@ -760,7 +730,7 @@ export default function Media() {
                 })}
               </motion.div>
             </motion.div>
-            
+
             {/* Modern Grid Gallery */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -780,7 +750,7 @@ export default function Media() {
                   <ChevronLeft size={20} className="md:w-6 md:h-6" />
                 </motion.button>
               )}
-              
+
               {currentGalleryIndex < Math.max(0, filteredImages.length - 4) && (
                 <motion.button
                   whileHover={{ scale: 1.1, x: 5 }}
@@ -797,7 +767,7 @@ export default function Media() {
                 {filteredImages.slice(currentGalleryIndex, currentGalleryIndex + 4).map((image, index) => {
                   const actualIndex = currentGalleryIndex + index;
                   const isCenter = index === 1;
-                  
+
                   return (
                     <motion.div
                       key={`${image.src}-${actualIndex}`}
@@ -809,16 +779,16 @@ export default function Media() {
                       onClick={() => setLightboxIndex(actualIndex)}
                       className={`group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer ${
                         /* Mobile: Stack vertically with varying heights */
-                        isCenter 
-                          ? "h-64 sm:h-80 md:col-span-6 md:row-span-4 md:col-start-4 md:row-start-2 md:h-auto" 
+                        isCenter
+                          ? "h-64 sm:h-80 md:col-span-6 md:row-span-4 md:col-start-4 md:row-start-2 md:h-auto"
                           : "h-48 sm:h-64 " + (
-                            index === 0 
-                              ? "md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-1 md:h-auto" 
-                              : index === 2 
-                                ? "md:col-span-3 md:row-span-2 md:col-start-10 md:row-start-1 md:h-auto" 
+                            index === 0
+                              ? "md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-1 md:h-auto"
+                              : index === 2
+                                ? "md:col-span-3 md:row-span-2 md:col-start-10 md:row-start-1 md:h-auto"
                                 : "md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-4 md:h-auto"
                           )
-                      }`}
+                        }`}
                     >
                       <img
                         src={image.src}
@@ -827,7 +797,7 @@ export default function Media() {
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
+
                       {/* Category Badge */}
                       <div className="absolute top-4 left-4 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30">
                         <span className="text-white text-xs font-medium">{image.category}</span>
@@ -836,7 +806,7 @@ export default function Media() {
                   );
                 })}
               </div>
-              
+
               {/* Lightbox */}
               <Lightbox
                 open={lightboxIndex >= 0}
@@ -857,16 +827,16 @@ export default function Media() {
               />
             </motion.div>
           </div>
-        </section>
+        </section >
 
         {/* CSR Activities Section */}
-        <section className="py-24 bg-gradient-to-br from-light-marine/10 to-white relative overflow-hidden">
+        < section className="py-24 bg-gradient-to-br from-light-marine/10 to-white relative overflow-hidden" >
           <motion.div
-            animate={{ 
+            animate={{
               y: [0, -50, 0],
               x: [0, 40, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 20,
               repeat: Infinity,
               ease: "easeInOut"
@@ -910,7 +880,7 @@ export default function Media() {
                 Our commitment to giving back to the community through meaningful initiatives and social responsibility programs
               </motion.p>
             </motion.div>
-            
+
             <div className="grid md:grid-cols-2 gap-12">
               {csrActivities.map((activity, index) => (
                 <motion.div
@@ -919,7 +889,7 @@ export default function Media() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  whileHover={{ 
+                  whileHover={{
                     y: -10,
                     boxShadow: "0 25px 50px rgba(0, 0, 0, 0.1)"
                   }}
@@ -933,7 +903,7 @@ export default function Media() {
                       alt={activity.title}
                       className="w-full h-64 object-cover"
                     />
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0 }}
                       whileHover={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
@@ -949,7 +919,7 @@ export default function Media() {
                     <p className="text-gray-600 leading-relaxed mb-6">
                       {activity.description}
                     </p>
-                    <motion.div 
+                    <motion.div
                       whileHover={{ x: 5 }}
                       className="flex items-center text-coral-accent font-semibold"
                     >
@@ -961,19 +931,20 @@ export default function Media() {
               ))}
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Call to Action */}
-        <motion.section 
-          style={{ y: useTransform(scrollYProgress, [0.8, 1], [0, -50]) }}
+        < motion.section
+          style={{ y: useTransform(scrollYProgress, [0.8, 1], [0, -50]) }
+          }
           className="py-32 bg-gradient-to-br from-ocean-blue via-marine-teal to-deep-navy text-white relative overflow-hidden"
         >
           <motion.div
-            animate={{ 
+            animate={{
               rotate: [0, 360],
               scale: [1, 1.3, 1]
             }}
-            transition={{ 
+            transition={{
               duration: 25,
               repeat: Infinity,
               ease: "linear"
@@ -981,11 +952,11 @@ export default function Media() {
             className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full backdrop-blur-sm"
           />
           <motion.div
-            animate={{ 
+            animate={{
               x: [0, 100, 0],
               y: [0, -50, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 18,
               repeat: Infinity,
               ease: "easeInOut"
@@ -999,7 +970,7 @@ export default function Media() {
               transition={{ duration: 1 }}
               viewport={{ once: true }}
             >
-              <motion.h2 
+              <motion.h2
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.2, delay: 0.2 }}
@@ -1017,7 +988,7 @@ export default function Media() {
                   Our Success Story?
                 </motion.span>
               </motion.h2>
-              <motion.p 
+              <motion.p
                 initial={{ y: 30, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1, delay: 0.8 }}
@@ -1031,7 +1002,7 @@ export default function Media() {
                 whileInView={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 1.2 }}
                 viewport={{ once: true }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   boxShadow: "0 25px 50px rgba(255, 107, 107, 0.4)"
                 }}
@@ -1050,14 +1021,14 @@ export default function Media() {
               </motion.button>
             </motion.div>
           </div>
-        </motion.section>
-      </main>
+        </motion.section >
+      </main >
       <Footer />
 
-      <ContactFormModal 
-        isOpen={isContactModalOpen} 
-        onClose={() => setIsContactModalOpen(false)} 
+      <ContactFormModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
       />
-    </div>
+    </div >
   );
 }

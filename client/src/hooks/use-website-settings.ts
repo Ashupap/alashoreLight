@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import type { WebsiteSetting } from "@shared/schema";
+import { STATIC_SETTINGS } from "@/data/settings";
 
 interface WebsiteSettingsData {
   facebook: string;
@@ -10,42 +9,20 @@ interface WebsiteSettingsData {
   phone: string;
 }
 
-const defaultSettings: WebsiteSettingsData = {
-  facebook: "https://www.facebook.com/AlashoreMarine/",
-  instagram: "https://www.instagram.com/alashoremarine/",
-  twitter: "https://twitter.com/AlashoreL",
-  linkedin: "https://www.linkedin.com/company/alashore-marine-private-limited/",
-  email: "alashoremarine@gmail.com",
-  phone: "+91 7381050536",
-};
-
 export function useWebsiteSettings() {
-  const { data: settings, isLoading, error } = useQuery<WebsiteSetting[]>({
-    queryKey: ["/api/settings"],
-    queryFn: async () => {
-      const response = await fetch("/api/settings?category=contact");
-      if (!response.ok) {
-        throw new Error("Failed to fetch settings");
-      }
-      return response.json();
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-
-  const settingsData: WebsiteSettingsData = { ...defaultSettings };
-
-  if (settings) {
-    settings.forEach((setting) => {
-      if (setting.key in settingsData && setting.value) {
-        settingsData[setting.key as keyof WebsiteSettingsData] = setting.value;
-      }
-    });
-  }
+  const settingsData: WebsiteSettingsData = {
+    facebook: STATIC_SETTINGS["social.facebook"] || "https://www.facebook.com/AlashoreMarine/",
+    instagram: STATIC_SETTINGS["social.instagram"] || "https://www.instagram.com/alashoremarine/",
+    twitter: STATIC_SETTINGS["social.twitter"] || "https://twitter.com/AlashoreL",
+    linkedin: STATIC_SETTINGS["social.linkedin"] || "https://www.linkedin.com/company/alashore-marine-private-limited/",
+    email: STATIC_SETTINGS["contact.email"] || "alashoremarine@gmail.com",
+    phone: STATIC_SETTINGS["contact.phone"] || "+91 7381050536",
+  };
 
   return {
     settings: settingsData,
-    isLoading,
-    error,
-    rawSettings: settings,
+    isLoading: false,
+    error: null,
+    rawSettings: []
   };
 }

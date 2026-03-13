@@ -1,5 +1,4 @@
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Package, Star, Award, Sparkles, Filter, Shield } from "lucide-react";
 import { useRef, useState } from "react";
 import { PerformanceImage } from "@/components/ui/performance-image";
@@ -11,13 +10,14 @@ import bapLogo from "@assets/BAP-Logo-2_1756201576811.png";
 import haccpLogo from "@assets/steptodown.com594892_1756202338499.png";
 import fdaLogo from "@assets/unnamed_1756201576811.png";
 import productsBg from "@assets/generated_images/Products_page_hero_background_00e06eb6.png";
+import { STATIC_PRODUCTS } from "@/data/products";
 
 export default function Products() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string>("");
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -28,65 +28,10 @@ export default function Products() {
   const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
   const y = useSpring(parallaxY, springConfig);
 
-  const { data: products, isLoading } = useQuery({
-    queryKey: ["/api/products?published=true"],
-  });
+  const isLoading = false; // Removed react-query loading state
 
-  // Default products data based on original website
-  const defaultProducts = [
-    {
-      id: 1,
-      name: "Frozen Peeled & Deveined Tail On IQF",
-      description: "Premium quality individually quick frozen shrimp, peeled and deveined with tail on for optimal presentation. Perfect for restaurants and high-end culinary applications.",
-      featuredImage: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      category: "IQF Shrimp",
-      specifications: "Sizes: 16/20, 21/25, 26/30, 31/40, 41/50 per lb\nPackaging: 2kg blocks, 6 blocks per carton\nShelf life: 24 months at -18°C"
-    },
-    {
-      id: 2,
-      name: "Frozen Peeled & Deveined Tail-off IQF",
-      description: "Expertly processed shrimp with tails removed, perfect for quick cooking and preparation in various dishes. Ideal for ready-to-cook applications.",
-      featuredImage: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      category: "IQF Shrimp",
-      specifications: "Sizes: 16/20, 21/25, 26/30, 31/40, 41/50 per lb\nPackaging: 2kg blocks, 6 blocks per carton\nShelf life: 24 months at -18°C"
-    },
-    {
-      id: 3,
-      name: "Raw Frozen Headless EZ Peel IQF",
-      description: "Easy-to-peel headless shrimp, flash frozen to maintain freshness and quality for extended shelf life. Convenient for food service industry.",
-      featuredImage: "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      category: "Raw Frozen",
-      specifications: "Sizes: 16/20, 21/25, 26/30, 31/40, 41/50 per lb\nPackaging: 2kg blocks, 6 blocks per carton\nShelf life: 24 months at -18°C"
-    },
-    {
-      id: 4,
-      name: "Frozen Headless Shell-On",
-      description: "Traditional shell-on shrimp, headless and frozen to preserve natural flavors and textures. Maintains authentic taste and appearance.",
-      featuredImage: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      category: "Shell-On",
-      specifications: "Sizes: 16/20, 21/25, 26/30, 31/40, 41/50 per lb\nPackaging: 2kg blocks, 6 blocks per carton\nShelf life: 24 months at -18°C"
-    },
-    {
-      id: 5,
-      name: "Raw Frozen Peeled & Un-Deveined IQF",
-      description: "Peeled but un-deveined shrimp for customers who prefer to prepare their seafood with maximum control over final preparation.",
-      featuredImage: "https://images.unsplash.com/photo-1585032226651-4e875fb40b24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      category: "Raw Frozen",
-      specifications: "Sizes: 16/20, 21/25, 26/30, 31/40, 41/50 per lb\nPackaging: 2kg blocks, 6 blocks per carton\nShelf life: 24 months at -18°C"
-    },
-    {
-      id: 6,
-      name: "Frozen Headless",
-      description: "Whole headless shrimp, perfect for traditional cooking methods and authentic seafood preparations. Maintains full natural flavor profile.",
-      featuredImage: "https://images.unsplash.com/photo-1563379091-20937a7886d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      category: "Whole Shrimp",
-      specifications: "Sizes: 16/20, 21/25, 26/30, 31/40, 41/50 per lb\nPackaging: 2kg blocks, 6 blocks per carton\nShelf life: 24 months at -18°C"
-    }
-  ];
+  const allProducts = STATIC_PRODUCTS;
 
-  // Always prioritize database products over default products
-  const allProducts = (products && Array.isArray(products) && products.length > 0) ? products : defaultProducts;
-  
   // Sort products by order field (smaller first), then by id as fallback
   const sortedProducts = allProducts
     .slice()
@@ -97,9 +42,9 @@ export default function Products() {
       return a.id - b.id; // fallback to id if order is same
     });
 
-  const categories = ["All", "HON/HL", "PD/PDTO", "PUD", "EZPL", "FISH"];
-  const filteredProducts = selectedCategory === "All" 
-    ? sortedProducts 
+  const categories = ["All", ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))];
+  const filteredProducts = selectedCategory === "All"
+    ? sortedProducts
     : sortedProducts.filter(product => product.category === selectedCategory);
 
   return (
@@ -109,25 +54,25 @@ export default function Products() {
         {/* Enhanced Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
           {/* Background Image */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ 
+            style={{
               backgroundImage: `url(${productsBg})`,
               filter: 'brightness(0.3) contrast(1.1)'
             }}
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-ocean-blue/80 via-marine-teal/70 to-deep-navy/85" />
-          <motion.div 
+          <motion.div
             style={{ y, opacity: parallaxOpacity }}
             className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"
           />
           <motion.div
-            animate={{ 
+            animate={{
               rotate: [0, 360],
               scale: [1, 1.3, 1]
             }}
-            transition={{ 
+            transition={{
               duration: 20,
               repeat: Infinity,
               ease: "linear"
@@ -135,11 +80,11 @@ export default function Products() {
             className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full backdrop-blur-sm"
           />
           <motion.div
-            animate={{ 
+            animate={{
               y: [0, -40, 0],
               x: [0, 30, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 15,
               repeat: Infinity,
               ease: "easeInOut",
@@ -163,7 +108,7 @@ export default function Products() {
                 <Package className="text-coral-accent mr-2" size={20} />
                 <span className="text-white/90 font-medium">Premium Quality Products</span>
               </motion.div>
-              <motion.h1 
+              <motion.h1
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.5, delay: 0.2 }}
@@ -172,13 +117,13 @@ export default function Products() {
                 Premium <span className="text-coral-accent">Seafood</span>
                 <br />Products
               </motion.h1>
-              <motion.p 
+              <motion.p
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1, delay: 0.8 }}
                 className="text-xl md:text-2xl text-light-marine max-w-4xl mx-auto leading-relaxed"
               >
-                Experience top-quality seafood with Alashore Marine. Our carefully sourced and processed products 
+                Experience top-quality seafood with Alashore Marine. Our carefully sourced and processed products
                 set new standards, offering delicious and sustainable choices in the seafood industry.
               </motion.p>
             </motion.div>
@@ -186,7 +131,7 @@ export default function Products() {
         </section>
 
         {/* Category Filter */}
-        <motion.section 
+        <motion.section
           style={{ y: useTransform(scrollYProgress, [0.1, 0.3], [50, 0]) }}
           className="py-16 bg-gradient-to-br from-light-marine/20 to-white relative overflow-hidden"
         >
@@ -215,7 +160,7 @@ export default function Products() {
                 className="w-24 h-1 bg-gradient-to-r from-coral-accent to-golden-orange mx-auto rounded-full mb-8"
               />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -233,11 +178,10 @@ export default function Products() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 backdrop-blur-md border ${
-                    selectedCategory === category
-                      ? "bg-gradient-to-r from-coral-accent to-golden-orange text-white border-transparent shadow-lg"
-                      : "bg-white/70 text-gray-700 border-gray-200 hover:bg-white/90 hover:border-coral-accent"
-                  }`}
+                  className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 backdrop-blur-md border ${selectedCategory === category
+                    ? "bg-gradient-to-r from-coral-accent to-golden-orange text-white border-transparent shadow-lg"
+                    : "bg-white/70 text-gray-700 border-gray-200 hover:bg-white/90 hover:border-coral-accent"
+                    }`}
                 >
                   <Filter className="inline mr-2" size={16} />
                   {category}
@@ -250,11 +194,11 @@ export default function Products() {
         {/* Enhanced Products Grid */}
         <section className="py-24 bg-white relative overflow-hidden">
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
               opacity: [0.1, 0.3, 0.1]
             }}
-            transition={{ 
+            transition={{
               duration: 18,
               repeat: Infinity,
               ease: "easeInOut"
@@ -277,7 +221,7 @@ export default function Products() {
                 ))}
               </div>
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
@@ -291,8 +235,8 @@ export default function Products() {
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.8, delay: index * 0.1, ease: "easeOut" }}
                     viewport={{ once: true }}
-                    whileHover={{ 
-                      y: -15, 
+                    whileHover={{
+                      y: -15,
                       scale: 1.02,
                       boxShadow: "0 25px 60px rgba(0, 0, 0, 0.15)"
                     }}
@@ -354,11 +298,11 @@ export default function Products() {
         <section className="py-20 bg-gradient-to-br from-light-marine to-white relative overflow-hidden">
           {/* Background Animation Elements */}
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
               opacity: [0.05, 0.15, 0.05]
             }}
-            transition={{ 
+            transition={{
               duration: 20,
               repeat: Infinity,
               ease: "easeInOut"
@@ -366,11 +310,11 @@ export default function Products() {
             className="absolute top-10 right-10 w-80 h-80 bg-ocean-blue/10 rounded-full backdrop-blur-sm"
           />
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1.2, 1, 1.2],
               opacity: [0.03, 0.08, 0.03]
             }}
-            transition={{ 
+            transition={{
               duration: 25,
               repeat: Infinity,
               ease: "easeInOut"
@@ -409,13 +353,13 @@ export default function Products() {
               <motion.div
                 initial={{ opacity: 0, y: 40, scale: 0.8, rotateY: 180 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0 }}
-                whileHover={{ 
-                  y: -15, 
+                whileHover={{
+                  y: -15,
                   scale: 1.08,
                   rotateY: 5,
                   boxShadow: "0 25px 50px rgba(255,215,0,0.4)"
                 }}
-                transition={{ 
+                transition={{
                   duration: 0.8,
                   type: "spring",
                   stiffness: 100
@@ -426,24 +370,24 @@ export default function Products() {
                 {/* Golden Background with Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-3xl shadow-2xl" />
                 <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/20 via-transparent to-yellow-200/30 rounded-3xl" />
-                
+
                 {/* Golden Border Ring */}
-                <motion.div 
+                <motion.div
                   className="absolute inset-0 rounded-3xl border-4 border-yellow-200/50"
-                  animate={{ 
+                  animate={{
                     boxShadow: [
                       "0 0 20px rgba(255,215,0,0.3)",
-                      "0 0 40px rgba(255,215,0,0.6)", 
+                      "0 0 40px rgba(255,215,0,0.6)",
                       "0 0 20px rgba(255,215,0,0.3)"
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 />
-                
+
                 {/* Sparkle Effects */}
                 <motion.div
                   className="absolute top-4 right-4 w-2 h-2 bg-white rounded-full"
-                  animate={{ 
+                  animate={{
                     scale: [0, 1, 0],
                     opacity: [0, 1, 0]
                   }}
@@ -451,17 +395,17 @@ export default function Products() {
                 />
                 <motion.div
                   className="absolute top-8 left-6 w-1.5 h-1.5 bg-yellow-100 rounded-full"
-                  animate={{ 
+                  animate={{
                     scale: [0, 1, 0],
                     opacity: [0, 1, 0]
                   }}
                   transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                 />
-                
+
                 <div className="relative p-8 z-10">
-                  <motion.div 
+                  <motion.div
                     className="w-24 h-24 mx-auto mb-6 flex items-center justify-center"
-                    whileHover={{ 
+                    whileHover={{
                       rotate: 360,
                       scale: 1.1
                     }}
@@ -490,13 +434,13 @@ export default function Products() {
               <motion.div
                 initial={{ opacity: 0, y: 40, scale: 0.8, rotateY: 180 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0 }}
-                whileHover={{ 
-                  y: -15, 
+                whileHover={{
+                  y: -15,
                   scale: 1.08,
                   rotateY: 5,
                   boxShadow: "0 25px 50px rgba(255,215,0,0.4)"
                 }}
-                transition={{ 
+                transition={{
                   duration: 0.8,
                   delay: 0.1,
                   type: "spring",
@@ -508,34 +452,34 @@ export default function Products() {
                 {/* Golden Background with Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-3xl shadow-2xl" />
                 <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/20 via-transparent to-yellow-200/30 rounded-3xl" />
-                
+
                 {/* Golden Border Ring */}
-                <motion.div 
+                <motion.div
                   className="absolute inset-0 rounded-3xl border-4 border-yellow-200/50"
-                  animate={{ 
+                  animate={{
                     boxShadow: [
                       "0 0 20px rgba(255,215,0,0.3)",
-                      "0 0 40px rgba(255,215,0,0.6)", 
+                      "0 0 40px rgba(255,215,0,0.6)",
                       "0 0 20px rgba(255,215,0,0.3)"
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                 />
-                
+
                 {/* Sparkle Effects */}
                 <motion.div
                   className="absolute top-6 right-8 w-2 h-2 bg-white rounded-full"
-                  animate={{ 
+                  animate={{
                     scale: [0, 1, 0],
                     opacity: [0, 1, 0]
                   }}
                   transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
                 />
-                
+
                 <div className="relative p-8 z-10">
-                  <motion.div 
+                  <motion.div
                     className="w-24 h-24 mx-auto mb-6 flex items-center justify-center"
-                    whileHover={{ 
+                    whileHover={{
                       rotate: 360,
                       scale: 1.1
                     }}
@@ -564,13 +508,13 @@ export default function Products() {
               <motion.div
                 initial={{ opacity: 0, y: 40, scale: 0.8, rotateY: 180 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0 }}
-                whileHover={{ 
-                  y: -15, 
+                whileHover={{
+                  y: -15,
                   scale: 1.08,
                   rotateY: 5,
                   boxShadow: "0 25px 50px rgba(255,215,0,0.4)"
                 }}
-                transition={{ 
+                transition={{
                   duration: 0.8,
                   delay: 0.2,
                   type: "spring",
@@ -582,34 +526,34 @@ export default function Products() {
                 {/* Golden Background with Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-3xl shadow-2xl" />
                 <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/20 via-transparent to-yellow-200/30 rounded-3xl" />
-                
+
                 {/* Golden Border Ring */}
-                <motion.div 
+                <motion.div
                   className="absolute inset-0 rounded-3xl border-4 border-yellow-200/50"
-                  animate={{ 
+                  animate={{
                     boxShadow: [
                       "0 0 20px rgba(255,215,0,0.3)",
-                      "0 0 40px rgba(255,215,0,0.6)", 
+                      "0 0 40px rgba(255,215,0,0.6)",
                       "0 0 20px rgba(255,215,0,0.3)"
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 />
-                
+
                 {/* Sparkle Effects */}
                 <motion.div
                   className="absolute top-4 left-4 w-1.5 h-1.5 bg-yellow-100 rounded-full"
-                  animate={{ 
+                  animate={{
                     scale: [0, 1, 0],
                     opacity: [0, 1, 0]
                   }}
                   transition={{ duration: 2, repeat: Infinity, delay: 2 }}
                 />
-                
+
                 <div className="relative p-8 z-10">
-                  <motion.div 
+                  <motion.div
                     className="w-24 h-24 mx-auto mb-6 flex items-center justify-center"
-                    whileHover={{ 
+                    whileHover={{
                       rotate: 360,
                       scale: 1.1
                     }}
@@ -638,13 +582,13 @@ export default function Products() {
               <motion.div
                 initial={{ opacity: 0, y: 40, scale: 0.8, rotateY: 180 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0 }}
-                whileHover={{ 
-                  y: -15, 
+                whileHover={{
+                  y: -15,
                   scale: 1.08,
                   rotateY: 5,
                   boxShadow: "0 25px 50px rgba(255,215,0,0.4)"
                 }}
-                transition={{ 
+                transition={{
                   duration: 0.8,
                   delay: 0.3,
                   type: "spring",
@@ -656,34 +600,34 @@ export default function Products() {
                 {/* Golden Background with Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-3xl shadow-2xl" />
                 <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/20 via-transparent to-yellow-200/30 rounded-3xl" />
-                
+
                 {/* Golden Border Ring */}
-                <motion.div 
+                <motion.div
                   className="absolute inset-0 rounded-3xl border-4 border-yellow-200/50"
-                  animate={{ 
+                  animate={{
                     boxShadow: [
                       "0 0 20px rgba(255,215,0,0.3)",
-                      "0 0 40px rgba(255,215,0,0.6)", 
+                      "0 0 40px rgba(255,215,0,0.6)",
                       "0 0 20px rgba(255,215,0,0.3)"
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
                 />
-                
+
                 {/* Sparkle Effects */}
                 <motion.div
                   className="absolute top-6 left-8 w-2 h-2 bg-white rounded-full"
-                  animate={{ 
+                  animate={{
                     scale: [0, 1, 0],
                     opacity: [0, 1, 0]
                   }}
                   transition={{ duration: 2, repeat: Infinity, delay: 0.8 }}
                 />
-                
+
                 <div className="relative p-8 z-10">
-                  <motion.div 
+                  <motion.div
                     className="w-24 h-24 mx-auto mb-6 flex items-center justify-center"
-                    whileHover={{ 
+                    whileHover={{
                       rotate: 360,
                       scale: 1.1
                     }}
@@ -768,8 +712,8 @@ export default function Products() {
       </main>
       <Footer />
 
-      <ContactFormModal 
-        isOpen={isContactModalOpen} 
+      <ContactFormModal
+        isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         productName={selectedProduct}
       />

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MapPin, Mail, Phone, Building, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
@@ -29,28 +28,37 @@ export default function Contact() {
     },
   });
 
-  const createInquiry = useMutation({
-    mutationFn: async (data: InsertInquirySchema) => {
-      await apiRequest("POST", "/api/inquiries", data);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Message Sent!",
-        description: "Thank you for your inquiry. We'll get back to you soon.",
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (data: InsertInquirySchema) => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-      form.reset();
-    },
-    onError: (error) => {
+
+      if (res.ok) {
+        toast({
+          title: "Message Sent!",
+          description: "Thank you for your inquiry. We'll get back to you within 24 hours.",
+        });
+        form.reset();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to submit");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: "Failed to send message. Please try again or use our contact information directly.",
         variant: "destructive",
       });
-    },
-  });
-
-  const onSubmit = (data: InsertInquirySchema) => {
-    createInquiry.mutate(data);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -291,11 +299,11 @@ export default function Contact() {
 
                 <Button
                   type="submit"
-                  disabled={createInquiry.isPending}
+                  disabled={isSubmitting}
                   className="w-full bg-ocean-blue hover:bg-deep-navy text-white font-semibold h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   data-testid="button-send-message"
                 >
-                  {createInquiry.isPending ? "Sending..." : "Send Message"}
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </Form>

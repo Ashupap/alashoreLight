@@ -1,5 +1,4 @@
 import { useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { useRef, useState } from "react";
 import { BookOpen, Calendar, User, Eye } from "lucide-react";
@@ -9,6 +8,7 @@ import ContactFormModal from "@/components/contact-form-modal";
 import BlogPostCard from "@/components/blog/blog-post-card";
 import { formatDistanceToNow } from "date-fns";
 import blogBg from "@assets/generated_images/Blog_page_hero_background_995e7f81.png";
+import { STATIC_BLOGS } from "@/data/blogs";
 
 export default function Blog() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,18 +22,13 @@ export default function Blog() {
   const parallaxOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 1, 0.3]);
   const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
   const y = useSpring(parallaxY, springConfig);
-  
+
   const { slug } = useParams();
 
-  const { data: posts, isLoading: postsLoading } = useQuery({
-    queryKey: ["/api/blog?published=true"],
-    enabled: !slug,
-  });
-
-  const { data: post, isLoading: postLoading } = useQuery({
-    queryKey: [`/api/blog/slug/${slug}`],
-    enabled: !!slug,
-  });
+  const posts = STATIC_BLOGS;
+  const post = slug ? STATIC_BLOGS.find(p => p.slug === slug) : null;
+  const postsLoading = false;
+  const postLoading = false;
 
   if (slug && post) {
     return (
@@ -58,14 +53,14 @@ export default function Blog() {
                     <Calendar className="mr-2" size={16} />
                     <span>{formatDistanceToNow(new Date((post as any).createdAt!))} ago</span>
                     <span className="mx-3">•</span>
-                    <motion.span 
+                    <motion.span
                       whileHover={{ scale: 1.05 }}
                       className="bg-gradient-to-r from-ocean-blue to-marine-teal text-white px-4 py-2 rounded-full text-xs font-semibold"
                     >
                       {(post as any).category}
                     </motion.span>
                   </div>
-                  <motion.h1 
+                  <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.4 }}
@@ -74,7 +69,7 @@ export default function Blog() {
                     {(post as any).title}
                   </motion.h1>
                   {(post as any).excerpt && (
-                    <motion.p 
+                    <motion.p
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.6 }}
@@ -100,7 +95,7 @@ export default function Blog() {
                   </motion.div>
                 )}
 
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1 }}
@@ -113,10 +108,10 @@ export default function Blog() {
           </article>
         </main>
         <Footer />
-        
-        <ContactFormModal 
-          isOpen={isContactModalOpen} 
-          onClose={() => setIsContactModalOpen(false)} 
+
+        <ContactFormModal
+          isOpen={isContactModalOpen}
+          onClose={() => setIsContactModalOpen(false)}
         />
       </div>
     );
@@ -129,25 +124,25 @@ export default function Blog() {
         {/* Enhanced Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
           {/* Background Image */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ 
+            style={{
               backgroundImage: `url(${blogBg})`,
               filter: 'brightness(0.3) contrast(1.1)'
             }}
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-ocean-blue/80 via-marine-teal/70 to-deep-navy/85" />
-          <motion.div 
+          <motion.div
             style={{ y, opacity: parallaxOpacity }}
             className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"
           />
           <motion.div
-            animate={{ 
+            animate={{
               rotate: [0, 360],
               scale: [1, 1.3, 1]
             }}
-            transition={{ 
+            transition={{
               duration: 22,
               repeat: Infinity,
               ease: "linear"
@@ -155,11 +150,11 @@ export default function Blog() {
             className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full backdrop-blur-sm"
           />
           <motion.div
-            animate={{ 
+            animate={{
               y: [0, -40, 0],
               x: [0, 30, 0]
             }}
-            transition={{ 
+            transition={{
               duration: 16,
               repeat: Infinity,
               ease: "easeInOut",
@@ -183,7 +178,7 @@ export default function Blog() {
                 <BookOpen className="text-coral-accent mr-2" size={20} />
                 <span className="text-white/90 font-medium">Industry Insights</span>
               </motion.div>
-              <motion.h1 
+              <motion.h1
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.5, delay: 0.2 }}
@@ -192,7 +187,7 @@ export default function Blog() {
                 Latest <span className="text-coral-accent">News</span>
                 <br />& Insights
               </motion.h1>
-              <motion.p 
+              <motion.p
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1, delay: 0.8 }}
@@ -203,14 +198,14 @@ export default function Blog() {
             </motion.div>
           </div>
         </section>
-        
+
         <section className="py-24 bg-gradient-to-br from-light-marine/10 to-white relative overflow-hidden">
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
               opacity: [0.1, 0.3, 0.1]
             }}
-            transition={{ 
+            transition={{
               duration: 20,
               repeat: Infinity,
               ease: "easeInOut"
@@ -247,8 +242,8 @@ export default function Blog() {
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.8, delay: index * 0.1, ease: "easeOut" }}
                     viewport={{ once: true }}
-                    whileHover={{ 
-                      y: -10, 
+                    whileHover={{
+                      y: -10,
                       scale: 1.02,
                       boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)"
                     }}
@@ -259,7 +254,7 @@ export default function Blog() {
                 ))}
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
@@ -267,11 +262,11 @@ export default function Blog() {
                 className="text-center py-24 bg-gradient-to-br from-white to-light-marine/20 rounded-3xl border border-gray-100 backdrop-blur-md"
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: [0, 10, -10, 0],
                     scale: [1, 1.1, 1]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 6,
                     repeat: Infinity,
                     ease: "easeInOut"
@@ -289,9 +284,9 @@ export default function Blog() {
       </main>
       <Footer />
 
-      <ContactFormModal 
-        isOpen={isContactModalOpen} 
-        onClose={() => setIsContactModalOpen(false)} 
+      <ContactFormModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
       />
     </div>
   );

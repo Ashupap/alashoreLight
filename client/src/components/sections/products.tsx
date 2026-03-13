@@ -1,16 +1,16 @@
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Clock, Package } from "lucide-react";
 import { Link } from "wouter";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import type { Product } from "@shared/schema";
+import { STATIC_PRODUCTS } from "@/data/products";
 
 // Function to get category color (case-insensitive)
 const getCategoryColor = (category: string) => {
   const colors = {
     "hon/hl": "bg-emerald-500/90",
-    "pd/pdto": "bg-blue-500/90", 
+    "pd/pdto": "bg-blue-500/90",
     "pud": "bg-purple-500/90",
     "ezpl": "bg-orange-500/90",
     "fish": "bg-red-500/90",
@@ -21,15 +21,14 @@ const getCategoryColor = (category: string) => {
     "shrimp": "bg-cyan-500/90",
     "crab": "bg-orange-600/90"
   };
-  
+
   const normalizedCategory = category.toLowerCase();
   return colors[normalizedCategory as keyof typeof colors] || "bg-ocean-blue/90";
 };
 
 export default function Products() {
-  const { data: products, isLoading } = useQuery<Product[]>({
-    queryKey: ["/api/products?published=true"],
-  });
+  const isLoading = false;
+  const products = STATIC_PRODUCTS;
 
   // Default products data if API returns empty
   const defaultProducts = [
@@ -92,7 +91,7 @@ export default function Products() {
       if (orderA !== orderB) return orderA - orderB;
       return a.id - b.id; // fallback to id if order is same
     });
-  
+
   const displayProducts = sortedProducts;
 
   return (
@@ -173,7 +172,7 @@ export default function Products() {
                           <h3 className="text-xl md:text-2xl font-heading font-bold mb-2 leading-tight">
                             {product.name}
                           </h3>
-                          
+
                           <p className="text-gray-100 mb-4 text-sm line-clamp-2 opacity-90">
                             {product.description}
                           </p>

@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X, Send, MessageSquare, Globe, Truck, ShoppingCart, HelpCircle, FileText, User, Target } from "lucide-react";
 import { insertInquirySchema, type InsertInquirySchema } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,29 +58,38 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
     }
   }, [isOpen, productName, form]);
 
-  const createInquiry = useMutation({
-    mutationFn: async (data: InsertInquirySchema) => {
-      await apiRequest("POST", "/api/inquiries", data);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Message Sent!",
-        description: "Thank you for your inquiry. We'll get back to you within 24 hours.",
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (data: InsertInquirySchema) => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-      form.reset();
-      onClose();
-    },
-    onError: (error) => {
+
+      if (res.ok) {
+        toast({
+          title: "Message Sent!",
+          description: "Thank you for your inquiry. We'll get back to you within 24 hours.",
+        });
+        form.reset();
+        onClose();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to submit");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again or contact us directly.",
         variant: "destructive",
       });
-    },
-  });
-
-  const onSubmit = (data: InsertInquirySchema) => {
-    createInquiry.mutate(data);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inquiryTopics = [
@@ -108,7 +115,7 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110]"
             onClick={onClose}
           />
-          
+
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -296,11 +303,11 @@ export default function ContactFormModal({ isOpen, onClose, productName }: Conta
                       </Button>
                       <Button
                         type="submit"
-                        disabled={createInquiry.isPending}
+                        disabled={isSubmitting}
                         className="flex-1 bg-ocean-blue hover:bg-deep-navy text-white font-semibold h-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                         data-testid="button-modal-send-message"
                       >
-                        {createInquiry.isPending ? (
+                        {isSubmitting ? (
                           "Sending..."
                         ) : (
                           <>
