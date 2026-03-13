@@ -198,9 +198,24 @@ app.post("/api/inquiries", (req, res) => {
 
 // Serve static built frontend
 const staticDir = path.join(__dirname, "dist/public");
+console.log(`📂 Serving static files from: ${staticDir}`);
 if (fs.existsSync(staticDir)) {
+  app.use((req, res, next) => {
+    console.log(`🔍 [${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+  });
+  
+  // Serve build assets
   app.use(express.static(staticDir));
-  app.get(/^(?!\/api).*/, (_req, res) => {
+  
+  // Serve external assets
+  app.use("/attached_assets", express.static(path.join(__dirname, "attached_assets")));
+  app.use("/CSR", express.static(path.join(__dirname, "CSR")));
+  app.use("/Certifications", express.static(path.join(__dirname, "Certifications")));
+  app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+  app.get(/^(?!\/api).*/, (req, res) => {
+    console.log(`📄 Serving index.html for: ${req.url}`);
     res.sendFile(path.join(staticDir, "index.html"));
   });
 } else {

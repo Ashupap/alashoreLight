@@ -7,11 +7,17 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 
-# Copy source files
+# Copy source files and assets needed for build
 COPY client/ ./client/
 COPY shared/ ./shared/
+COPY attached_assets/ ./attached_assets/
+COPY CSR/ ./CSR/
+COPY Certifications/ ./Certifications/
+COPY uploads/ ./uploads/
 COPY vite.config.ts ./
 COPY tsconfig.json ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
 
 # Build the frontend
 RUN npm run build
